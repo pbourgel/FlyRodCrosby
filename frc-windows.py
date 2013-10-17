@@ -7,7 +7,7 @@ import requests
 import re
 import hashlib
 from urlparse import urlparse
-from frc-winconfig import *
+from frc_winconfig import *
 
 #Intevation doesn't have an HTTPS download of the file 
 #that doesn't throw a certificate error.  Could somebody yell at them, please?	
@@ -49,16 +49,10 @@ except Exception:
     print "Expect an installer window in 5 minutes."
     getGPG(gpg4win_url)
 
-try:
-    gpg=gnupg.GPG()
-    print 'GnuPG installed'
-except Exception:
-    print 'Ugh, turns out it doesnt update after installation'
-
 #REQUIRE: url and lang are unicode
 def getTOR(url, lang):	
     try:
-	    tor_page=requests.get(url)
+        tor_page=requests.get(url)
         tor_soup = BeautifulSoup(tor_page.content)
         tor_exe_link=''
         tor_sig_link=''
@@ -66,18 +60,27 @@ def getTOR(url, lang):
 		#TO-DO: Alas my regex fu is too weak to filter out the beta version, 
         #so this will return two links.  
         #If somebody from the Tor Project is reading this, would it kill you to use absolute links?
-        tor_link_exes=onion_soup.find_all('a', attrs={'href': re.compile('tor-browser.*' + lang + '.*exe$')})
-		tor_sig_links=onion_soup.find_all('a', attrs={'href': re.compile('tor-browser.*' + lang + '.*asc$')})
-        for exe_link, sig_link in map(None, tor_link_exes, tor_sig_exes):
+        print 'Scraping the Tor Project site for the relevant links'
+        tor_link_exes=tor_soup.find_all('a', attrs={'href': re.compile('tor-browser.*' + lang + '.*exe$')})
+        tor_sig_links=tor_soup.find_all('a', attrs={'href': re.compile('tor-browser.*' + lang + '.*asc$')})
+        tor_url_parsed=urlparse(url)
+        tor_url_base=tor_url_parsed.scheme + '://' + tor_url_parsed.netloc
+        
+        print unicode(tor_link_exes) + '\n\n' + unicode(tor_sig_links)
+        
+        
+        for exe_link, sig_link in tor_link_exes, tor_sig_links:
             if len(exe_link) > 0 and 'beta' not in sig_link['href']:
-                tor_exe_link=exe_link['href'][2:]
+                tor_exe_link=tor_url_base+exe_link['href'][2:]
+                print tor_exe_link
             if len(sig_link) > 0 and 'beta' not in exe_link['href']:
-                tor_sig_link=sig_link['href'][2:]
+                tor_sig_link=tor_url_base+sig_link['href'][2:]
+                print tor_sig_link
         
         if len(tor_link) == 0 or len(tor_sig_link) == 0:
             print "Couldn't find download link for Tor.  Please tell whoever is running the Cryptoparty."
             exit()
-        
+        print 'Found download links.  Downloading EXE'
         tor_exe_file=requests.get(url + tor_exe_link,stream=True) 
         with open('tor.exe','wb') as f:
             for chunk in tor_exe_file.iter_content(chunk_size=1024): 
@@ -85,7 +88,7 @@ def getTOR(url, lang):
                     f.write(chunk)
                     f.flush()
         f.close()
-
+        print 'Downloaded exe.  Now downloading GPG signature.'
         tor_sig_file=requests.get(tor_sig_link)
         f=open('tor_sig.asc')
         f.write(tor_sig_file)
@@ -98,34 +101,45 @@ def getTOR(url, lang):
         #TO-DO: Finish key verification
         try:
             gpg=gnupg.GPG()
+            print 'Trying to download Tor devs GPG key'
             gpg.recv_keys('pool.sks-keyservers.net',tor_dev_gpg_id)
             f = open('tor_sig.asc','rb')
             g = open('tor.exe','rb')
 		    #This verifies the executable with the key in the keyring
+            print 'Verifying exe with GPG key in keyring'
             verified_exe_with_kring = gpg.verify(g)
             #This verifies the executable with the downloaded signature
+            print 'Verifying EXE with downloaded signature'
             verified_with_asc = gpg.verify_file(f,os.path.abspath('tor.exe'))
-            if verified_with_asc amd verified_exe:
+            if verified_with_asc and verified_exe:
                 print "The Tor executable checks out.  Let's extract it."                
                 os.system('tor.exe')
                 f.close()
                 g.close()
             elif verified_with_asc and not verified_exe_with_kring:
-                print 'The signature checked out, but not the executable.  Game over.'
-            elif verified_exe_with_kring and not verified_with_asc:
-                print 'The executable has been verified, but the signature failed.  Game over.'
-            else;
-                print "Neither the signature nor the executable checked out.  Game over."
+                print 'The downloaded signature checked out, but not the one in the keyring.  Game over.'
                 f.close()
                 g.close()
-				exit()
+                exit()
+            elif verified_exe_with_kring and not verified_with_asc:
+                print 'The executable has been verified with the key in the keyring, but the downloaded signature failed.  Game over.'
+                f.close()                
+                g.close()
+                exit()
+            else:
+                print "Neither the downloaded signature nor the one in the keyring successfully verified the executable.  Game over."
+                f.close()
+                g.close()
+                exit()
         except Exception as e:
             print 'Problem downloading Tor: Please show this to your facilitator: ' + unicode(e)
     except Exception as e:
         print 'An error occured with your Tor download.  Please show this message to your Cryptoparty facilitator: ' + unicode(e)
-	
+
 def getThunderbirdWithEnigmail():
-    pass
+    print "some day we'll find it / the rainbow connection"
 #What's a good browser decision here?  Should I just install Firefox if it isn't installed, or add it to the TBB?
 def getCryptocat():
-    pass
+    print "the lovers, the dreamers, and me"
+
+getTOR('https://www.torproject.org/projects/torbrowser.html.en#Download-torbrowserbundle','en-US')
