@@ -10,7 +10,9 @@ GPG4Win
 We plan to support:
 
 Thunderbird with Enigmail
+
 Tor Browser Bundle
+
 Cryptocat
 
 [1] https://en.wikipedia.org/wiki/Cornilia_Thurza_Crosby
