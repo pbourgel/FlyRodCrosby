@@ -62,18 +62,20 @@ def getTOR(url, lang):
         #If somebody from the Tor Project is reading this, would it kill you to use absolute links?
         print 'Scraping the Tor Project site for the relevant links'
         tor_link_exes=tor_soup.find_all('a', attrs={'href': re.compile('tor-browser.*' + lang + '.*exe$')})
-        tor_sig_links=tor_soup.find_all('a', attrs={'href': re.compile('tor-browser.*' + lang + '.*asc$')})
+        tor_sig_links=tor_soup.find_all('a', attrs={'href': re.compile('tor-browser.*' + lang + '\\.exe\\.*asc$')})
         tor_url_parsed=urlparse(url)
         tor_url_base=tor_url_parsed.scheme + '://' + tor_url_parsed.netloc
         
-        print unicode(tor_link_exes) + '\n\n' + unicode(tor_sig_links)
+        #print unicode(tor_link_exes) + '\n\n' + unicode(tor_sig_links)
         
         
-        for exe_link, sig_link in tor_link_exes, tor_sig_links:
-            if len(exe_link) > 0 and 'beta' not in sig_link['href']:
+        for exe_link in tor_link_exes:
+            if len(exe_link) > 0 and 'beta' not in exe_link['href']:
                 tor_exe_link=tor_url_base+exe_link['href'][2:]
                 print tor_exe_link
-            if len(sig_link) > 0 and 'beta' not in exe_link['href']:
+
+        for sig_link in tor_sig_links:
+            if len(sig_link) > 0 and 'beta' not in sig_link['href']:
                 tor_sig_link=tor_url_base+sig_link['href'][2:]
                 print tor_sig_link
         
