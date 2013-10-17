@@ -99,10 +99,33 @@ def getTOR(url, lang):
         try:
             gpg=gnupg.GPG()
             gpg.recv_keys('pool.sks-keyservers.net',tor_dev_gpg_id)
+			f = open('tor_sig.asc','rb')
+            g = open('tor.exe','rb')
+		    #This verifies the executable with the key in the keyring
+            verified_exe_with_kring = gpg.verify(g)
+            #This verifies the executable with the downloaded signature
+			verified_with_asc = gpg.verify_file(f,os.path.abspath('tor.exe'))
+			if verified_with_asc amd verified_exe:
+                print "The Tor executable checks out.  Let's extract it."                
+                os.system('tor.exe')
+                f.close()
+                g.close()
+			elif verified_with_asc and not verified_exe_with_kring:
+                print 'The signature checked out, but not the executable.  Game over.'
+            elif verified_exe_with_kring and not verified_with_asc:
+                print 'The executable has been verified, but the signature failed.  Game over.'
+            else;
+                print "Neither the signature nor the executable checked out.  Game over."
+                f.close()
+                g.close()
+				exit()
         except Exception as e:
 		    print 'Problem downloading Tor: Please show this to your facilitator: ' + unicode(e)
-        
-        
-
     except Exception as e:
         print 'An error occured with your Tor download.  Please show this message to your Cryptoparty facilitator: ' + unicode(e)
+	
+def getThunderbirdWithEnigmail():
+    pass
+#What's a good browser decision here?  Should I just install Firefox if it isn't installed, or add it to the TBB?
+def getCryptocat():
+    pass
