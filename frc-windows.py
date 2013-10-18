@@ -79,21 +79,22 @@ def getTOR(url, lang):
                 tor_sig_link=tor_url_base+sig_link['href'][2:]
                 print tor_sig_link
         
-        if len(tor_link) == 0 or len(tor_sig_link) == 0:
+        if len(tor_exe_link) == 0 or len(tor_sig_link) == 0:
             print "Couldn't find download link for Tor.  Please tell whoever is running the Cryptoparty."
             exit()
-        print 'Found download links.  Downloading EXE'
-        tor_exe_file=requests.get(url + tor_exe_link,stream=True) 
+        print 'Found download links.  Downloading EXE from ' + tor_exe_link
+        tor_exe_file=requests.get(tor_exe_link,stream=True) 
+        
         with open('tor.exe','wb') as f:
             for chunk in tor_exe_file.iter_content(chunk_size=1024): 
                 if chunk: # filter out keep-alive new chunks
                     f.write(chunk)
                     f.flush()
         f.close()
-        print 'Downloaded exe.  Now downloading GPG signature.'
+        print 'Downloaded exe.  Now downloading GPG signature from' + tor_sig_link
         tor_sig_file=requests.get(tor_sig_link)
-        f=open('tor_sig.asc')
-        f.write(tor_sig_file)
+        f=open('tor_sig.asc', 'wb')
+        f.write(tor_sig_file.content)
         f.close()
         #And now to verify the executable.
         #I just hope that nobody tampered with both the exe AND the asc!
@@ -109,27 +110,14 @@ def getTOR(url, lang):
             g = open('tor.exe','rb')
 		    #This verifies the executable with the key in the keyring
             print 'Verifying exe with GPG key in keyring'
-            verified_exe_with_kring = gpg.verify(g)
-            #This verifies the executable with the downloaded signature
-            print 'Verifying EXE with downloaded signature'
             verified_with_asc = gpg.verify_file(f,os.path.abspath('tor.exe'))
-            if verified_with_asc and verified_exe:
+            if verified_with_asc:
                 print "The Tor executable checks out.  Let's extract it."                
                 os.system('tor.exe')
                 f.close()
                 g.close()
-            elif verified_with_asc and not verified_exe_with_kring:
-                print 'The downloaded signature checked out, but not the one in the keyring.  Game over.'
-                f.close()
-                g.close()
-                exit()
-            elif verified_exe_with_kring and not verified_with_asc:
-                print 'The executable has been verified with the key in the keyring, but the downloaded signature failed.  Game over.'
-                f.close()                
-                g.close()
-                exit()
             else:
-                print "Neither the downloaded signature nor the one in the keyring successfully verified the executable.  Game over."
+                print "EXE verification failed.  Please tell whoever is running your Cryptoparty."
                 f.close()
                 g.close()
                 exit()
