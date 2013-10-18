@@ -7,11 +7,11 @@ FlyRodCrosby[1] is an automated installer for all of the standard Cryptoparty to
 
 GPG4Win
 
+Tor Browser Bundle [3]
+
 We plan to support:
 
 Thunderbird with Enigmail [2]
-
-Tor Browser Bundle [3]
 
 Cryptocat [4]
 
