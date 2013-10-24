@@ -9,13 +9,20 @@ import hashlib
 from urlparse import urlparse
 from frc_winconfig import *
 
+#Given an HTTP url, return it with https
+def HTTPSthis(url):
+    return re.sub(pattern='http', repl='https', string=url)
+
+def printError(text):
+    print 'An error occured with your download.  Please show this to your Cruptoparty facilitator: ' + text
+
 #Intevation doesn't have an HTTPS download of the file 
 #that doesn't throw a certificate error.  Could somebody yell at them, please?	
 #Anyway 
 def getGPG(url):
     gpg_page=requests.get(url)
     gpg4win_soup = BeautifulSoup(gpg_page.content)
-    gpg4win_link=gpg4win_soup.find_all('a', attrs={'href': re.compile('gpg4win-light.*exe$')})[0]['href']
+    gpg4win_link=gpg4win_soup.find_all('a', attrs={'href': re.compile('gpg4win-vanilla.*exe$')})[0]['href']
     gpg4win_checksums=gpg4win_soup.find_all('code')
     gpg4win_file=requests.get(gpg4win_link,stream=True) 
     with open('gpg4win.exe','wb') as f:
@@ -124,12 +131,62 @@ def getTOR(url, lang):
         except Exception as e:
             print 'Problem downloading Tor: Please show this to your facilitator: ' + unicode(e)
     except Exception as e:
-        print 'An error occured with your Tor download.  Please show this message to your Cryptoparty facilitator: ' + unicode(e)
+        printError(unicode(e))
+
+def getThunderbird(lang):
+    try:
+        tbird_soup=BeautifulSoup(requests.get(thunderbird_url).content)
+        tbird_link=tbird_soup.find_all('a',attrs={'href': re.compile('.*os=win.*lang=' + lang)})
+        #print tbird_link
+        tbird_file=requests.get(tbird_link[0]['href'],stream=True) 
+        #Grease is the word...
+        with open('thunderbird.exe','wb') as f:
+            for chunk in tbird_file.iter_content(chunk_size=1024): 
+                if chunk: # filter out keep-alive new chunks
+                    f.write(chunk)
+                    f.flush()
+        f.close()
+        #I WOULD add signature verification code here, BUT THERE'S NO FUCKING
+        #PGP key!
+        os.system('thunderbird.exe')
+    except Exception as e:
+        printError(unicode(e))
+
+def getEnigmail(url):
+    try:
+        enigmail_page = requests.get(url).content
+        enigmail_soup = BeautifulSoup(enigmail_page)
+        enigmail_links=enigmail_soup.find_all('a', attrs={'href': re.compile('enigmail.*sm\\+tb\\.xpi')})[:2]
+        enigmail_xpi=requests.get(enigmail_links[0]['href'])
+        enigmail_asc=requests.get(HTTPSthis(enigmail_links[1]))
+        f = open('enigmail.xpi','wb')
+        g = open('enigmail.xpi.asc','wb')
+        f.write(enigmail_xpi.content)
+        g.write(enigmail_asc.content)
+        f.close()
+        g.close()
+        gpg=gnupg.GPG()    
+        gpg.recv_keys('pool.sks-keyservers.net',enigmail_dev_gpg_id)
+        verified = gpg.verify_file(open('enigmail.xpi.asc','rb'),os.path.abspath('enigmail.xmi'))
+        if verified:
+            print "The Enigmail plugin checks out.  Let's install it in Thunderbird"
+        else:
+            print "Enigmail verification failed.  Please tell whoever is running your Cryptoparty."
+            exit()
+    except Exception as e:
+        printError(unicode(e))
+    
+
+def getJitsi():
+    pass
 
 def getThunderbirdWithEnigmail():
-    print "some day we'll find it / the rainbow connection"
+    getThunderbird()
+    getEnigmail()
 #What's a good browser decision here?  Should I just install Firefox if it isn't installed, or add it to the TBB?
 def getCryptocat():
-    print "the lovers, the dreamers, and me"
+    pass
 
-getTOR('https://www.torproject.org/projects/torbrowser.html.en#Download-torbrowserbundle','en-US')
+#getTOR(tor_url)
+#getEnigmail(enigmail_url)
+getThunderbird('en-US')
