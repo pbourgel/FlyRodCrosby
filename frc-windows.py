@@ -1,11 +1,11 @@
 #Fly Rod Crosby: Making Cryptoparties Easier since 1905!
 
 import os
-from bs4 import BeautifulSoup
-#import wx
 import requests
 import re
 import hashlib
+from shutil import copyfile
+from bs4 import BeautifulSoup
 from urlparse import urlparse
 from frc_winconfig import *
 
@@ -50,7 +50,9 @@ def getGPG(url):
 
 try:
     import gnupg
+    print 'near gpg init'
     gpg=gnupg.GPG()
+    print 'after gpg init'
 except Exception:
     print "GnuPG not found.  Downloading it now."
     print "Expect an installer window in 5 minutes."
@@ -114,19 +116,18 @@ def getTOR(url, lang):
             print 'Trying to download Tor devs GPG key'
             gpg.recv_keys('pool.sks-keyservers.net',tor_dev_gpg_id)
             f = open('tor_sig.asc','rb')
-            g = open('tor.exe','rb')
-		    #This verifies the executable with the key in the keyring
+            #g = open('tor.exe','rb')
             print 'Verifying exe with GPG key in keyring'
             verified_with_asc = gpg.verify_file(f,os.path.abspath('tor.exe'))
             if verified_with_asc:
                 print "The Tor executable checks out.  Let's extract it."                
                 os.system('tor.exe')
                 f.close()
-                g.close()
+                #g.close()
             else:
                 print "EXE verification failed.  Please tell whoever is running your Cryptoparty."
                 f.close()
-                g.close()
+                #g.close()
                 exit()
         except Exception as e:
             print 'Problem downloading Tor: Please show this to your facilitator: ' + unicode(e)
@@ -154,11 +155,15 @@ def getThunderbird(lang):
 
 def getEnigmail(url):
     try:
+        print 'in getEnigmail'
         enigmail_page = requests.get(url).content
         enigmail_soup = BeautifulSoup(enigmail_page)
         enigmail_links=enigmail_soup.find_all('a', attrs={'href': re.compile('enigmail.*sm\\+tb\\.xpi')})[:2]
+        print 'contents of enigmail_links: ' + str(enigmail_links)
         enigmail_xpi=requests.get(enigmail_links[0]['href'])
-        enigmail_asc=requests.get(HTTPSthis(enigmail_links[1]))
+        print 'Downloaded enigmail.xpi'
+        enigmail_asc=requests.get(HTTPSthis(enigmail_links[1]['href']))
+        print 'scraped and downloaded enigmail'
         f = open('enigmail.xpi','wb')
         g = open('enigmail.xpi.asc','wb')
         f.write(enigmail_xpi.content)
@@ -167,26 +172,50 @@ def getEnigmail(url):
         g.close()
         gpg=gnupg.GPG()    
         gpg.recv_keys('pool.sks-keyservers.net',enigmail_dev_gpg_id)
-        verified = gpg.verify_file(open('enigmail.xpi.asc','rb'),os.path.abspath('enigmail.xmi'))
+        x = open('enigmail.xpi.asc','rb')
+        dd = os.path.abspath('enigmail.xpi')
+        print 'Directory: ' + str(dd)
+        verified = gpg.verify_file(x,os.path.abspath('enigmail.xpi'))
         if verified:
             print "The Enigmail plugin checks out.  Let's install it in Thunderbird"
+            x.close()
         else:
             print "Enigmail verification failed.  Please tell whoever is running your Cryptoparty."
+            x.close()
             exit()
     except Exception as e:
         printError(unicode(e))
-    
+
+def spaceEscape(d): #That's a fun NES game
+    return d.replace(' ','\ ')
+
+def installEnigmail():
+    try:
+        for d in thunderbird_extensions_dirs:
+            if os.path.isdir(d):
+                thunderbird_ext_dir=d
+        for d in thunderbird_dirs:
+            if os.path.isdir(d):
+                thunderbird_main_dir=d		
+        print 'Determined Thunderbird extensions directory: ' + thunderbird_ext_dir
+        print 'Determined Thunderbird main directory: ' + thunderbird_main_dir
+        copyfile('enigmail.xpi',thunderbird_ext_dir + 'enigmail.xpi')
+        os.system(spaceEscape(thunderbird_main_dir) + 'thunderbird.exe')
+    except Exception as e:
+        printError(unicode(e))
 
 def getJitsi():
     pass
 
-def getThunderbirdWithEnigmail():
-    getThunderbird()
-    getEnigmail()
+def getThunderbirdWithEnigmail(lang):
+    getThunderbird(lang)
+    getEnigmail(enigmail_url)
+    installEnigmail()
+
 #What's a good browser decision here?  Should I just install Firefox if it isn't installed, or add it to the TBB?
-def getCryptocat():
+def getCryptoCat():
     pass
 
-#getTOR(tor_url)
+#getTOR(tor_url,'en-US')
 #getEnigmail(enigmail_url)
-getThunderbird('en-US')
+getThunderbirdWithEnigmail('en-US')
