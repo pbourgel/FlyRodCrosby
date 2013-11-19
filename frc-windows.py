@@ -1,5 +1,10 @@
 #Fly Rod Crosby: Making Cryptoparties Easier since 1905!
-
+#All original material Copyright (C) 2013 Peter Bourgelais
+#Original file from xpi2folders: xpi2folders.py Copyright (C) 2011-2012, Kirill Kozlovskiy
+#This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+#This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#See the GNU General Public License for more details.
+#You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 import os
 import requests
 import re
@@ -8,6 +13,8 @@ from shutil import copyfile
 from bs4 import BeautifulSoup
 from urlparse import urlparse
 from frc_winconfig import *
+from xpi2folders import *
+from _winreg import *
 
 #Given an HTTP url, return it with https
 def HTTPSthis(url):
@@ -141,7 +148,7 @@ def getThunderbird(lang):
         #print tbird_link
         tbird_file=requests.get(tbird_link[0]['href'],stream=True) 
         #Grease is the word...
-        with open('thunderbird.exe','wb') as f:
+        with open('thunderbird-installer.exe','wb') as f:
             for chunk in tbird_file.iter_content(chunk_size=1024): 
                 if chunk: # filter out keep-alive new chunks
                     f.write(chunk)
@@ -149,7 +156,7 @@ def getThunderbird(lang):
         f.close()
         #I WOULD add signature verification code here, BUT THERE'S NO FUCKING
         #PGP key!
-        os.system('thunderbird.exe')
+        os.system('thunderbird-installer.exe')
     except Exception as e:
         printError(unicode(e))
 
@@ -186,27 +193,33 @@ def getEnigmail(url):
     except Exception as e:
         printError(unicode(e))
 
-def spaceEscape(d): #That's a fun NES game
-    return d.replace(' ','\ ')
+#def spaceEscape(d): #That's a fun NES game
+#    return d.replace(' ','\ ')
 
 def installEnigmail():
     try:
-        for d in thunderbird_extensions_dirs:
-            if os.path.isdir(d):
-                thunderbird_ext_dir=d
-        for d in thunderbird_dirs:
-            if os.path.isdir(d):
-                thunderbird_main_dir=d		
+        #for d in thunderbird_main_dirs:
+         #   if os.path.isdir(d):
+          #      thunderbird_main_dir=d
         print 'Determined Thunderbird extensions directory: ' + thunderbird_ext_dir
         print 'Determined Thunderbird main directory: ' + thunderbird_main_dir
         copyfile('enigmail.xpi',thunderbird_ext_dir + 'enigmail.xpi')
-        os.system(spaceEscape(thunderbird_main_dir) + 'thunderbird.exe')
+        xpi_id = processXpi(thunderbird_ext_dir + 'enigmail.xpi', thunderbird_ext_dir)['id']
+        with CreateKey(HKEY_CURRENT_USER,tbird_reg_str) as key:
+           SetValueEx(key,"",0,_winreg.REG_SZ,xpi_id,
+        #os.system(thunderbird_main_dir)
     except Exception as e:
         printError(unicode(e))
 
-def getJitsi():
-    pass
-
+def getJitsi(url):
+    try:
+        jitsi_page = requests.get(url).content
+        jitsi_soup = BeautifulSoup(jitsi_page)
+        jitsi_links=jitsi_soup.find_all('a', attrs={'href': re.compile('\\/windows\\/jitsi-.*\\.exe$')})
+		print str(jitsi_links)
+	except Exception as e:
+        printError(e)
+	
 def getThunderbirdWithEnigmail(lang):
     getThunderbird(lang)
     getEnigmail(enigmail_url)
