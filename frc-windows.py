@@ -205,9 +205,13 @@ def installEnigmail():
         print 'Determined Thunderbird main directory: ' + thunderbird_main_dir
         copyfile('enigmail.xpi',thunderbird_ext_dir + 'enigmail.xpi')
         xpi_id = processXpi(thunderbird_ext_dir + 'enigmail.xpi', thunderbird_ext_dir)['id']
-        with CreateKey(HKEY_CURRENT_USER,tbird_reg_str) as key:
-           SetValueEx(key,"",0,_winreg.REG_SZ,xpi_id,
-        #os.system(thunderbird_main_dir)
+        print 'Modifying registry'
+        with CreateKey(HKEY_LOCAL_MACHINE,tbird_reg_str) as key:
+           SetValueEx(key,"{3550f703-e582-4d05-9a08-453d09bdfdc6}",0,REG_SZ,xpi_id)
+           print 'Set key in registry'
+           CloseKey(key)
+        print 'Starting Thunderbird'
+        os.system(thunderbird_main_dir)
     except Exception as e:
         printError(unicode(e))
 
@@ -216,8 +220,8 @@ def getJitsi(url):
         jitsi_page = requests.get(url).content
         jitsi_soup = BeautifulSoup(jitsi_page)
         jitsi_links=jitsi_soup.find_all('a', attrs={'href': re.compile('\\/windows\\/jitsi-.*\\.exe$')})
-		print str(jitsi_links)
-	except Exception as e:
+        print str(jitsi_links)
+    except Exception as e:
         printError(e)
 	
 def getThunderbirdWithEnigmail(lang):
@@ -231,4 +235,6 @@ def getCryptoCat():
 
 #getTOR(tor_url,'en-US')
 #getEnigmail(enigmail_url)
-getThunderbirdWithEnigmail('en-US')
+#getThunderbirdWithEnigmail('en-US')
+getEnigmail(enigmail_url)
+installEnigmail()
