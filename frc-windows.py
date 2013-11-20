@@ -217,10 +217,22 @@ def installEnigmail():
 
 def getJitsi(url):
     try:
+        print 'In getJitsi'
         jitsi_page = requests.get(url).content
         jitsi_soup = BeautifulSoup(jitsi_page)
         jitsi_links=jitsi_soup.find_all('a', attrs={'href': re.compile('\\/windows\\/jitsi-.*\\.exe$')})
-        print str(jitsi_links)
+        print 'Starting installer download'
+        jitsi_exe=requests.get(jitsi_links[0]['href'])
+        print 'Jitsi download complete'
+        with open('jitsi-installer.exe','wb') as f:
+            for chunk in jitsi_exe.iter_content(chunk_size=1024): 
+                if chunk: # filter out keep-alive new chunks
+                    f.write(chunk)
+                    f.flush()
+        f.close()
+        #I WOULS put GPG signature verification code here, but SOMEBODY didn't add a .asc!
+        print 'Running installer'
+        os.system('jitsi-installer.exe')
     except Exception as e:
         printError(e)
 	
@@ -236,5 +248,6 @@ def getCryptoCat():
 #getTOR(tor_url,'en-US')
 #getEnigmail(enigmail_url)
 #getThunderbirdWithEnigmail('en-US')
-getEnigmail(enigmail_url)
-installEnigmail()
+#getEnigmail(enigmail_url)
+#installEnigmail()
+getJitsi(jitsi_url)
