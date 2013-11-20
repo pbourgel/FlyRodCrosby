@@ -9,9 +9,9 @@ GPG4Win
 
 Tor Browser Bundle [3]
 
-We plan to support:
-
 Thunderbird with Enigmail [2]
+
+We plan to support:
 
 Cryptocat [4]
 
