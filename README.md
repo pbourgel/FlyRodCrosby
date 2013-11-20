@@ -11,11 +11,11 @@ Tor Browser Bundle [3]
 
 Thunderbird with Enigmail [2]
 
+Jitsi [5]
+
 We plan to support:
 
 Cryptocat [4]
-
-Jitsi [5]
 
 [1] https://en.wikipedia.org/wiki/Cornilia_Thurza_Crosby
 
