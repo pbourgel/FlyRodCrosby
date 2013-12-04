@@ -230,7 +230,7 @@ def getJitsi(url):
                     f.write(chunk)
                     f.flush()
         f.close()
-        #I WOULS put GPG signature verification code here, but SOMEBODY didn't add a .asc!
+        #I WOULD put GPG signature verification code here, but SOMEBODY didn't add a .asc!
         print 'Running installer'
         os.system('jitsi-installer.exe')
     except Exception as e:
@@ -245,9 +245,31 @@ def getThunderbirdWithEnigmail(lang):
 def getCryptoCat():
     pass
 
+def GPG4WinTest():
+    try:
+        print 'Fetching certificates...'
+        root_cert = requests.get('https://ssl.intevation.de/Intevation-Root-CA-2010.crt')
+        server_cert = requests.get('https://ssl.intevation.de/Intevation-Server-CA-2010.crt')
+        print 'Writing certs to disk'
+        rc = file('cert.crt','w')
+        rc.write(root_cert.content)
+        rc.close()
+        sc = file('cert.crt','a')
+        sc.write(server_cert.content)
+        sc.close()
+        print 'Starting HTTPS download'
+        os.environ['REQUESTS_CA_BUNDLE'] = os.path.abspath('cert.crt')
+        gpg_exe = requests.get('https://files.gpg4win.org/gpg4win-light-2.2.1.exe')
+        gpgf = file('gpg4win.exe','wb')
+        gpgf.write(gpg_exe.content)
+        gpgf.close()
+    except Exception as e:
+        printError(e)
+
 #getTOR(tor_url,'en-US')
 #getEnigmail(enigmail_url)
 #getThunderbirdWithEnigmail('en-US')
 #getEnigmail(enigmail_url)
 #installEnigmail()
-getJitsi(jitsi_url)
+#getJitsi(jitsi_url)
+GPG4WinTest()
