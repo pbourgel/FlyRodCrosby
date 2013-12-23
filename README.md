@@ -25,7 +25,7 @@ TrueCrypt [8]
 
 Functionality to automatically download Tails [9] and burn it to a DVD
 
-The FakeOut Anti-Fake Domain Attack Plugin from Access[10]
+The Fake Donain Detective plugin from Access[10]
 
 [1] https://en.wikipedia.org/wiki/Cornilia_Thurza_Crosby
 
