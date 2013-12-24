@@ -25,6 +25,8 @@ TrueCrypt [8]
 
 Functionality to automatically download Tails [9] and burn it to a DVD
 
+The Fake Donain Detective plugin from Access[10]
+
 [1] https://en.wikipedia.org/wiki/Cornilia_Thurza_Crosby
 
 [2] https://www.enigmail.net/home/index.php
@@ -42,3 +44,5 @@ Functionality to automatically download Tails [9] and burn it to a DVD
 [8] http://www.truecrypt.org/
 
 [9] https://tails.boum.org/
+
+[10] https://addons.mozilla.org/en-US/firefox/addon/fake-domain/
