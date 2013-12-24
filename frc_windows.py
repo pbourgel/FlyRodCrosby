@@ -1,4 +1,4 @@
-#Fly Rod Crosby: Making Cryptoparties Easier since 1905!
+#Fly Rod Crosby: Making Cryptoparties Easier since 1897!
 #All original material Copyright (C) 2013 Peter Bourgelais
 #Original file from xpi2folders: xpi2folders.py Copyright (C) 2011-2012, Kirill Kozlovskiy
 #This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
@@ -121,7 +121,9 @@ def getTOR(url, lang):
         try:
             gpg=gnupg.GPG()
             print 'Trying to download Tor devs GPG key'
-            gpg.recv_keys('pool.sks-keyservers.net',tor_dev_gpg_id)
+            #TO-DO: Iterate through the standard servers in case sks-skyservers
+            #is down.
+            gpg.recv_keys('pool.sks-keyservers.net',tor_dev_gpg_fingerprint)
             f = open('tor_sig.asc','rb')
             #g = open('tor.exe','rb')
             print 'Verifying exe with GPG key in keyring'
@@ -178,6 +180,8 @@ def getEnigmail(url):
         f.close()
         g.close()
         gpg=gnupg.GPG()    
+		#TO-DO: Iterate through the standard servers in case sks-skyservers
+        #is down.
         gpg.recv_keys('pool.sks-keyservers.net',enigmail_dev_gpg_id)
         x = open('enigmail.xpi.asc','rb')
         dd = os.path.abspath('enigmail.xpi')
