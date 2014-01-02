@@ -27,6 +27,13 @@ Functionality to automatically download Tails [9] and burn it to a DVD
 
 The Fake Donain Detective plugin from Access[10]
 
+
+Note to potential developers
+============================
+
+When making an application available for download/install that has a detached GPG signature, remember to add the full fingerprint rather than the 8 character ID due to the security issue described in [11].
+
+
 [1] https://en.wikipedia.org/wiki/Cornilia_Thurza_Crosby
 
 [2] https://www.enigmail.net/home/index.php
@@ -46,3 +53,5 @@ The Fake Donain Detective plugin from Access[10]
 [9] https://tails.boum.org/
 
 [10] https://addons.mozilla.org/en-US/firefox/addon/fake-domain/
+
+[11] http://www.asheesh.org/note/debian/short-key-ids-are-bad-news.html
