@@ -6,9 +6,8 @@ tor_url = u'https://www.torproject.org/projects/torbrowser.html.en#Download-torb
 jitsi_url = u'https://jitsi.org/Main/Download'
 #SOMEONE PLEASE CHECK THAT I GOT ERINN CLARK'S GPG INFO RIGHT
 tor_dev_gpg_fingerprint = '8738A680B84B3031A630F2DB416F061063FEE659'
-tor_dev_gpg_id = u'63FEE659'
 tor_dev_gpg_name = u'Erinn Clark (erinn@torproject.org)'
-enigmail_dev_gpg_id = u'9369CDF3'
+enigmail_dev_gpg_fingerprint = u'10B2E4A0E718BB1B2791DAC4F040E41B9369CDF3'
 gpg_servers = ['pool.sks-keyservers.net','subkeys.pgp.net','sks.mit.edu']
 #TO-DO: We need to substitute whatever the language variable needs to be in here
 cryptocat_url = u'https://addons.mozilla.org/en-US/firefox/addon/cryptocat/'

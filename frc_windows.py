@@ -16,12 +16,20 @@ from frc_winconfig import *
 from xpi2folders import *
 from _winreg import *
 
+import wx
+
 #Given an HTTP url, return it with https
 def HTTPSthis(url):
     return re.sub(pattern='http', repl='https', string=url)
 
 def printError(text):
-    print 'An error occured with your download.  Please show this to your Cruptoparty facilitator: ' + text
+    FRCAlert('An error occured with your download.  Please show this to your Cruptoparty facilitator: ' + text)
+
+def FRCAlert(text):
+    dlg = wx.MessageDialog(text,"FlyRodCrosby",wx.OK)
+	result = dlg.ShowModal()
+	dlg.Destroy()
+
 
 #Intevation doesn't have an HTTPS download of the file 
 #that doesn't throw a certificate error.  Could somebody yell at them, please?	
@@ -38,7 +46,7 @@ def getGPG(url):
                 f.write(chunk)
                 f.flush()
 	f.close()
-	print "Calculating and verifying SHA1, which is geek speak for making sure that nobody changed the file during download."
+    print "Calculating and verifying SHA1, which is geek speak for making sure that nobody changed the file during download."
     sha1 = hashlib.sha1()
     f = open('gpg4win.exe','rb')
     try:
@@ -53,7 +61,7 @@ def getGPG(url):
             checksum_verified=True
             os.system("gpg4win.exe")
     if checksum_verified == False:
-        print "SHA1 verification failed!  Hide yo kids!  Hide yo wife!  The NSA messin' with everybody out here!"
+        print "SHA1 verification failed!  Hide yo kids!  Hide yo wife!  They messin' with everybody out here!"
 
 try:
     import gnupg
@@ -182,7 +190,7 @@ def getEnigmail(url):
         gpg=gnupg.GPG()    
 		#TO-DO: Iterate through the standard servers in case sks-skyservers
         #is down.
-        gpg.recv_keys('pool.sks-keyservers.net',enigmail_dev_gpg_id)
+        gpg.recv_keys('pool.sks-keyservers.net',enigmail_dev_gpg_fingerprint)
         x = open('enigmail.xpi.asc','rb')
         dd = os.path.abspath('enigmail.xpi')
         print 'Directory: ' + str(dd)
@@ -202,9 +210,6 @@ def getEnigmail(url):
 
 def installEnigmail():
     try:
-        #for d in thunderbird_main_dirs:
-         #   if os.path.isdir(d):
-          #      thunderbird_main_dir=d
         print 'Determined Thunderbird extensions directory: ' + thunderbird_ext_dir
         print 'Determined Thunderbird main directory: ' + thunderbird_main_dir
         copyfile('enigmail.xpi',thunderbird_ext_dir + 'enigmail.xpi')
@@ -249,31 +254,9 @@ def getThunderbirdWithEnigmail(lang):
 def getCryptoCat():
     pass
 
-def GPG4WinTest():
-    try:
-        print 'Fetching certificates...'
-        root_cert = requests.get('https://ssl.intevation.de/Intevation-Root-CA-2010.crt')
-        server_cert = requests.get('https://ssl.intevation.de/Intevation-Server-CA-2010.crt')
-        print 'Writing certs to disk'
-        rc = file('cert.crt','w')
-        rc.write(root_cert.content)
-        rc.close()
-        sc = file('cert.crt','a')
-        sc.write(server_cert.content)
-        sc.close()
-        print 'Starting HTTPS download'
-        os.environ['REQUESTS_CA_BUNDLE'] = os.path.abspath('cert.crt')
-        gpg_exe = requests.get('https://files.gpg4win.org/gpg4win-light-2.2.1.exe')
-        gpgf = file('gpg4win.exe','wb')
-        gpgf.write(gpg_exe.content)
-        gpgf.close()
-    except Exception as e:
-        printError(e)
-
 #getTOR(tor_url,'en-US')
 #getEnigmail(enigmail_url)
 #getThunderbirdWithEnigmail('en-US')
 #getEnigmail(enigmail_url)
 #installEnigmail()
 #getJitsi(jitsi_url)
-GPG4WinTest()
