@@ -27,8 +27,8 @@ def printError(text):
 
 def FRCAlert(text):
     dlg = wx.MessageDialog(text,"FlyRodCrosby",wx.OK)
-	result = dlg.ShowModal()
-	dlg.Destroy()
+    result = dlg.ShowModal()
+    dlg.Destroy()
 
 
 #Intevation doesn't have an HTTPS download of the file 
@@ -63,15 +63,6 @@ def getGPG(url):
     if checksum_verified == False:
         print "SHA1 verification failed!  Hide yo kids!  Hide yo wife!  They messin' with everybody out here!"
 
-try:
-    import gnupg
-    print 'near gpg init'
-    gpg=gnupg.GPG()
-    print 'after gpg init'
-except Exception:
-    print "GnuPG not found.  Downloading it now."
-    print "Expect an installer window in 5 minutes."
-    getGPG(gpg4win_url)
 
 #REQUIRE: url and lang are unicode
 def getTOR(url, lang):	
