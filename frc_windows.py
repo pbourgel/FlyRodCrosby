@@ -18,18 +18,14 @@ from _winreg import *
 
 import wx
 
-#Given an HTTP url, return it with https
-def HTTPSthis(url):
-    return re.sub(pattern='http', repl='https', string=url)
-
-def printError(text):
-    FRCAlert('An error occured with your download.  Please show this to your Cruptoparty facilitator: ' + text)
-
 def FRCAlert(text):
-    dlg = wx.MessageDialog(text,"FlyRodCrosby",wx.OK)
-    result = dlg.ShowModal()
-    dlg.Destroy()
-
+     print text
+#    if os.path.isfile('log.dat'):
+#        f = open('log.dat','a')
+#    else:
+#        f = open('log.dat','w')
+#    f.write(text)
+#    f.close()
 
 #Intevation doesn't have an HTTPS download of the file 
 #that doesn't throw a certificate error.  Could somebody yell at them, please?	
@@ -46,7 +42,7 @@ def getGPG(url):
                 f.write(chunk)
                 f.flush()
 	f.close()
-    print "Calculating and verifying SHA1, which is geek speak for making sure that nobody changed the file during download."
+    FRCAlert("Calculating and verifying SHA1, which is geek speak for making sure that nobody changed the file during download.\n")
     sha1 = hashlib.sha1()
     f = open('gpg4win.exe','rb')
     try:
@@ -57,11 +53,31 @@ def getGPG(url):
     checksum_verified=False
     for checksum in gpg4win_checksums:
         if gpg4win_hash in checksum:
-            print "SHA1 verified, running installer"
+            FRCAlert("SHA1 verified, running installer\n")
             checksum_verified=True
             os.system("gpg4win.exe")
     if checksum_verified == False:
-        print "SHA1 verification failed!  Hide yo kids!  Hide yo wife!  They messin' with everybody out here!"
+        FRCAlert("SHA1 verification failed!  Hide yo kids!  Hide yo wife!  They messin' with everybody out here!\n")
+
+
+try:
+    import gnupg
+    FRCAlert('near gpg init\n')
+    gpg=gnupg.GPG()
+    FRCAlert('after gpg init\n')
+except Exception:
+    FRCAlert("GnuPG not found.  Downloading it now.\n")
+    FRCAlert("Expect an installer window in 5 minutes.\n")
+    getGPG(gpg4win_url)
+    import gnupg
+
+
+#Given an HTTP url, return it with https
+def HTTPSthis(url):
+    return re.sub(pattern='http', repl='https', string=url)
+
+def printError(text):
+    print 'An error occured with your download.  Please show this to your Cruptoparty facilitator: ' + str(text)
 
 
 #REQUIRE: url and lang are unicode
@@ -71,13 +87,10 @@ def getTOR(url, lang):
         tor_soup = BeautifulSoup(tor_page.content)
         tor_exe_link=''
         tor_sig_link=''
-		
-		#TO-DO: Alas my regex fu is too weak to filter out the beta version, 
-        #so this will return two links.  
         #If somebody from the Tor Project is reading this, would it kill you to use absolute links?
-        print 'Scraping the Tor Project site for the relevant links'
-        tor_link_exes=tor_soup.find_all('a', attrs={'href': re.compile('tor-browser.*' + lang + '.*exe$')})
-        tor_sig_links=tor_soup.find_all('a', attrs={'href': re.compile('tor-browser.*' + lang + '\\.exe\\.*asc$')})
+        FRCAlert('Scraping the Tor Project site for the relevant links\n')
+        tor_link_exes=tor_soup.find_all('a', attrs={'href': re.compile('torbrowser-install-.*' + lang + '.*exe$')})
+        tor_sig_links=tor_soup.find_all('a', attrs={'href': re.compile('torbrowser-install-.*' + lang + '\\.exe\\.*asc$')})
         tor_url_parsed=urlparse(url)
         tor_url_base=tor_url_parsed.scheme + '://' + tor_url_parsed.netloc
         
@@ -87,17 +100,17 @@ def getTOR(url, lang):
         for exe_link in tor_link_exes:
             if len(exe_link) > 0 and 'beta' not in exe_link['href']:
                 tor_exe_link=tor_url_base+exe_link['href'][2:]
-                print tor_exe_link
+                FRCAlert(tor_exe_link + '\n')
 
         for sig_link in tor_sig_links:
             if len(sig_link) > 0 and 'beta' not in sig_link['href']:
                 tor_sig_link=tor_url_base+sig_link['href'][2:]
-                print tor_sig_link
+                FRCAlert(tor_sig_link + '\n')
         
         if len(tor_exe_link) == 0 or len(tor_sig_link) == 0:
-            print "Couldn't find download link for Tor.  Please tell whoever is running the Cryptoparty."
+            FRCAlert("Couldn't find download link for Tor.  Please tell whoever is running the Cryptoparty.\n")
             exit()
-        print 'Found download links.  Downloading EXE from ' + tor_exe_link
+        FRCAlert('Found download links.  Downloading EXE from ' + tor_exe_link + '\n')
         tor_exe_file=requests.get(tor_exe_link,stream=True) 
         
         with open('tor.exe','wb') as f:
@@ -106,7 +119,7 @@ def getTOR(url, lang):
                     f.write(chunk)
                     f.flush()
         f.close()
-        print 'Downloaded exe.  Now downloading GPG signature from' + tor_sig_link
+        FRCAlert('Downloaded exe.  Now downloading GPG signature from ' + tor_sig_link + '\n')
         tor_sig_file=requests.get(tor_sig_link)
         f=open('tor_sig.asc', 'wb')
         f.write(tor_sig_file.content)
@@ -119,26 +132,26 @@ def getTOR(url, lang):
         #TO-DO: Finish key verification
         try:
             gpg=gnupg.GPG()
-            print 'Trying to download Tor devs GPG key'
+            FRCAlert('Trying to download Tor devs GPG key\n')
             #TO-DO: Iterate through the standard servers in case sks-skyservers
             #is down.
             gpg.recv_keys('pool.sks-keyservers.net',tor_dev_gpg_fingerprint)
             f = open('tor_sig.asc','rb')
             #g = open('tor.exe','rb')
-            print 'Verifying exe with GPG key in keyring'
+            FRCAlert('Verifying exe with GPG key in keyring\n')
             verified_with_asc = gpg.verify_file(f,os.path.abspath('tor.exe'))
             if verified_with_asc:
-                print "The Tor executable checks out.  Let's extract it."                
+                FRCAlert("The Tor executable checks out.  Let's extract it.\n")
                 os.system('tor.exe')
                 f.close()
                 #g.close()
             else:
-                print "EXE verification failed.  Please tell whoever is running your Cryptoparty."
+                FRCAlert("EXE verification failed.  Please tell whoever is running your Cryptoparty." + '\n')
                 f.close()
                 #g.close()
                 exit()
         except Exception as e:
-            print 'Problem downloading Tor: Please show this to your facilitator: ' + unicode(e)
+            FRCAlert('Problem downloading Tor: Please show this to your facilitator: ' + unicode(e) + '\n')
     except Exception as e:
         printError(unicode(e))
 
@@ -163,15 +176,15 @@ def getThunderbird(lang):
 
 def getEnigmail(url):
     try:
-        print 'in getEnigmail'
+        FRCAlert('in getEnigmail\n')
         enigmail_page = requests.get(url).content
         enigmail_soup = BeautifulSoup(enigmail_page)
         enigmail_links=enigmail_soup.find_all('a', attrs={'href': re.compile('enigmail.*sm\\+tb\\.xpi')})[:2]
-        print 'contents of enigmail_links: ' + str(enigmail_links)
+        FRCAlert('contents of enigmail_links: ' + str(enigmail_links) + '\n')
         enigmail_xpi=requests.get(enigmail_links[0]['href'])
-        print 'Downloaded enigmail.xpi'
+        FRCAlert('Downloaded enigmail.xpi\n')
         enigmail_asc=requests.get(HTTPSthis(enigmail_links[1]['href']))
-        print 'scraped and downloaded enigmail'
+        FRCAlert('scraped and downloaded enigmail\n')
         f = open('enigmail.xpi','wb')
         g = open('enigmail.xpi.asc','wb')
         f.write(enigmail_xpi.content)
@@ -184,13 +197,13 @@ def getEnigmail(url):
         gpg.recv_keys('pool.sks-keyservers.net',enigmail_dev_gpg_fingerprint)
         x = open('enigmail.xpi.asc','rb')
         dd = os.path.abspath('enigmail.xpi')
-        print 'Directory: ' + str(dd)
+        FRCAlert('Directory: ' + str(dd) + '\n')
         verified = gpg.verify_file(x,os.path.abspath('enigmail.xpi'))
         if verified:
-            print "The Enigmail plugin checks out.  Let's install it in Thunderbird"
+            FRCAlert("The Enigmail plugin checks out.  Let's install it in Thunderbird\n")
             x.close()
         else:
-            print "Enigmail verification failed.  Please tell whoever is running your Cryptoparty."
+            FRCAlert("Enigmail verification failed.  Please tell whoever is running your Cryptoparty.\n")
             x.close()
             exit()
     except Exception as e:
@@ -201,29 +214,32 @@ def getEnigmail(url):
 
 def installEnigmail():
     try:
-        print 'Determined Thunderbird extensions directory: ' + thunderbird_ext_dir
-        print 'Determined Thunderbird main directory: ' + thunderbird_main_dir
-        copyfile('enigmail.xpi',thunderbird_ext_dir + 'enigmail.xpi')
+        FRCAlert('Determined Thunderbird extensions directory: ' + thunderbird_ext_dir + '\n')
+        FRCAlert('Determined Thunderbird main directory: ' + thunderbird_main_dir + '\n')
+        copyfile(os.getcwd() + '\\' + 'enigmail.xpi', thunderbird_ext_dir + 'enigmail.xpi')
         xpi_id = processXpi(thunderbird_ext_dir + 'enigmail.xpi', thunderbird_ext_dir)['id']
-        print 'Modifying registry'
+        FRCAlert('Modifying registry\n')
         with CreateKey(HKEY_LOCAL_MACHINE,tbird_reg_str) as key:
            SetValueEx(key,"{3550f703-e582-4d05-9a08-453d09bdfdc6}",0,REG_SZ,xpi_id)
-           print 'Set key in registry'
+           FRCAlert('Set key in registry\n')
            CloseKey(key)
-        print 'Starting Thunderbird'
+        FRCAlert('Starting Thunderbird\n')
         os.system(thunderbird_main_dir)
     except Exception as e:
         printError(unicode(e))
 
 def getJitsi(url):
     try:
-        print 'In getJitsi'
+        FRCAlert('In getJitsi\n')
         jitsi_page = requests.get(url).content
         jitsi_soup = BeautifulSoup(jitsi_page)
-        jitsi_links=jitsi_soup.find_all('a', attrs={'href': re.compile('\\/windows\\/jitsi-.*\\.exe$')})
-        print 'Starting installer download'
+        if arch == 32:
+            jitsi_links=jitsi_soup.find_all('a', attrs={'href': re.compile('\\/windows\\/jitsi-.*x86\\.exe$')})
+        else:
+            jitsi_links=jitsi_soup.find_all('a', attrs={'href': re.compile('\\/windows\\/jitsi-.*x64\\.exe$')})
+        FRCAlert('Starting installer download\n')
         jitsi_exe=requests.get(jitsi_links[0]['href'])
-        print 'Jitsi download complete'
+        FRCAlert('Jitsi download complete\n')
         with open('jitsi-installer.exe','wb') as f:
             for chunk in jitsi_exe.iter_content(chunk_size=1024): 
                 if chunk: # filter out keep-alive new chunks
@@ -231,7 +247,7 @@ def getJitsi(url):
                     f.flush()
         f.close()
         #I WOULD put GPG signature verification code here, but SOMEBODY didn't add a .asc!
-        print 'Running installer'
+        FRCAlert('Running installer\n')
         os.system('jitsi-installer.exe')
     except Exception as e:
         printError(e)
