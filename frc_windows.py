@@ -209,6 +209,39 @@ def getEnigmail(url):
     except Exception as e:
         printError(unicode(e))
 
+def getTorBirdy():
+    try:
+        FRCAlert('in getTorBirdy\n')
+        torbirdy_xpi=requests.get(torbirdy_xpi_url)
+        FRCAlert('Downloaded torbirdy.xpi\n')
+        torbirdy_asc=requests.get(torbirdy_xpi_sig_url)
+        FRCAlert('Downloaded TorBirdy signature\n')
+        f = open('torbirdy.xpi','wb')
+        g = open('torbirdy.xpi.asc','wb')
+        f.write(torbirdy_xpi.content)
+        g.write(torbirdy_asc.content)
+        f.close()
+        g.close()
+        gpg=gnupg.GPG()    
+		#TO-DO: Iterate through the standard servers in case sks-skyservers
+        #is down.
+        gpg.recv_keys('pool.sks-keyservers.net',torbirdy_dev_gpg_fingerprint)
+        x = open('torbirdy.xpi.asc','rb')
+        dd = os.path.abspath('torbirdy.xpi')
+        FRCAlert('Directory: ' + str(dd) + '\n')
+        verified = gpg.verify_file(x,os.path.abspath('torbirdy.xpi'))
+        if verified:
+            FRCAlert("The Torbirdy plugin checks out.  Let's install it in Thunderbird\n")
+            x.close()
+        else:
+            FRCAlert("Torbirdy verification failed.  Please tell whoever is running your Cryptoparty.\n")
+            x.close()
+            exit()
+    except Exception as e:
+        printError(unicode(e))
+
+
+
 #def spaceEscape(d): #That's a fun NES game
 #    return d.replace(' ','\ ')
 
@@ -227,6 +260,24 @@ def installEnigmail():
         os.system(thunderbird_main_dir)
     except Exception as e:
         printError(unicode(e))
+
+def installTorBirdy():
+    try:
+        FRCAlert('Determined Thunderbird extensions directory: ' + thunderbird_ext_dir + '\n')
+        FRCAlert('Determined Thunderbird main directory: ' + thunderbird_main_dir + '\n')
+        copyfile(os.getcwd() + '\\' + 'torbirdy.xpi', thunderbird_ext_dir + 'torbirdy.xpi')
+        xpi_id = processXpi(thunderbird_ext_dir + 'torbirdy.xpi', thunderbird_ext_dir)['id']
+        FRCAlert('Modifying registry\n')
+        with CreateKey(HKEY_LOCAL_MACHINE,tbird_reg_str) as key:
+           #TO-DO: Add the xpi id
+		   SetValueEx(key,"",0,REG_SZ,xpi_id)
+           FRCAlert('Set key in registry\n')
+           CloseKey(key)
+        FRCAlert('Starting Thunderbird\n')
+        os.system(thunderbird_main_dir)
+    except Exception as e:
+        printError(unicode(e))
+
 
 def getJitsi(url):
     try:

@@ -16,7 +16,8 @@ thunderbird_url = u'https://www.mozilla.org/en-US/thunderbird/all.html'
 
 torbirdy_xpi_url = u'https://www.torproject.org/dist/torbirdy/torbirdy-current.xpi'
 torbirdy_xpi_sig_url = u'https://www.torproject.org/dist/torbirdy/torbirdy-current.xpi.asc'
-torbirdy_dev_gpg_fingerprint = u''
+#You can find this key by searching for "Jacob Appelbaum (offline long term identity key)"
+torbirdy_dev_gpg_fingerprint = u'228FAD203DE9AE7D84E25265CF9A6F914193A197'
 
 jitsi_url = u'https://jitsi.org/Main/Download'
 
