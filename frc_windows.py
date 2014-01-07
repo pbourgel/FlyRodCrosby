@@ -269,8 +269,7 @@ def installTorBirdy():
         xpi_id = processXpi(thunderbird_ext_dir + 'torbirdy.xpi', thunderbird_ext_dir)['id']
         FRCAlert('Modifying registry\n')
         with CreateKey(HKEY_LOCAL_MACHINE,tbird_reg_str) as key:
-           #TO-DO: Add the xpi id
-		   SetValueEx(key,"",0,REG_SZ,xpi_id)
+           SetValueEx(key,"{3550f703-e582-4d05-9a08-453d09bdfdc6}",0,REG_SZ,xpi_id)
            FRCAlert('Set key in registry\n')
            CloseKey(key)
         FRCAlert('Starting Thunderbird\n')
