@@ -245,7 +245,7 @@ def getTorBirdy():
 #def spaceEscape(d): #That's a fun NES game
 #    return d.replace(' ','\ ')
 
-def installEnigmail():
+def installEnigmail(start_after_copied):
     try:
         FRCAlert('Determined Thunderbird extensions directory: ' + thunderbird_ext_dir + '\n')
         FRCAlert('Determined Thunderbird main directory: ' + thunderbird_main_dir + '\n')
@@ -253,11 +253,12 @@ def installEnigmail():
         xpi_id = processXpi(thunderbird_ext_dir + 'enigmail.xpi', thunderbird_ext_dir)['id']
         FRCAlert('Modifying registry\n')
         with CreateKey(HKEY_LOCAL_MACHINE,tbird_reg_str) as key:
-           SetValueEx(key,"{3550f703-e582-4d05-9a08-453d09bdfdc6}",0,REG_SZ,xpi_id)
-           FRCAlert('Set key in registry\n')
-           CloseKey(key)
+            SetValueEx(key,"{3550f703-e582-4d05-9a08-453d09bdfdc6}",0,REG_SZ,xpi_id)
+            FRCAlert('Set key in registry\n')
+            CloseKey(key)
         FRCAlert('Starting Thunderbird\n')
-        os.system(thunderbird_main_dir)
+        if start_after_copied:
+            os.system(thunderbird_main_dir)
     except Exception as e:
         printError(unicode(e))
 
@@ -302,10 +303,10 @@ def getJitsi(url):
     except Exception as e:
         printError(e)
 	
-def getThunderbirdWithEnigmail(lang):
+def getThunderbirdWithEnigmail(lang, start_after_copied):
     getThunderbird(lang)
     getEnigmail(enigmail_url)
-    installEnigmail()
+    installEnigmail(start_after_copied)
 
 #What's a good browser decision here?  Should I just install Firefox if it isn't installed, or add it to the TBB?
 def getCryptoCat():

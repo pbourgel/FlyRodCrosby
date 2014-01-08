@@ -14,6 +14,7 @@ from frc_windows import *
 # end wxGlade
 
 item_border=5
+tab_offset=10
 
 # A note on dependencies:
 # Thunderbird, Enigmail, and GPG4Win / MacGPG all need to be installed together
@@ -31,6 +32,7 @@ class FRCMainFrame(wx.Frame):
         self.label_1.Wrap(400)
         self.tbird_checkbox = wx.CheckBox(self, -1, "Thunderbird with Enigmail lets you send and receive encrypted emails.")
         self.tbb_checkbox = wx.CheckBox(self, -1, "The Tor Browser Bundle lets you browse the web anonymously.")
+        self.torbirdy_checkbox = wx.CheckBox(self, -1, "TorBirdy lets you send and receive email over the Tor network (requires Tor and Thunderbird).")
         self.jitsi_checkbox = wx.CheckBox(self, -1, "Jitsi is a secure Skype alternative with support for encrypted chat.")
         self.ok_button = wx.Button(self, wx.ID_OK, "OK")
         self.cancel_button = wx.Button(self, wx.ID_CLOSE, "Quit")
@@ -45,19 +47,21 @@ class FRCMainFrame(wx.Frame):
     def __set_properties(self):
         # begin wxGlade: FRCMainFrame.__set_properties
         self.SetTitle("FlyRodCrosby - Making Cryptoparties easier since 1897!")
-        self.SetSize((640, 256))
+        self.SetSize((640, 512))
         self.combo_box_1.SetSelection(-1)
         # end wxGlade
 
     def __do_layout(self):
         # begin wxGlade: FRCMainFrame.__do_layout
         global item_border
+        global tab_offset
         sizer_1 = wx.BoxSizer(wx.VERTICAL)
         grid_sizer_1 = wx.GridSizer(1, 2, 0, 0)
         sizer_1.Add(self.combo_box_1, 0, wx.ALIGN_RIGHT, item_border)
         sizer_1.Add(self.label_1, 0, wx.ALL, item_border)
         sizer_1.Add(self.tbird_checkbox, 0, wx.ALL, item_border)
         sizer_1.Add(self.tbb_checkbox, 0, wx.ALL, item_border)
+        sizer_1.Add(self.torbirdy_checkbox, 0, wx.ALL, item_border+tab_offset)
         sizer_1.Add(self.jitsi_checkbox, 0, wx.ALL, item_border)
         grid_sizer_1.Add(self.ok_button, 0, wx.ALIGN_RIGHT | wx.BOTTOM, 0)
         grid_sizer_1.Add(self.cancel_button, 0, wx.ALIGN_RIGHT | wx.BOTTOM, 0)
@@ -76,8 +80,9 @@ class FRCMainFrame(wx.Frame):
         self.Close(True)
 
     def installation_controller(self, evt):
+      
         if self.tbird_checkbox.IsChecked():
-            getThunderbirdWithEnigmail('en-US')
+            getThunderbirdWithEnigmail('en-US', self.torbirdy_checkbox.IsChecked())
 
         if self.tbb_checkbox.IsChecked():
             getTOR(tor_url,'en-US')
@@ -85,6 +90,9 @@ class FRCMainFrame(wx.Frame):
         if self.jitsi_checkbox.IsChecked():
             getJitsi(jitsi_url)
 
+        if self.torbirdy_checkbox.IsChecked():
+            getTorBirdy()
+            installTorBirdy()
 
 
 # end of class FRCMainFrame
