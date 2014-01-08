@@ -36,7 +36,7 @@ class FRCMainFrame(wx.Frame):
         self.jitsi_checkbox = wx.CheckBox(self, -1, "Jitsi is a secure Skype alternative with support for encrypted chat.")
         self.bleachbit_checkbox = wx.CheckBox(self, -1, "Bleachbit securely deletes sensitive files to prevent recovery.")
         self.truecrypt_checkbox = wx.CheckBox(self, -1, "Use Truecrypt to encrypt files on your computer.")
-		self.tailsISO_checkbox = wx.CheckBox(self, -1, "Download Tails and burn it to a DVD for a temporary Windows alternative in highly insecure environments.")
+        self.tailsISO_checkbox = wx.CheckBox(self, -1, "Download Tails and burn it to a DVD for a temporary Windows alternative in highly insecure environments.")
         self.ok_button = wx.Button(self, wx.ID_OK, "OK")
         self.cancel_button = wx.Button(self, wx.ID_CLOSE, "Quit")
         self.SetBackgroundColour(wx.WHITE)
