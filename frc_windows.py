@@ -312,9 +312,16 @@ def getThunderbirdWithEnigmail(lang, start_after_copied):
 def getCryptoCat():
     pass
 
-#getTOR(tor_url,'en-US')
-#getEnigmail(enigmail_url)
-#getThunderbirdWithEnigmail('en-US')
-#getEnigmail(enigmail_url)
-#installEnigmail()
-#getJitsi(jitsi_url)
+def getBleachBit():
+    pass
+
+def getTrueCrypt():
+    pass
+
+def getTailsISO():
+    pass
+
+def getFakeOut():
+    pass
+
+
