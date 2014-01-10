@@ -308,19 +308,34 @@ def getThunderbirdWithEnigmail(lang, start_after_copied):
     getEnigmail(enigmail_url)
     installEnigmail(start_after_copied)
 
-#What's a good browser decision here?  Should I just install Firefox if it isn't installed, or add it to the TBB?
+#[2/3]What's a good browser decision here?  Should I just install Firefox if it isn't installed, or add it to the TBB?
 def getCryptoCat():
     pass
 
+#[1]Straight HTTP download.  Message going out soon asking for PGP signature
 def getBleachBit():
-    pass
+    bleachbit_soup = BeautifulSoup(requests.get(bleachbit_url).content)
+    bleachbit_exe_link = bleachbit_soup.find_all('a', attrs = {'href': re.compile('BleachBit-.*\\.exe$')})
+    FRCAlert('Found download link: ' + bleachbit_exe_link)
+    bleachbit_exe = requests.get(bleachbit_exe_link)
+    with open('bleachbit-installer.exe','wb') as f:
+        for chunk in bleachbit_exe.iter_content(chunk_size=1024): 
+            if chunk: # filter out keep-alive new chunks
+                f.write(chunk)
+                f.flush()
+    f.close()
+    os.system('bleachbit-installer.exe')
+    
 
+#[4]Weird POST and transient URL stuff here, HTTP but there is PGP sig
 def getTrueCrypt():
     pass
 
+#[5]Big HTTPS download, but there is a signature over HTTP
 def getTailsISO():
     pass
 
+#[2/3]HTTPS download, PGP signature coming soon
 def getFakeOut():
     pass
 
