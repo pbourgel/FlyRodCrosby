@@ -13,7 +13,9 @@ gpg_servers = ['pool.sks-keyservers.net','subkeys.pgp.net','sks.mit.edu','pgp.mi
 cryptocat_url = u'https://addons.mozilla.org/en-US/firefox/addon/cryptocat/'
 enigmail_url = u'https://www.enigmail.net/download/download-static.php'
 thunderbird_url = u'https://www.mozilla.org/en-US/thunderbird/all.html'
-
+bleachbit_url = u'http://bleachbit.sourceforge.net/download/windows'
+bleachbit_base_url = u'http://bleachbit.sourceforge.net/download/'
+tails_url = u'http://bleachbit.sourceforge.net/download/windows'
 torbirdy_xpi_url = u'https://www.torproject.org/dist/torbirdy/torbirdy-current.xpi'
 torbirdy_xpi_sig_url = u'https://www.torproject.org/dist/torbirdy/torbirdy-current.xpi.asc'
 #You can find this key by searching for "Jacob Appelbaum (offline long term identity key)"

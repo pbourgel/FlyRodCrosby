@@ -312,31 +312,73 @@ def getThunderbirdWithEnigmail(lang, start_after_copied):
 def getCryptoCat():
     pass
 
-#[1]Straight HTTP download.  Message going out soon asking for PGP signature
+#[1]Straight HTTP download.  Does offer a sha256 sum over HTTP.
 def getBleachBit():
-    bleachbit_soup = BeautifulSoup(requests.get(bleachbit_url).content)
-    bleachbit_exe_link = bleachbit_soup.find_all('a', attrs = {'href': re.compile('BleachBit-.*\\.exe$')})
-    FRCAlert('Found download link: ' + bleachbit_exe_link)
-    bleachbit_exe = requests.get(bleachbit_exe_link)
-    with open('bleachbit-installer.exe','wb') as f:
-        for chunk in bleachbit_exe.iter_content(chunk_size=1024): 
-            if chunk: # filter out keep-alive new chunks
-                f.write(chunk)
-                f.flush()
-    f.close()
-    os.system('bleachbit-installer.exe')
+    try:
+        bleachbit_soup = BeautifulSoup(requests.get(bleachbit_url).content)
+        bleachbit_exe_link = bleachbit_soup.find_all('a', attrs = {'href': re.compile('BleachBit-.*\\.exe$')})[0]['href']
+        FRCAlert('Found download links: ' + str(bleachbit_exe_link))
+        bleachbit_exe = requests.get(bleachbit_base_url + bleachbit_exe_link)
+        with open('bleachbit-installer.exe','wb') as f:
+            for chunk in bleachbit_exe.iter_content(chunk_size=1024): 
+                if chunk: # filter out keep-alive new chunks
+                    f.write(chunk)
+                    f.flush()
+        f.close()
+        FRCAlert('Bleachbit EXE written to disk.  Running installer.')
+        os.system('bleachbit-installer.exe')
+    except Exception as e:
+        printError(e)
     
 
 #[4]Weird POST and transient URL stuff here, HTTP but there is PGP sig
 def getTrueCrypt():
-    pass
+    FRCAlert('TrueCrypt download stub here.')
 
 #[5]Big HTTPS download, but there is a signature over HTTP
 def getTailsISO():
-    pass
+    tails_soup = BeautifulSoup(requests.get(tails_url).content)
+    tails_iso_link = tails_soup.find_all('a', attrs = {'href': re.compile('tails.*\\.iso$')})[0]['href']
+    FRCAlert('Got Tails download link: ' + str(tails_iso_link))
+    tails_sig_link = tails_soup.find_all('a', attrs = {'href': re.compile('tails.*\\.iso\\.sig$')})[0]['href']
+
+def downloadFakeOut():
+    try:
+        fakeout_soup = BeautifulSoup(requests.get(fakeout_url).content)
+        fakeout_xpi_link = fakeout_soup.find_all('a', attrs = {'href': re.compile('fake_domain_detective_plugin.8\\.xpi')})[0]['href']
+        FRCAlert('Found download links: ' + str(fakeout_xpi_link))
+        fakeout_xpi = requests.get(fakeout_xpi_link).content
+        with open('fakeout.xpi','wb') as f:
+            for chunk in fakeout_xpi.iter_content(chunk_size=1024): 
+                if chunk: # filter out keep-alive new chunks
+                    f.write(chunk)
+                    f.flush()
+        f.close()
+        FRCAlert('FakeOut EXE written to disk.  Running installer.')
+        #Coming soon: A detached GPG signature for this so we can verify the integrity.
+	except Exception as e:
+        printError(e)
+
+def installFakeOut():
+#Copied and pasted the TorBirdy install code.  
+#Need to figure out if there are any significant changes needed.
+#    try:
+#        FRCAlert('Determined Thunderbird extensions directory: ' + thunderbird_ext_dir + '\n')
+#        FRCAlert('Determined Thunderbird main directory: ' + thunderbird_main_dir + '\n')
+#        copyfile(os.getcwd() + '\\' + 'fakeout.xpi', thunderbird_ext_dir + 'fakeout.xpi')
+#        xpi_id = processXpi(thunderbird_ext_dir + 'fakeout.xpi', thunderbird_ext_dir)['id']
+#        FRCAlert('Modifying registry\n')
+#        with CreateKey(HKEY_LOCAL_MACHINE,tbird_reg_str) as key:
+#           SetValueEx(key,"{3550f703-e582-4d05-9a08-453d09bdfdc6}",0,REG_SZ,xpi_id)
+#           FRCAlert('Set key in registry\n')
+#          CloseKey(key)
+#        FRCAlert('Starting Thunderbird\n')
+#        os.system(thunderbird_main_dir)
+#    except Exception as e:
+#        printError(unicode(e))
 
 #[2/3]HTTPS download, PGP signature coming soon
 def getFakeOut():
-    pass
-
+    downloadFakeOut()
+    installFakeOut()
 

@@ -37,6 +37,7 @@ class FRCMainFrame(wx.Frame):
         self.bleachbit_checkbox = wx.CheckBox(self, -1, "Bleachbit securely deletes sensitive files to prevent recovery.")
         self.truecrypt_checkbox = wx.CheckBox(self, -1, "Use Truecrypt to encrypt files on your computer.")
         self.tailsISO_checkbox = wx.CheckBox(self, -1, "Download Tails and burn it to a DVD for a temporary Windows alternative in highly insecure environments.")
+        self.fakeOut_checkbox = wx.CheckBox(self, -1, "The FakeOut plugin from Access prevents Fake Domain attacks caused by misspelled domain names and other network shenanigans.")
         self.ok_button = wx.Button(self, wx.ID_OK, "OK")
         self.cancel_button = wx.Button(self, wx.ID_CLOSE, "Quit")
         self.SetBackgroundColour(wx.WHITE)
@@ -50,7 +51,7 @@ class FRCMainFrame(wx.Frame):
     def __set_properties(self):
         # begin wxGlade: FRCMainFrame.__set_properties
         self.SetTitle("FlyRodCrosby - Making Cryptoparties easier since 1897!")
-        self.SetSize((640, 512))
+        self.SetSize((640, 412))
         self.combo_box_1.SetSelection(-1)
         # end wxGlade
 
@@ -68,7 +69,7 @@ class FRCMainFrame(wx.Frame):
         sizer_1.Add(self.jitsi_checkbox, 0, wx.ALL, item_border)
         sizer_1.Add(self.bleachbit_checkbox, 0, wx.ALL, item_border)
         sizer_1.Add(self.truecrypt_checkbox, 0, wx.ALL, item_border)
-		sizer_1.Add(self.tailsISO_checkbox, 0, wx.ALL, item_border)
+        sizer_1.Add(self.tailsISO_checkbox, 0, wx.ALL, item_border)
         grid_sizer_1.Add(self.ok_button, 0, wx.ALIGN_RIGHT | wx.BOTTOM, 0)
         grid_sizer_1.Add(self.cancel_button, 0, wx.ALIGN_RIGHT | wx.BOTTOM, 0)
         sizer_1.Add(grid_sizer_1, 1, wx.ALIGN_RIGHT, 5)
@@ -99,6 +100,18 @@ class FRCMainFrame(wx.Frame):
         if self.torbirdy_checkbox.IsChecked():
             getTorBirdy()
             installTorBirdy()
+
+        if self.bleachbit_checkbox.IsChecked():
+            getBleachBit()
+
+        if self.tailsISO_checkbox.IsChecked():
+			getTailsISO()
+
+        if self.truecrypt_checkbox.IsChecked():
+            getTrueCrypt()
+
+        if self.fakeOut_checkbos.IsChecked():
+            getFakeOut()
 
 
 # end of class FRCMainFrame
