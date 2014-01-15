@@ -25,7 +25,7 @@ TrueCrypt [8]
 
 Functionality to automatically download Tails [9] and burn it to a DVD
 
-The Fake Donain Detective plugin from Access[10]
+The Fake Domain Detective plugin from Access[10]
 
 
 Note to potential developers
