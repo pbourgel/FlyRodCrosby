@@ -11,27 +11,25 @@ Tor Browser Bundle [3]
 
 Thunderbird with Enigmail [2]
 
-Jitsi [5]
+Jitsi [4]
 
-TorBirdy [6]
+TorBirdy [5]
 
 We plan to support:
 
-Cryptocat [4]
+Bleachbit [6]
 
-Bleachbit [7]
+TrueCrypt [7]
 
-TrueCrypt [8]
+Functionality to automatically download Tails [8] and burn it to a DVD
 
-Functionality to automatically download Tails [9] and burn it to a DVD
-
-The Fake Domain Detective plugin from Access[10]
+The Fake Domain Detective plugin from Access[9]
 
 
 Note to potential developers
 ============================
 
-When making an application available for download/install that has a detached GPG signature, remember to add the full fingerprint rather than the 8 character ID due to the security issue described in [11].
+When making an application available for download/install that has a detached GPG signature, remember to add the full fingerprint rather than the 8 character ID due to the security issue described in [10].
 
 
 [1] https://en.wikipedia.org/wiki/Cornilia_Thurza_Crosby
@@ -40,18 +38,16 @@ When making an application available for download/install that has a detached GP
 
 [3] https://www.torproject.org/
 
-[4] https://crypto.cat/
+[4] https://jitsi.org/
 
-[5] https://jitsi.org/
+[5] https://trac.torproject.org/projects/tor/wiki/torbirdy
 
-[6] https://trac.torproject.org/projects/tor/wiki/torbirdy
+[6] http://bleachbit.sourceforge.net/
 
-[7] http://bleachbit.sourceforge.net/
+[7] http://www.truecrypt.org/
 
-[8] http://www.truecrypt.org/
+[8] https://tails.boum.org/
 
-[9] https://tails.boum.org/
+[9] https://addons.mozilla.org/en-US/firefox/addon/fake-domain/
 
-[10] https://addons.mozilla.org/en-US/firefox/addon/fake-domain/
-
-[11] http://www.asheesh.org/note/debian/short-key-ids-are-bad-news.html
+[10] http://www.asheesh.org/note/debian/short-key-ids-are-bad-news.html
