@@ -13,11 +13,11 @@ Thunderbird with Enigmail [2]
 
 Jitsi [5]
 
+TorBirdy [6]
+
 We plan to support:
 
 Cryptocat [4]
-
-TorBirdy [6]
 
 Bleachbit [7]
 
