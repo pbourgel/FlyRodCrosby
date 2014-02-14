@@ -18,6 +18,9 @@ from _winreg import *
 
 import wx
 
+#TO-DO: Generic alert function.  Right now it just prints to stdout, but
+#in later functions we should change this to something a little more
+#user-friendly.
 def FRCAlert(text):
      print text
 #    if os.path.isfile('log.dat'):
@@ -29,20 +32,37 @@ def FRCAlert(text):
 
 #Intevation doesn't have an HTTPS download of the file 
 #that doesn't throw a certificate error.  Could somebody yell at them, please?	
-#Anyway 
+#Anyway, this function downloads and installs GPG.  It also checks the SHA1 checksum
+#to make sure that it matches the signature on the download page.
 def getGPG(url):
     gpg_page=requests.get(url)
     gpg4win_soup = BeautifulSoup(gpg_page.content)
+    #We need to get the download link for the specific version of GPG we're trying to download.
+    #For example, in the OSX version, the Intevation website has a link in the source code
+    #like so: 
+    #
+    #    <a href="http://files.gpg4win.org/gpg4win-vanilla-2.2.1.exe">...</a>
+    #
+    #What the next line does is search for all the anchor links in the page, find and return the first href 
+    #attribute that matches the regex "gpg4win-vanilla.*exe$".
     gpg4win_link=gpg4win_soup.find_all('a', attrs={'href': re.compile('gpg4win-vanilla.*exe$')})[0]['href']
+    #I was lazy and didn't feel like walking a few tags down to get to the right <code> tag, so I just grabbed them all.
+    #This should give us a list of 4 SHA1 checksums, one of whichd better match the EXE we're about to download.
     gpg4win_checksums=gpg4win_soup.find_all('code')
+    #Download the exe, but stream it so that we can write it first to memory and then to disk as it comes in.
     gpg4win_file=requests.get(gpg4win_link,stream=True) 
     with open('gpg4win.exe','wb') as f:
+        #Open up a file in write-binary mode and start reading in the file from the network 1024 bytes at a time.
+        #Note that this is probably unnecessary for a file as small as GPG4Win on most computers, but something like the 
+        #Tails ISO will make this necessary.
         for chunk in gpg4win_file.iter_content(chunk_size=1024): 
             if chunk: # filter out keep-alive new chunks
+                #write to disk
                 f.write(chunk)
                 f.flush()
 	f.close()
     FRCAlert("Calculating and verifying SHA1, which is geek speak for making sure that nobody changed the file during download.\n")
+    #Set up and compute the SHA1 of the fule we just downloaded
     sha1 = hashlib.sha1()
     f = open('gpg4win.exe','rb')
     try:
@@ -51,15 +71,18 @@ def getGPG(url):
         f.close()
     gpg4win_hash = sha1.hexdigest()
     checksum_verified=False
+    #Check to make sure it matches a signature from the page
     for checksum in gpg4win_checksums:
         if gpg4win_hash in checksum:
             FRCAlert("SHA1 verified, running installer\n")
             checksum_verified=True
             os.system("gpg4win.exe")
     if checksum_verified == False:
+        #And if somebody is messing with the user's download, we should at least make them laugh.
         FRCAlert("SHA1 verification failed!  Hide yo kids!  Hide yo wife!  They messin' with everybody out here!\n")
 
-
+#Debug code going on historical code now.
+#Checks to make sure GPG is installed, and installs it if it isn't.
 try:
     import gnupg
     FRCAlert('near gpg init\n')
@@ -69,18 +92,19 @@ except Exception:
     FRCAlert("GnuPG not found.  Downloading it now.\n")
     FRCAlert("Expect an installer window in 5 minutes.\n")
     getGPG(gpg4win_url)
-    import gnupg
+     import gnupg
 
 
 #Given an HTTP url, return it with https
 def HTTPSthis(url):
     return re.sub(pattern='http', repl='https', string=url)
-
+#Exception handler used in a few cases elsewhere in the code
 def printError(text):
     print 'An error occured with your download.  Please show this to your Cruptoparty facilitator: ' + str(text)
 
 
 #REQUIRE: url and lang are unicode
+#Downloads and verifies Tor given a URL and language tag
 def getTOR(url, lang):	
     try:
         tor_page=requests.get(url)
