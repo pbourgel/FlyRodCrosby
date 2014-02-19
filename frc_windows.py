@@ -105,22 +105,34 @@ def printError(text):
 
 #REQUIRE: url and lang are unicode
 #Downloads and verifies Tor given a URL and language tag
+#Examples of the language tag include: 
+#  'en-us'
+#  'ar'
+#  'de'
+#  'fr'
+#  'es-ES'
 def getTOR(url, lang):	
     try:
+        #get and parse the HTML of the download page
         tor_page=requests.get(url)
         tor_soup = BeautifulSoup(tor_page.content)
         tor_exe_link=''
         tor_sig_link=''
-        #If somebody from the Tor Project is reading this, would it kill you to use absolute links?
         FRCAlert('Scraping the Tor Project site for the relevant links\n')
+        #Find the anchor tags for the language's EXE and OpenPGP signature
         tor_link_exes=tor_soup.find_all('a', attrs={'href': re.compile('torbrowser-install-.*' + lang + '.*exe$')})
         tor_sig_links=tor_soup.find_all('a', attrs={'href': re.compile('torbrowser-install-.*' + lang + '\\.exe\\.*asc$')})
+        #We parse the url and add the scheme because the href text in the source looks something like this:
+        # ../dist/torbrowser/3.5.2.1/torbrowser-install-3.5.2.1_vi.exe
+        #Therefore we need to take the url in the href attribute,  parse out the netloc, and add https to the beginning.
         tor_url_parsed=urlparse(url)
         tor_url_base=tor_url_parsed.scheme + '://' + tor_url_parsed.netloc
         
         #print unicode(tor_link_exes) + '\n\n' + unicode(tor_sig_links)
-        
-        
+        #In an earlier version of the Tor download page, the stable version
+        #and the beta version were available and localized to American English,
+        #Hence the two for loops below to find the non-beta version.
+        #TO-DO: Remove the for loops to make the code more readable.
         for exe_link in tor_link_exes:
             if len(exe_link) > 0 and 'beta' not in exe_link['href']:
                 tor_exe_link=tor_url_base+exe_link['href'][2:]
@@ -130,11 +142,13 @@ def getTOR(url, lang):
             if len(sig_link) > 0 and 'beta' not in sig_link['href']:
                 tor_sig_link=tor_url_base+sig_link['href'][2:]
                 FRCAlert(tor_sig_link + '\n')
-        
+        #Check to make sure we have an exe link and a signature link
+        #to request.
         if len(tor_exe_link) == 0 or len(tor_sig_link) == 0:
             FRCAlert("Couldn't find download link for Tor.  Please tell whoever is running the Cryptoparty.\n")
             exit()
         FRCAlert('Found download links.  Downloading EXE from ' + tor_exe_link + '\n')
+        #Download and write to file (see getGPG for an explanation of the with block below
         tor_exe_file=requests.get(tor_exe_link,stream=True) 
         
         with open('tor.exe','wb') as f:
@@ -144,6 +158,7 @@ def getTOR(url, lang):
                     f.flush()
         f.close()
         FRCAlert('Downloaded exe.  Now downloading GPG signature from ' + tor_sig_link + '\n')
+        #Now download the signature
         tor_sig_file=requests.get(tor_sig_link)
         f=open('tor_sig.asc', 'wb')
         f.write(tor_sig_file.content)
@@ -153,8 +168,10 @@ def getTOR(url, lang):
         #If they did, I'm going to download Erinn Clark's GPG off one of a list
         #of public key servers (from the Thunderbird defaults) and verify with
         #both keys.  If either one fails, I'll throw an exception.
-        #TO-DO: Finish key verification
+        #TO-DO: Tweak the key verification.  It might be a good idea to use
+        #a server that speaks HKPS if we can find one.
         try:
+            #Start up GPG
             gpg=gnupg.GPG()
             FRCAlert('Trying to download Tor devs GPG key\n')
             #TO-DO: Iterate through the standard servers in case sks-skyservers
@@ -170,7 +187,7 @@ def getTOR(url, lang):
                 f.close()
                 #g.close()
             else:
-                FRCAlert("EXE verification failed.  Please tell whoever is running your Cryptoparty." + '\n')
+                FRCAlert("EXE verification failed.  Please tell whoever is running your Cryptoparty." + "\n")
                 f.close()
                 #g.close()
                 exit()
@@ -179,8 +196,10 @@ def getTOR(url, lang):
     except Exception as e:
         printError(unicode(e))
 
+#Downloads the Thunderbird installer for Windows and runs it.
 def getThunderbird(lang):
     try:
+        #Get the HTML and parse out the link for the language we want
         tbird_soup=BeautifulSoup(requests.get(thunderbird_url).content)
         tbird_link=tbird_soup.find_all('a',attrs={'href': re.compile('.*os=win.*lang=' + lang)})
         #print tbird_link
@@ -192,15 +211,18 @@ def getThunderbird(lang):
                     f.write(chunk)
                     f.flush()
         f.close()
-        #I WOULD add signature verification code here, BUT THERE'S NO FUCKING
+        #I WOULD add signature verification code here, BUT THERE'S NO FSCKING
         #PGP key!
         os.system('thunderbird-installer.exe')
     except Exception as e:
         printError(unicode(e))
 
+#Download the XPI file (standard file for Thunderbird/Icedove and Firefox/Iceweasel plugins)
+#for Enigmail.  See installEnigmail() for the installation step.
 def getEnigmail(url):
     try:
         FRCAlert('in getEnigmail\n')
+        #Lather, rinse, repeat I mean get, scrape, repeat
         enigmail_page = requests.get(url).content
         enigmail_soup = BeautifulSoup(enigmail_page)
         enigmail_links=enigmail_soup.find_all('a', attrs={'href': re.compile('enigmail.*sm\\+tb\\.xpi')})[:2]
@@ -216,7 +238,7 @@ def getEnigmail(url):
         f.close()
         g.close()
         gpg=gnupg.GPG()    
-		#TO-DO: Iterate through the standard servers in case sks-skyservers
+	#TO-DO: Iterate through the standard servers in case sks-skyservers
         #is down.
         gpg.recv_keys('pool.sks-keyservers.net',enigmail_dev_gpg_fingerprint)
         x = open('enigmail.xpi.asc','rb')
@@ -233,6 +255,8 @@ def getEnigmail(url):
     except Exception as e:
         printError(unicode(e))
 
+#Download the XPI file (standard file for Thunderbird/Icedove and Firefox/Iceweasel plugins)
+#for TorBirdy.  See installTorBirdy for the installation step.
 def getTorBirdy():
     try:
         FRCAlert('in getTorBirdy\n')
@@ -247,7 +271,7 @@ def getTorBirdy():
         f.close()
         g.close()
         gpg=gnupg.GPG()    
-		#TO-DO: Iterate through the standard servers in case sks-skyservers
+	#TO-DO: Iterate through the standard servers in case sks-skyservers
         #is down.
         gpg.recv_keys('pool.sks-keyservers.net',torbirdy_dev_gpg_fingerprint)
         x = open('torbirdy.xpi.asc','rb')
@@ -264,11 +288,16 @@ def getTorBirdy():
     except Exception as e:
         printError(unicode(e))
 
-
-
 #def spaceEscape(d): #That's a fun NES game
 #    return d.replace(' ','\ ')
 
+#installEnigmail: Copies the Enigmail XPI to the appropriate Thunderbird directory, decompresses it then
+#modifies the registry so that thunderbird knows there's a new plugin to be installed 
+#see https://developer.mozilla.org/en-US/docs/Adding_Extensions_using_the_Windows_Registry
+#for an explanation
+###################
+#start_after_copied: If true, restart Thunderbird after the plugin is copied
+#(so that it adds it automatically)
 def installEnigmail(start_after_copied):
     try:
         FRCAlert('Determined Thunderbird extensions directory: ' + thunderbird_ext_dir + '\n')
@@ -286,6 +315,8 @@ def installEnigmail(start_after_copied):
     except Exception as e:
         printError(unicode(e))
 
+#Same as installEnigmail(), but installs the TorBirdy plugin and doesn't have the
+#start_after_copied argument
 def installTorBirdy():
     try:
         FRCAlert('Determined Thunderbird extensions directory: ' + thunderbird_ext_dir + '\n')
@@ -302,17 +333,21 @@ def installTorBirdy():
     except Exception as e:
         printError(unicode(e))
 
-
+#Downloads and installs Jitsi.  Unfortunately, no OpenPGP signature is available at this time
 def getJitsi(url):
     try:
         FRCAlert('In getJitsi\n')
         jitsi_page = requests.get(url).content
         jitsi_soup = BeautifulSoup(jitsi_page)
+        #Since Jitsi is available for both 32 and 64-bit Windows, we make a decision about which link to 
+        #scrape based on the architecture of the system, which we determine in frc_winconfig.py
         if arch == 32:
             jitsi_links=jitsi_soup.find_all('a', attrs={'href': re.compile('\\/windows\\/jitsi-.*x86\\.exe$')})
         else:
             jitsi_links=jitsi_soup.find_all('a', attrs={'href': re.compile('\\/windows\\/jitsi-.*x64\\.exe$')})
         FRCAlert('Starting installer download\n')
+        #Download and write to file
+        #TO-DO: make the get request with stream=True
         jitsi_exe=requests.get(jitsi_links[0]['href'])
         FRCAlert('Jitsi download complete\n')
         with open('jitsi-installer.exe','wb') as f:
@@ -326,7 +361,9 @@ def getJitsi(url):
         os.system('jitsi-installer.exe')
     except Exception as e:
         printError(e)
-	
+
+#Master function to handle the download, verification, and install steps
+#for Thunderbird and Enigmail.
 def getThunderbirdWithEnigmail(lang, start_after_copied):
     getThunderbird(lang)
     getEnigmail(enigmail_url)

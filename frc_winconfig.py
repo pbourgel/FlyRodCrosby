@@ -1,10 +1,11 @@
 #Fly Rod Crosby: Making Cryptoparties Easier since 1897!
+#This is a config file listing download pages for the various tools, GPG fingerprints for the 
+#various tools, and some code to determine other things about the system the program is running on/
 import os
 
 gpg4win_url = u'http://www.gpg4win.org/download.html'
 tor_url = u'https://www.torproject.org/projects/torbrowser.html.en#Download-torbrowserbundle'
 jitsi_url = u'https://jitsi.org/Main/Download'
-#SOMEONE PLEASE CHECK THAT I GOT ERINN CLARK'S GPG INFO RIGHT
 tor_dev_gpg_fingerprint = '8738A680B84B3031A630F2DB416F061063FEE659'
 tor_dev_gpg_name = u'Erinn Clark (erinn@torproject.org)'
 enigmail_dev_gpg_fingerprint = u'10B2E4A0E718BB1B2791DAC4F040E41B9369CDF3'
@@ -23,12 +24,13 @@ torbirdy_dev_gpg_fingerprint = u'228FAD203DE9AE7D84E25265CF9A6F914193A197'
 
 jitsi_url = u'https://jitsi.org/Main/Download'
 
+#Are we on a 32-bit system or 64-bit?
 try:
     os.environ['PROGRAMFILES(X86)']
     arch=64
 except KeyError:
     arch=32
-
+#If this is a 64-bit Windows system, we need to take different directory names into account
 if arch == 64:
     thunderbird_ext_dir = 'C:\\Program Files (x86)\\Mozilla Thunderbird\\extensions\\'
     thunderbird_main_dir = r'""C:\Program Files (x86)\Mozilla Thunderbird\thunderbird.exe""'

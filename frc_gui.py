@@ -105,7 +105,7 @@ class FRCMainFrame(wx.Frame):
             getBleachBit()
 
         if self.tailsISO_checkbox.IsChecked():
-			getTailsISO()
+            getTailsISO()
 
         if self.truecrypt_checkbox.IsChecked():
             getTrueCrypt()
