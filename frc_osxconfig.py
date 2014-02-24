@@ -1,7 +1,7 @@
 #Fly Rod Crosby: Making Cryptoparties Easier since 1897!
 import os
 
-gpg4win_url = u'http://www.gpg4win.org/download.html'
+gpg4win_url = u'https://gpgtools.org/'
 tor_url = u'https://www.torproject.org/projects/torbrowser.html.en#Download-torbrowserbundle'
 jitsi_url = u'https://jitsi.org/Main/Download'
 #SOMEONE PLEASE CHECK THAT I GOT ERINN CLARK'S GPG INFO RIGHT
