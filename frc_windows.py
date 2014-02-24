@@ -92,7 +92,7 @@ except Exception:
     FRCAlert("GnuPG not found.  Downloading it now.\n")
     FRCAlert("Expect an installer window in 5 minutes.\n")
     getGPG(gpg4win_url)
-     import gnupg
+    import gnupg
 
 
 #Given an HTTP url, return it with https
@@ -417,10 +417,11 @@ def downloadFakeOut():
         f.close()
         FRCAlert('FakeOut EXE written to disk.  Running installer.')
         #Coming soon: A detached GPG signature for this so we can verify the integrity.
-	except Exception as e:
+    except Exception as e:
         printError(e)
 
 def installFakeOut():
+    pass
 #Copied and pasted the TorBirdy install code.  
 #Need to figure out if there are any significant changes needed.
 #    try:

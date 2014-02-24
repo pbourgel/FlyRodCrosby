@@ -5,8 +5,8 @@ includes = ['urllib']
 
 setup(options = {"py2exe": {
                                 "includes": includes,
-
-
+                                "bundle_files": 1,
+                                "compressed": True,
 
                            }
                 },
