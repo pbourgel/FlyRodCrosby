@@ -31,7 +31,7 @@ To build FlyRodCrosby from source, install PyInstaller and type
 pyinstaller frc_gui.py --onefile
 ~~~
 
-Be sure to include the certificate file associated with the requests library.  On Python 2.7.x this is usually found in C:\Python27\Lib\site-packages\requests\cacert.pem
+The EXE will be stored in the dist subfolder.  When running the EXE, run as Administrator and include the certificate file associated with the requests library.  On Python 2.7.x this is usually found in C:\Python27\Lib\site-packages\requests\cacert.pem
 
 Note to potential developers
 ============================
