@@ -70,6 +70,7 @@ class FRCMainFrame(wx.Frame):
         sizer_1.Add(self.bleachbit_checkbox, 0, wx.ALL, item_border)
         sizer_1.Add(self.truecrypt_checkbox, 0, wx.ALL, item_border)
         sizer_1.Add(self.tailsISO_checkbox, 0, wx.ALL, item_border)
+        sizer_1.Add(self.fakeOut_checkbox, 0, wx.ALL, item_border)
         grid_sizer_1.Add(self.ok_button, 0, wx.ALIGN_RIGHT | wx.BOTTOM, 0)
         grid_sizer_1.Add(self.cancel_button, 0, wx.ALIGN_RIGHT | wx.BOTTOM, 0)
         sizer_1.Add(grid_sizer_1, 1, wx.ALIGN_RIGHT, 5)
@@ -110,7 +111,7 @@ class FRCMainFrame(wx.Frame):
         if self.truecrypt_checkbox.IsChecked():
             getTrueCrypt()
 
-        if self.fakeOut_checkbos.IsChecked():
+        if self.fakeOut_checkbox.IsChecked():
             getFakeOut()
 
 
@@ -121,4 +122,4 @@ frame_1 = FRCMainFrame(None, -1, "")
 app.SetTopWindow(frame_1)
 #frame_1.Show()
 app.MainLoop()
-close_input = raw_input('Press Enter to quit')
+#close_input = raw_input('Press Enter to quit')

@@ -35,8 +35,10 @@ def FRCAlert(text):
 #Anyway, this function downloads and installs GPG.  It also checks the SHA1 checksum
 #to make sure that it matches the signature on the download page.
 def getGPG(url):
+    print url
     gpg_page=requests.get(url)
     gpg4win_soup = BeautifulSoup(gpg_page.content)
+    print gpg_page.content
     #We need to get the download link for the specific version of GPG we're trying to download.
     #For example, in the OSX version, the Intevation website has a link in the source code
     #like so: 
