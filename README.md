@@ -25,6 +25,13 @@ Functionality to automatically download Tails [8] and burn it to a DVD
 
 The Fake Domain Detective plugin from Access[9]
 
+To build FlyRodCrosby from source, install PyInstaller and type
+
+~~~
+pyinstaller frc_gui.py --onefile
+~~~
+
+Be sure to include the certificate file associated with the requests library.  On Python 2.7.x this is usually found in C:\Python27\Lib\site-packages\requests\cacert.pem
 
 Note to potential developers
 ============================
