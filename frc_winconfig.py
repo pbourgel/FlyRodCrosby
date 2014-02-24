@@ -3,7 +3,7 @@
 #various tools, and some code to determine other things about the system the program is running on/
 import os
 
-gpg4win_url = u'http://www.gpg4win.org/download.html'
+gpg4win_url = u'https://gpgtools.org/'
 tor_url = u'https://www.torproject.org/projects/torbrowser.html.en#Download-torbrowserbundle'
 jitsi_url = u'https://jitsi.org/Main/Download'
 tor_dev_gpg_fingerprint = '8738A680B84B3031A630F2DB416F061063FEE659'
@@ -41,5 +41,8 @@ else:
     thunderbird_main_dir = r'""C:\Program Files\Mozilla Thunderbird\thunderbird.exe""'
     gpgrwin_path = 'C:\\Program\ Files\\GNU\\GnuPG\\gpg2.exe'
     tbird_reg_str = r'SOFTWARE\Mozilla\Mozilla Thunderbird\Extensions'
+
+
+\Extensions'
 
 
