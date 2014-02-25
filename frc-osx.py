@@ -15,8 +15,36 @@ from urlparse import urlparse
 from frc_winconfig import *
 from xpi2folders import *
 from _winreg import *
+from xml.dom import minidom
 
 import wx
+
+
+
+def install_plugin(plugin_name):
+  task="unzip -p "+plugin_name+" install.rdf > install.rdf"
+  os.system(task) #" unzip -p enigmail.xpi install.rdf >   install.rdf"
+  xmldoc = minidom.parse("install.rdf")
+  dom = minidom.parseString(xmldoc.toxml())
+  plugin_id = str(dom.getElementsByTagName("em:id")[0].toxml().replace('<em:id>','').replace('</em:id>',''))
+  print plugin_id
+
+  #profile=os.listdir("./.thunderbird")[0]
+
+  for x in os.listdir("./.thunderbird"):
+	  if x.endswith(".default"):
+		  profile=x
+  #/Library/Thunderbird/Profiles/
+  path="./Library/Thunderbird/"+profile+"/extensions/" #don hesitate to change thunderbird to icedove
+  #print path
+  path=path +plugin_id+"/"
+  task1="mkdir "+path
+  print task1
+  os.system(task1)
+  task2="unzip "+plugin_name+" -d "+path
+
+  os.system(task2)
+  
 
 def FRCAlert(text):
      print text
@@ -288,34 +316,36 @@ def getTorBirdy():
 
 def installEnigmail(start_after_copied):
     try:
-        FRCAlert('Determined Thunderbird extensions directory: ' + thunderbird_ext_dir + '\n')
-        FRCAlert('Determined Thunderbird main directory: ' + thunderbird_main_dir + '\n')
-        copyfile(os.getcwd() + '\\' + 'enigmail.xpi', thunderbird_ext_dir + 'enigmail.xpi')
-        xpi_id = processXpi(thunderbird_ext_dir + 'enigmail.xpi', thunderbird_ext_dir)['id']
-        FRCAlert('Modifying registry\n')
-        with CreateKey(HKEY_LOCAL_MACHINE,tbird_reg_str) as key:
-            SetValueEx(key,"{3550f703-e582-4d05-9a08-453d09bdfdc6}",0,REG_SZ,xpi_id)
-            FRCAlert('Set key in registry\n')
-            CloseKey(key)
-        FRCAlert('Starting Thunderbird\n')
-        if start_after_copied:
-            os.system(thunderbird_main_dir)
+      install_plugin("enigmail.xpi")
+        #FRCAlert('Determined Thunderbird extensions directory: ' + thunderbird_ext_dir + '\n')
+        #FRCAlert('Determined Thunderbird main directory: ' + thunderbird_main_dir + '\n')
+        #copyfile(os.getcwd() + '\\' + 'enigmail.xpi', thunderbird_ext_dir + 'enigmail.xpi')
+        #xpi_id = processXpi(thunderbird_ext_dir + 'enigmail.xpi', thunderbird_ext_dir)['id']
+        #FRCAlert('Modifying registry\n')
+        #with CreateKey(HKEY_LOCAL_MACHINE,tbird_reg_str) as key:
+            #SetValueEx(key,"{3550f703-e582-4d05-9a08-453d09bdfdc6}",0,REG_SZ,xpi_id)
+            #FRCAlert('Set key in registry\n')
+            #CloseKey(key)
+        #FRCAlert('Starting Thunderbird\n')
+        #if start_after_copied:
+            #os.system(thunderbird_main_dir)
     except Exception as e:
         printError(unicode(e))
 
 def installTorBirdy():
     try:
-        FRCAlert('Determined Thunderbird extensions directory: ' + thunderbird_ext_dir + '\n')
-        FRCAlert('Determined Thunderbird main directory: ' + thunderbird_main_dir + '\n')
-        copyfile(os.getcwd() + '\\' + 'torbirdy.xpi', thunderbird_ext_dir + 'torbirdy.xpi')
-        xpi_id = processXpi(thunderbird_ext_dir + 'torbirdy.xpi', thunderbird_ext_dir)['id']
-        FRCAlert('Modifying registry\n')
-        with CreateKey(HKEY_LOCAL_MACHINE,tbird_reg_str) as key:
-           SetValueEx(key,"{3550f703-e582-4d05-9a08-453d09bdfdc6}",0,REG_SZ,xpi_id)
-           FRCAlert('Set key in registry\n')
-           CloseKey(key)
-        FRCAlert('Starting Thunderbird\n')
-        os.system(thunderbird_main_dir)
+      install_plugin("torbirdy.xpi")
+        #FRCAlert('Determined Thunderbird extensions directory: ' + thunderbird_ext_dir + '\n')
+        #FRCAlert('Determined Thunderbird main directory: ' + thunderbird_main_dir + '\n')
+        #copyfile(os.getcwd() + '\\' + 'torbirdy.xpi', thunderbird_ext_dir + 'torbirdy.xpi')
+        #xpi_id = processXpi(thunderbird_ext_dir + 'torbirdy.xpi', thunderbird_ext_dir)['id']
+        #FRCAlert('Modifying registry\n')
+        #with CreateKey(HKEY_LOCAL_MACHINE,tbird_reg_str) as key:
+           #SetValueEx(key,"{3550f703-e582-4d05-9a08-453d09bdfdc6}",0,REG_SZ,xpi_id)
+           #FRCAlert('Set key in registry\n')
+           #CloseKey(key)
+        #FRCAlert('Starting Thunderbird\n')
+        #os.system(thunderbird_main_dir)
     except Exception as e:
         printError(unicode(e))
 
