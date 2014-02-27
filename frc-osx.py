@@ -496,7 +496,7 @@ def downloadFakeOut():
       printError(e)
 
 def installFakeOut():
-  install_plugin('fake_domain_detective.xpi')
+  install_Firefox_plugin('fake_domain_detective.xpi')
 #Copied and pasted the TorBirdy install code.  
 #Need to figure out if there are any significant changes needed.
 #    try:
@@ -552,6 +552,4 @@ tallFakeOut()
 )
 
 tallFakeOut()
-
-()
 
