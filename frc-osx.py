@@ -16,8 +16,35 @@ from frc_winconfig import *
 from xpi2folders import *
 from _winreg import *
 from xml.dom import minidom
+import urllib2,urllib
 
 import wx
+
+
+def install_Firefox_plugin(plugin_name):
+  task="unzip -p "+plugin_name+" install.rdf > install.rdf"
+  print task 
+  os.system(task) #" unzip -p enigmail.xpi install.rdf >   install.rdf"
+  xmldoc = minidom.parse("install.rdf")
+  dom = minidom.parseString(xmldoc.toxml())
+  plugin_id = str(dom.getElementsByTagName("em:id")[0].toxml().replace('<em:id>','').replace('</em:id>',''))
+  print plugin_id
+  
+  #profile=os.listdir("./.icedove")[0]
+
+  for x in os.listdir("./Library/Application Support/Firefox/"):
+	  if x.endswith(".default"):
+		  profile=x
+
+  path="./Library/Application Support/Firefox/"+profile+"/extensions/" 
+  print path
+  path=path +plugin_id+"/"
+  task1="mkdir "+path
+  print task1
+  os.system(task1)
+  task2="unzip "+plugin_name +" -d "+path
+
+  os.system(task2)
 
 
 
@@ -314,7 +341,7 @@ def getTorBirdy():
 #def spaceEscape(d): #That's a fun NES game
 #    return d.replace(' ','\ ')
 
-def installEnigmail(start_after_copied):
+def installEnigmail():
     try:
       install_plugin("enigmail.xpi")
         #FRCAlert('Determined Thunderbird extensions directory: ' + thunderbird_ext_dir + '\n')
@@ -375,60 +402,101 @@ def getJitsi(url):
 def getThunderbirdWithEnigmail(lang, start_after_copied):
     getThunderbird(lang)
     getEnigmail(enigmail_url)
-    installEnigmail(start_after_copied)
+    installEnigmail()
 
 #[2/3]What's a good browser decision here?  Should I just install Firefox if it isn't installed, or add it to the TBB?
 def getCryptoCat():
     pass
 
 #[1]Straight HTTP download.  Does offer a sha256 sum over HTTP.
-def getBleachBit():
-    try:
-        bleachbit_soup = BeautifulSoup(requests.get(bleachbit_url).content)
-        bleachbit_exe_link = bleachbit_soup.find_all('a', attrs = {'href': re.compile('BleachBit-.*\\.exe$')})[0]['href']
-        FRCAlert('Found download links: ' + str(bleachbit_exe_link))
-        bleachbit_exe = requests.get(bleachbit_base_url + bleachbit_exe_link)
-        with open('bleachbit-installer.exe','wb') as f:
-            for chunk in bleachbit_exe.iter_content(chunk_size=1024): 
-                if chunk: # filter out keep-alive new chunks
-                    f.write(chunk)
-                    f.flush()
-        f.close()
-        FRCAlert('Bleachbit EXE written to disk.  Running installer.')
-        os.system('bleachbit-installer.exe')
-    except Exception as e:
-        printError(e)
+#def getBleachBit():#We can think about another alternative.. 
+    #try:
+        #bleachbit_soup = BeautifulSoup(requests.get(bleachbit_url).content)
+        #bleachbit_exe_link = bleachbit_soup.find_all('a', attrs = {'href': re.compile('BleachBit-.*\\.exe$')})[0]['href']
+        #FRCAlert('Found download links: ' + str(bleachbit_exe_link))
+        #bleachbit_exe = requests.get(bleachbit_base_url + bleachbit_exe_link)
+        #with open('bleachbit-installer.exe','wb') as f:
+            #for chunk in bleachbit_exe.iter_content(chunk_size=1024): 
+                #if chunk: # filter out keep-alive new chunks
+                    #f.write(chunk)
+                    #f.flush()
+        #f.close()
+        #FRCAlert('Bleachbit EXE written to disk.  Running installer.')
+        #os.system('bleachbit-installer.exe')
+    #except Exception as e:
+        #printError(e)
     
 
 #[4]Weird POST and transient URL stuff here, HTTP but there is PGP sig
 def getTrueCrypt():
     FRCAlert('TrueCrypt download stub here.')
+    #url_trueCrypt = "http://www.truecrypt.org/dl"
+    req = urllib2.Request(url_trueCrypt)  
+    values = {"DownloadVersion" : "7.1a", "MacOSXDownload" : "Download"}
+    data = urllib.urlencode(values)
+    response = urllib2.urlopen(req, data)
+    open("truecrypt.dmg","w").write(response.read())
+    os.system("open truecrypt.dmg ")
 
 #[5]Big HTTPS download, but there is a signature over HTTP
 def getTailsISO():
     tails_soup = BeautifulSoup(requests.get(tails_url).content)
     tails_iso_link = tails_soup.find_all('a', attrs = {'href': re.compile('tails.*\\.iso$')})[0]['href']
     FRCAlert('Got Tails download link: ' + str(tails_iso_link))
-    tails_sig_link = tails_soup.find_all('a', attrs = {'href': re.compile('tails.*\\.iso\\.sig$')})[0]['href']
+    sig_link = tails_soup.find_all('a', attrs = {'href': re.compile('tails.*\\.iso\\.sig$')})[0]['href']
+    #sig_link='https://tails.boum.org/torrents/files/tails-i386-0.22.1.iso.sig'
+    sig_file=requests.get(sig_link,stream=True)
+    iso_file = requests.get(tails_iso_link,stream=True)
+    #Downloading iso file 
+    FRCAlert("Downloading iso file..")
+    with open("tails.iso","wbe") as f:
+      for chunk in iso_file.iter_content(chunk_size=1024):
+	if chunk:
+	  f.write(chunk)
+	  f.flush()
+    f.close()
+    #downloading signature file
+    FRCAlert("Downloading signature file..")
+    with open('tails.sig','wb') as f:
+      for chunk in sig_file.iter_content(chunk_size=1024):
+	if chunk:
+	  f.write(chunk)
+	  f.flush()
+    f.close()
+    
+  try:
+    gpg=gnupg.GPG()
+    s=gpg.recv_keys('pool.sks-keyservers.net',tails_finger_print) #tails_finger_print
+    #print s
+    f=open("tails.sig","rb")
+    verified=gpg.verify_file(f,os.path.abspath("tails.iso"))
+    if verified :
+      FRCAlert("Signature verified..")
+      os.open("hdiutil burn tails.iso") #osx command line
+      FRCAlert("Iso is burning now please wait..")
+    f.close()
+  except Exception as e:
+  print e
 
 def downloadFakeOut():
     try:
-        fakeout_soup = BeautifulSoup(requests.get(fakeout_url).content)
-        fakeout_xpi_link = fakeout_soup.find_all('a', attrs = {'href': re.compile('fake_domain_detective_plugin.8\\.xpi')})[0]['href']
-        FRCAlert('Found download links: ' + str(fakeout_xpi_link))
-        fakeout_xpi = requests.get(fakeout_xpi_link).content
-        with open('fakeout.xpi','wb') as f:
-            for chunk in fakeout_xpi.iter_content(chunk_size=1024): 
-                if chunk: # filter out keep-alive new chunks
-                    f.write(chunk)
-                    f.flush()
-        f.close()
-        FRCAlert('FakeOut EXE written to disk.  Running installer.')
-        #Coming soon: A detached GPG signature for this so we can verify the integrity.
-	except Exception as e:
-        printError(e)
+      FRCAlert('in getFakeDoamin\n')
+      fake_page = requests.get(url).content
+      fake_soup = BeautifulSoup(fake_page)
+      fake_links=fake_soup.find_all('a', attrs={'href': re.compile('\\/fake_domain_detective-.*\\.xpi*')})[0]['href']
+      FRCAlert('contents of fake_links: ' + str(fake_links) + '\n')
+      fake_xpi=requests.get(fake_links)
+      FRCAlert('FakeDomain.xpi\n')
+      #fake_asc=requests.get(HTTPSthis(fake_links))
+      FRCAlert('scraped and downloaded fake domain detective\n')
+      f = open('fake_domain_detective.xpi','wb')
+      f.write(fake_xpi.content)
+      f.close()
+    except Exception as e:
+      printError(e)
 
 def installFakeOut():
+  install_plugin('fake_domain_detective.xpi')
 #Copied and pasted the TorBirdy install code.  
 #Need to figure out if there are any significant changes needed.
 #    try:
@@ -462,4 +530,28 @@ def getFakeOut():
     installFakeOut()
 
 tallFakeOut()
+
+)
+
+tallFakeOut()
+
+)
+
+tallFakeOut()
+
+f getFakeOut():
+    downloadFakeOut()
+    installFakeOut()
+
+tallFakeOut()
+
+)
+
+tallFakeOut()
+
+)
+
+tallFakeOut()
+
+()
 
