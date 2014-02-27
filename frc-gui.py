@@ -8,7 +8,7 @@ import sys
 import subprocess
 import ctypes
 
-from frc_windows import *
+from frc-osx import *
 
 # begin wxGlade: extracode
 # end wxGlade
@@ -34,7 +34,7 @@ class FRCMainFrame(wx.Frame):
         self.tbb_checkbox = wx.CheckBox(self, -1, "The Tor Browser Bundle lets you browse the web anonymously.")
         self.torbirdy_checkbox = wx.CheckBox(self, -1, "TorBirdy lets you send and receive email over the Tor network (requires Tor and Thunderbird).")
         self.jitsi_checkbox = wx.CheckBox(self, -1, "Jitsi is a secure Skype alternative with support for encrypted chat.")
-        self.bleachbit_checkbox = wx.CheckBox(self, -1, "Bleachbit securely deletes sensitive files to prevent recovery.")
+        #self.bleachbit_checkbox = wx.CheckBox(self, -1, "Bleachbit securely deletes sensitive files to prevent recovery.")
         self.truecrypt_checkbox = wx.CheckBox(self, -1, "Use Truecrypt to encrypt files on your computer.")
         self.tailsISO_checkbox = wx.CheckBox(self, -1, "Download Tails and burn it to a DVD for a temporary Windows alternative in highly insecure environments.")
         self.fakeOut_checkbox = wx.CheckBox(self, -1, "The FakeOut plugin from Access prevents Fake Domain attacks caused by misspelled domain names and other network shenanigans.")
@@ -67,7 +67,7 @@ class FRCMainFrame(wx.Frame):
         sizer_1.Add(self.tbb_checkbox, 0, wx.ALL, item_border)
         sizer_1.Add(self.torbirdy_checkbox, 0, wx.ALL, item_border+tab_offset)
         sizer_1.Add(self.jitsi_checkbox, 0, wx.ALL, item_border)
-        sizer_1.Add(self.bleachbit_checkbox, 0, wx.ALL, item_border)
+        #sizer_1.Add(self.bleachbit_checkbox, 0, wx.ALL, item_border)
         sizer_1.Add(self.truecrypt_checkbox, 0, wx.ALL, item_border)
         sizer_1.Add(self.tailsISO_checkbox, 0, wx.ALL, item_border)
         grid_sizer_1.Add(self.ok_button, 0, wx.ALIGN_RIGHT | wx.BOTTOM, 0)
@@ -101,8 +101,8 @@ class FRCMainFrame(wx.Frame):
             getTorBirdy()
             installTorBirdy()
 
-        if self.bleachbit_checkbox.IsChecked():
-            getBleachBit()
+        #if self.bleachbit_checkbox.IsChecked():
+            #getBleachBit()
 
         if self.tailsISO_checkbox.IsChecked():
 			getTailsISO()
@@ -121,3 +121,4 @@ frame_1 = FRCMainFrame(None, -1, "")
 app.SetTopWindow(frame_1)
 #frame_1.Show()
 app.MainLoop()
+p()
