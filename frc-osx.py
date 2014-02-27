@@ -12,7 +12,7 @@ import hashlib
 from shutil import copyfile
 from bs4 import BeautifulSoup
 from urlparse import urlparse
-from frc_winconfig import *
+from frc_osxconfig import *
 from xpi2folders import *
 from _winreg import *
 from xml.dom import minidom
@@ -62,7 +62,7 @@ def install_plugin(plugin_name):
 	  if x.endswith(".default"):
 		  profile=x
   #/Library/Thunderbird/Profiles/
-  path="./Library/Thunderbird/Profiles/"+profile+"/extensions/" #don hesitate to change thunderbird to icedove if you have icedove installed
+  path="./Library/Thunderbird/Profiles/"+profile+"/extensions/" #don't hesitate to change thunderbird to icedove if you have icedove installed
   #print path
   path=path +plugin_id+"/"
   task1="mkdir "+path
@@ -85,7 +85,7 @@ def FRCAlert(text):
 #Intevation doesn't have an HTTPS download of the file 
 #that doesn't throw a certificate error.  Could somebody yell at them, please?	
 #Anyway 
-def getGPG(url):
+def getGPG(macGPGurl):
   page = requests.get(url,verify=False)
   soup = BeautifulSoup(page.content)
   link=soup.find_all('a',attrs={'href': re.compile("GPG%20Suite *")}) [0]['href'] 
@@ -150,7 +150,7 @@ def HTTPSthis(url):
     return re.sub(pattern='http', repl='https', string=url)
 
 def printError(text):
-    print 'An error occured with your download.  Please show this to your Cruptoparty facilitator: ' + str(text)
+    print 'An error occured with your download.  Please show this to your Cryptoparty facilitator: ' + str(text)
 
 
 #REQUIRE: url and lang are unicode
@@ -252,7 +252,7 @@ ddef getTOR(url, lang):
  
 def getThunderbird(lang):
     try:
-        tbird_soup=BeautifulSoup(requests.get(thunderbird_url).content)#here we go very fast :p
+        tbird_soup=B eautifulSoup(requests.get(thunderbird_url).content)#here we go very fast :p
         tbird_link=tbird_soup.find_all('a',attrs={'href': re.compile('.*os=osx.*lang=' + lang)})
         print tbird_link
         tbird_file=requests.get(tbird_link[0]['href'],stream=True)
@@ -374,12 +374,12 @@ def installTorBirdy():
         #FRCAlert('Starting Thunderbird\n')
         #os.system(thunderbird_main_dir)
     except Exception as e:
-        printError(unicode(e))
+      printError(unicode(e))
 
 
 def getJitsi(url):
     try:
-         FRCAlert('In getJitsi\n')
+      FRCAlert('In getJitsi\n')
       jitsi_page = requests.get(url).content
       jitsi_soup = BeautifulSoup(jitsi_page)
       jitsi_links=jitsi_soup.find_all('a', attrs={'href': re.compile('\\/macosx\\/jitsi-.*\\.dmg$')})
@@ -392,12 +392,12 @@ def getJitsi(url):
 	  if chunk: # filter out keep-alive new chunks
 	    f.write(chunk)
 	    f.flush()
-	f.close()
-	#I WOULD put GPG signature verification code here, but SOMEBODY didn't add a .asc!
-	FRCAlert('Running installer\n')
-	os.system(' open jitsi-installer.dmg')
+      f.close()
+      #I WOULD put GPG signature verification code here, but SOMEBODY didn't add a .asc!
+      FRCAlert('Running installer\n')
+      os.system(' open jitsi-installer.dmg')
     except Exception as e:
-        printError(e)
+      printError(e)
 	
 def getThunderbirdWithEnigmail(lang, start_after_copied):
     getThunderbird(lang)
@@ -519,37 +519,37 @@ def getFakeOut():
     downloadFakeOut()
     installFakeOut()
 
-erbird\n')
-#        os.system(thunderbird_main_dir)
-#    except Exception as e:
-#        printError(unicode(e))
+#erbird\n')
+##        os.system(thunderbird_main_dir)
+##    except Exception as e:
+##        printError(unicode(e))
 
-#[2/3]HTTPS download, PGP signature coming soon
-def getFakeOut():
-    downloadFakeOut()
-    installFakeOut()
+##[2/3]HTTPS download, PGP signature coming soon
+#def getFakeOut():
+    #downloadFakeOut()
+    #installFakeOut()
 
-tallFakeOut()
+#tallFakeOut()
 
-)
+#)
 
-tallFakeOut()
+#tallFakeOut()
 
-)
+#)
 
-tallFakeOut()
+#tallFakeOut()
 
-f getFakeOut():
-    downloadFakeOut()
-    installFakeOut()
+#f getFakeOut():
+    #downloadFakeOut()
+    #installFakeOut()
 
-tallFakeOut()
+#tallFakeOut()
 
-)
+#)
 
-tallFakeOut()
+#tallFakeOut()
 
-)
+#)
 
-tallFakeOut()
+#tallFakeOut()
 

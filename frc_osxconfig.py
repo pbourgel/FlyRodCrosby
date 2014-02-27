@@ -1,7 +1,7 @@
 #Fly Rod Crosby: Making Cryptoparties Easier since 1897!
 import os
 
-gpg4win_url = u'https://gpgtools.org/'
+macGPGurl= u'https://gpgtools.org/'
 tor_url = u'https://www.torproject.org/projects/torbrowser.html.en#Download-torbrowserbundle'
 jitsi_url = u'https://jitsi.org/Main/Download'
 #SOMEONE PLEASE CHECK THAT I GOT ERINN CLARK'S GPG INFO RIGHT
@@ -25,21 +25,21 @@ jitsi_url = u'https://jitsi.org/Main/Download'
 tails_finger_print='0D24B36AA9A2A651787876451202821CBE2CD9C1'
 
 
-try:
-    os.environ['PROGRAMFILES(X86)']
-    arch=64
-except KeyError:
-    arch=32
+#try:
+    #os.environ['PROGRAMFILES(X86)']
+    #arch=64
+#except KeyError:
+    #arch=32
 
-if arch == 64:
-    thunderbird_ext_dir = 'C:\\Program Files (x86)\\Mozilla Thunderbird\\extensions\\'
-    thunderbird_main_dir = r'""C:\Program Files (x86)\Mozilla Thunderbird\thunderbird.exe""'
-    gpg4win_path = 'C:\\Program\ Files\ (x86)\\GNU\\GnuPG\\gpg2.exe'
-    tbird_reg_str = r'SOFTWARE\Wow6432Node\Mozilla\Mozilla Thunderbird\Extensions'
-else:
-    thunderbird_ext_dir = 'C:\\Program Files\\Mozilla Thunderbird\\extensions\\'
-    thunderbird_main_dir = r'""C:\Program Files\Mozilla Thunderbird\thunderbird.exe""'
-    gpgrwin_path = 'C:\\Program\ Files\\GNU\\GnuPG\\gpg2.exe'
-    tbird_reg_str = r'SOFTWARE\Mozilla\Mozilla Thunderbird\Extensions'
+#if arch == 64:
+    #thunderbird_ext_dir = 'C:\\Program Files (x86)\\Mozilla Thunderbird\\extensions\\'
+    #thunderbird_main_dir = r'""C:\Program Files (x86)\Mozilla Thunderbird\thunderbird.exe""'
+    #gpg4win_path = 'C:\\Program\ Files\ (x86)\\GNU\\GnuPG\\gpg2.exe'
+    #tbird_reg_str = r'SOFTWARE\Wow6432Node\Mozilla\Mozilla Thunderbird\Extensions'
+#else:
+    #thunderbird_ext_dir = 'C:\\Program Files\\Mozilla Thunderbird\\extensions\\'
+    #thunderbird_main_dir = r'""C:\Program Files\Mozilla Thunderbird\thunderbird.exe""'
+    #gpgrwin_path = 'C:\\Program\ Files\\GNU\\GnuPG\\gpg2.exe'
+    #tbird_reg_str = r'SOFTWARE\Mozilla\Mozilla Thunderbird\Extensions'
 
 
