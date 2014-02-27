@@ -1,3 +1,4 @@
+
 #Fly Rod Crosby: Making Cryptoparties Easier since 1897!
 #All original material Copyright (C) 2013 Peter Bourgelais
 #Original file from xpi2folders: xpi2folders.py Copyright (C) 2011-2012, Kirill Kozlovskiy
@@ -10,11 +11,11 @@ import requests
 import re
 import hashlib
 from shutil import copyfile
-from bs4 import BeautifulSoup
+import BeautifulSoup
 from urlparse import urlparse
 from frc_osxconfig import *
-from xpi2folders import *
-from _winreg import *
+#from xpi2folders import *
+#from _winreg import *
 from xml.dom import minidom
 import urllib2,urllib
 
@@ -151,10 +152,9 @@ def HTTPSthis(url):
 
 def printError(text):
     print 'An error occured with your download.  Please show this to your Cryptoparty facilitator: ' + str(text)
-
-
-#REQUIRE: url and lang are unicode
-ddef getTOR(url, lang):	
+    print "ERROR: "+ str(text)
+    
+def getTOR(url,lang):	
     try:
         #get and parse the HTML of the download page
         tor_page=requests.get(url)
@@ -248,11 +248,11 @@ ddef getTOR(url, lang):
         except Exception as e:
             FRCAlert('Problem downloading Tor: Please show this to your facilitator: ' + unicode(e) + '\n')
     except Exception as e:
-        #printError(unicode(e))
+        printError(unicode(e))
  
 def getThunderbird(lang):
     try:
-        tbird_soup=B eautifulSoup(requests.get(thunderbird_url).content)#here we go very fast :p
+        tbird_soup=BeautifulSoup(requests.get(thunderbird_url).content)#here we go very fast :p
         tbird_link=tbird_soup.find_all('a',attrs={'href': re.compile('.*os=osx.*lang=' + lang)})
         print tbird_link
         tbird_file=requests.get(tbird_link[0]['href'],stream=True)
@@ -421,7 +421,7 @@ def downloadCryptoCat():
       f.write(cat_xpi.content)
       f.close()
     except Exception as e:
-      #printError(e)
+      printError(e)
       
 def installCryptoCat():
   install_Firefox_plugin('cryptocat.xpi')
@@ -431,63 +431,41 @@ def getCryptoCat():
   downloadCryptoCat()
   installCryptoCat()
   
-    
-
-#[1]Straight HTTP download.  Does offer a sha256 sum over HTTP.
-#def getBleachBit():#We can think about another alternative.. 
-    #try:
-        #bleachbit_soup = BeautifulSoup(requests.get(bleachbit_url).content)
-        #bleachbit_exe_link = bleachbit_soup.find_all('a', attrs = {'href': re.compile('BleachBit-.*\\.exe$')})[0]['href']
-        #FRCAlert('Found download links: ' + str(bleachbit_exe_link))
-        #bleachbit_exe = requests.get(bleachbit_base_url + bleachbit_exe_link)
-        #with open('bleachbit-installer.exe','wb') as f:
-            #for chunk in bleachbit_exe.iter_content(chunk_size=1024): 
-                #if chunk: # filter out keep-alive new chunks
-                    #f.write(chunk)
-                    #f.flush()
-        #f.close()
-        #FRCAlert('Bleachbit EXE written to disk.  Running installer.')
-        #os.system('bleachbit-installer.exe')
-    #except Exception as e:
-        #printError(e)
-    
-
-#[4]Weird POST and transient URL stuff here, HTTP but there is PGP sig
 def getTrueCrypt():
-    FRCAlert('TrueCrypt download stub here.')
-    #url_trueCrypt = "http://www.truecrypt.org/dl"
-    req = urllib2.Request(url_trueCrypt)  
-    values = {"DownloadVersion" : "7.1a", "MacOSXDownload" : "Download"}
-    data = urllib.urlencode(values)
-    response = urllib2.urlopen(req, data)
-    open("truecrypt.dmg","w").write(response.read())
-    os.system("open truecrypt.dmg ")
+  FRCAlert('TrueCrypt download stub here.')
+  #url_trueCrypt = "http://www.truecrypt.org/dl"
+  req = urllib2.Request(url_trueCrypt)  
+  values = {"DownloadVersion" : "7.1a", "MacOSXDownload" : "Download"}
+  data = urllib.urlencode(values)
+  response = urllib2.urlopen(req, data)
+  open("truecrypt.dmg","w").write(response.read())
+  os.system("open truecrypt.dmg ")
 
 #[5]Big HTTPS download, but there is a signature over HTTP
 def getTailsISO():
-    tails_soup = BeautifulSoup(requests.get(tails_url).content)
-    tails_iso_link = tails_soup.find_all('a', attrs = {'href': re.compile('tails.*\\.iso$')})[0]['href']
-    FRCAlert('Got Tails download link: ' + str(tails_iso_link))
-    sig_link = tails_soup.find_all('a', attrs = {'href': re.compile('tails.*\\.iso\\.sig$')})[0]['href']
-    #sig_link='https://tails.boum.org/torrents/files/tails-i386-0.22.1.iso.sig'
-    sig_file=requests.get(sig_link,stream=True)
-    iso_file = requests.get(tails_iso_link,stream=True)
-    #Downloading iso file 
-    FRCAlert("Downloading iso file..")
-    with open("tails.iso","wbe") as f:
-      for chunk in iso_file.iter_content(chunk_size=1024):
-	if chunk:
-	  f.write(chunk)
-	  f.flush()
-    f.close()
-    #downloading signature file
-    FRCAlert("Downloading signature file..")
-    with open('tails.sig','wb') as f:
-      for chunk in sig_file.iter_content(chunk_size=1024):
-	if chunk:
-	  f.write(chunk)
-	  f.flush()
-    f.close()
+  tails_soup = BeautifulSoup(requests.get(tails_url).content)
+  tails_iso_link = tails_soup.find_all('a', attrs = {'href': re.compile('tails.*\\.iso$')})[0]['href']
+  FRCAlert('Got Tails download link: ' + str(tails_iso_link))
+  sig_link = tails_soup.find_all('a', attrs = {'href': re.compile('tails.*\\.iso\\.sig$')})[0]['href']
+  #sig_link='https://tails.boum.org/torrents/files/tails-i386-0.22.1.iso.sig'
+  sig_file=requests.get(sig_link,stream=True)
+  iso_file = requests.get(tails_iso_link,stream=True)
+  #Downloading iso file 
+  FRCAlert("Downloading iso file..")
+  with open("tails.iso","wbe") as f:
+    for chunk in iso_file.iter_content(chunk_size=1024):
+      if chunk:
+	f.write(chunk)
+	f.flush()
+  f.close()
+  #downloading signature file
+  FRCAlert("Downloading signature file..")
+  with open('tails.sig','wb') as f:
+    for chunk in sig_file.iter_content(chunk_size=1024):
+      if chunk:
+	f.write(chunk)
+	f.flush()
+  f.close()
     
   try:
     gpg=gnupg.GPG()
@@ -499,92 +477,59 @@ def getTailsISO():
       FRCAlert("Signature verified..")
       os.open("hdiutil burn tails.iso") #osx command line
       FRCAlert("Iso is burning now please wait..")
-    f.close()
+      f.close()
   except Exception as e:
-  print e
+      print e
 
 def downloadFakeOut(url):
-    try:
-      FRCAlert('in getFakeDoamin\n')
-      fake_page = requests.get(url).content
-      fake_soup = BeautifulSoup(fake_page)
-      fake_links=fake_soup.find_all('a', attrs={'href': re.compile('\\/fake_domain_detective-.*\\.xpi*')})[0]['href']
-      FRCAlert('contents of fake_links: ' + str(fake_links) + '\n')
-      fake_xpi=requests.get(fake_links)
-      FRCAlert('FakeDomain.xpi\n')
-      #fake_asc=requests.get(HTTPSthis(fake_links))
-      FRCAlert('scraped and downloaded fake domain detective\n')
-      f = open('fake_domain_detective.xpi','wb')
-      f.write(fake_xpi.content)
-      f.close()
-    except Exception as e:
-      printError(e)
+  try:
+    FRCAlert('in getFakeDoamin\n')
+    fake_page = requests.get(url).content
+    fake_soup = BeautifulSoup(fake_page)
+    fake_links=fake_soup.find_all('a', attrs={'href': re.compile('\\/fake_domain_detective-.*\\.xpi*')})[0]['href']
+    FRCAlert('contents of fake_links: ' + str(fake_links) + '\n')
+    fake_xpi=requests.get(fake_links)
+    FRCAlert('FakeDomain.xpi\n')
+    #fake_asc=requests.get(HTTPSthis(fake_links))
+    FRCAlert('scraped and downloaded fake domain detective\n')
+    f = open('fake_domain_detective.xpi','wb')
+    f.write(fake_xpi.content)
+    f.close()
+  except Exception as e:
+    printError(e)
 
 def installFakeOut():
   install_Firefox_plugin('fake_domain_detective.xpi')
-#Copied and pasted the TorBirdy install code.  
-#Need to figure out if there are any significant changes needed.
-#    try:
-#        FRCAlert('Determined Thunderbird extensions directory: ' + thunderbird_ext_dir + '\n')
-#        FRCAlert('Determined Thunderbird main directory: ' + thunderbird_main_dir + '\n')
-#        copyfile(os.getcwd() + '\\' + 'fakeout.xpi', thunderbird_ext_dir + 'fakeout.xpi')
-#        xpi_id = processXpi(thunderbird_ext_dir + 'fakeout.xpi', thunderbird_ext_dir)['id']
-#        FRCAlert('Modifying registry\n')
-#        with CreateKey(HKEY_LOCAL_MACHINE,tbird_reg_str) as key:
-#           SetValueEx(key,"{3550f703-e582-4d05-9a08-453d09bdfdc6}",0,REG_SZ,xpi_id)
-#           FRCAlert('Set key in registry\n')
-#          CloseKey(key)
-#        FRCAlert('Starting Thunderbird\n')
-#        os.system(thunderbird_main_dir)
-#    except Exception as e:
-#        printError(unicode(e))
+
+#[2/3]HTTPS download, PGP signature coming soon
+def getFakeOut():
+  downloadFakeOut(FakeDomain_url)
+  installFakeOut()
+
+def downloadFakeOut(url):
+  try:
+    FRCAlert('in getFakeDoamin\n')
+    fake_page = requests.get(url).content
+    fake_soup = BeautifulSoup(fake_page)
+    fake_links=fake_soup.find_all('a', attrs={'href': re.compile('\\/fake_domain_detective-.*\\.xpi*')})[0]['href']
+    FRCAlert('contents of fake_links: ' + str(fake_links) + '\n')
+    fake_xpi=requests.get(fake_links)
+    FRCAlert('FakeDomain.xpi\n')
+    #fake_asc=requests.get(HTTPSthis(fake_links))
+    FRCAlert('scraped and downloaded fake domain detective\n')
+    f = open('fake_domain_detective.xpi','wb')
+    f.write(fake_xpi.content)
+    f.close()
+  except Exception as e:
+    printError(e)
+
+def installFakeOut():
+  install_Firefox_plugin('fake_domain_detective.xpi')
+
 
 #[2/3]HTTPS download, PGP signature coming soon
 def getFakeOut():
     downloadFakeOut(FakeDomain_url)
     installFakeOut()
 
-#erbird\n')
-##        os.system(thunderbird_main_dir)
-##    except Exception as e:
-##        printError(unicode(e))
-
-##[2/3]HTTPS download, PGP signature coming soon
-#def getFakeOut():
-    #downloadFakeOut()
-    #installFakeOut()
-
-#tallFakeOut()
-
-#)
-
-#tallFakeOut()
-
-#)
-
-#tallFakeOut()
-
-#f getFakeOut():
-    #downloadFakeOut()
-    #installFakeOut()
-
-#tallFakeOut()
-
-#)
-
-#tallFakeOut()
-
-#)
-
-#tallFakeOut()
-
-ut()
-
-#)
-
-#tallFakeOut()
-
-#)
-
-#tallFakeOut()
-
+print "OK "
