@@ -32,11 +32,11 @@ def install_Firefox_plugin(plugin_name):
   
   #profile=os.listdir("./.icedove")[0]
 
-  for x in os.listdir("./Library/Application Support/Firefox/"):
+  for x in os.listdir("./Library/Application\ Support/Firefox/Profiles"):
 	  if x.endswith(".default"):
 		  profile=x
 
-  path="./Library/Application Support/Firefox/"+profile+"/extensions/" 
+  path="./Library/Application\ Support/Firefox/Pofiles/"+profile+"/extensions/" 
   print path
   path=path +plugin_id+"/"
   task1="mkdir "+path
@@ -58,15 +58,15 @@ def install_plugin(plugin_name):
 
   #profile=os.listdir("./.thunderbird")[0]
 
-  for x in os.listdir("./.thunderbird"):
+  for x in os.listdir("./Library/Thunderbird/Profiles/"):
 	  if x.endswith(".default"):
 		  profile=x
   #/Library/Thunderbird/Profiles/
-  path="./Library/Thunderbird/"+profile+"/extensions/" #don hesitate to change thunderbird to icedove
+  path="./Library/Thunderbird/Profiles/"+profile+"/extensions/" #don hesitate to change thunderbird to icedove if you have icedove installed
   #print path
   path=path +plugin_id+"/"
   task1="mkdir "+path
-  print task1
+  #print task1
   os.system(task1)
   task2="unzip "+plugin_name+" -d "+path
 
