@@ -404,9 +404,34 @@ def getThunderbirdWithEnigmail(lang, start_after_copied):
     getEnigmail(enigmail_url)
     installEnigmail()
 
+
+  
+def downloadCryptoCat():
+    try:
+      FRCAlert('in CryptoCat downloading..\n')
+      cat_page = requests.get(cryptocat_url ).content
+      cat_soup = BeautifulSoup(cat_page)
+      cat_links=cat_soup.find_all('a', attrs={'href': re.compile('\\/cryptocat-.*\\.xpi*')})[0]['href']
+      FRCAlert('contents of cat_links: ' + str(cat_links) + '\n')
+      cat_xpi=requests.get(cat_links)
+      FRCAlert('cryptocat.xpi\n')
+      #fake_asc=requests.get(HTTPSthis(fake_links))
+      FRCAlert('scraped and downloaded fake domain detective\n')
+      f = open('cryptocat.xpi','wb')
+      f.write(cat_xpi.content)
+      f.close()
+    except Exception as e:
+      #printError(e)
+      
+def installCryptoCat():
+  install_Firefox_plugin('cryptocat.xpi')
+  
 #[2/3]What's a good browser decision here?  Should I just install Firefox if it isn't installed, or add it to the TBB?
 def getCryptoCat():
-    pass
+  downloadCryptoCat()
+  installCryptoCat()
+  
+    
 
 #[1]Straight HTTP download.  Does offer a sha256 sum over HTTP.
 #def getBleachBit():#We can think about another alternative.. 
@@ -478,7 +503,7 @@ def getTailsISO():
   except Exception as e:
   print e
 
-def downloadFakeOut():
+def downloadFakeOut(url):
     try:
       FRCAlert('in getFakeDoamin\n')
       fake_page = requests.get(url).content
@@ -516,7 +541,7 @@ def installFakeOut():
 
 #[2/3]HTTPS download, PGP signature coming soon
 def getFakeOut():
-    downloadFakeOut()
+    downloadFakeOut(FakeDomain_url)
     installFakeOut()
 
 #erbird\n')
@@ -544,6 +569,16 @@ def getFakeOut():
     #installFakeOut()
 
 #tallFakeOut()
+
+#)
+
+#tallFakeOut()
+
+#)
+
+#tallFakeOut()
+
+ut()
 
 #)
 

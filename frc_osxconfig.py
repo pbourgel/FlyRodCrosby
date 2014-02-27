@@ -23,6 +23,7 @@ torbirdy_dev_gpg_fingerprint = u'228FAD203DE9AE7D84E25265CF9A6F914193A197'
 url_trueCrypt=u'"http://www.truecrypt.org/dl'
 jitsi_url = u'https://jitsi.org/Main/Download'
 tails_finger_print='0D24B36AA9A2A651787876451202821CBE2CD9C1'
+FakeDomain_url=u'https://addons.mozilla.org/ro/firefox/addon/fake-domain/'
 
 
 #try:
