@@ -8,7 +8,7 @@ import sys
 import subprocess
 import ctypes
 
-from frc-osx import *
+from frc_osx import *
 
 # begin wxGlade: extracode
 # end wxGlade
@@ -27,7 +27,7 @@ class FRCMainFrame(wx.Frame):
         # begin wxGlade: FRCMainFrame.__init__
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
         wx.Frame.__init__(self, *args, **kwds)
-        self.combo_box_1 = wx.ComboBox(self, -1, choices=["English", u"العربية", u"Français", u"Español", u"Português"], style=wx.CB_READONLY)
+        #self.combo_box_1 = wx.ComboBox(self, -1, choices=["English", u"العربية", u"Français", u"Español", u"Português"], style=wx.CB_READONLY)
         self.label_1 = wx.StaticText(self, -1, "Welcome to FlyRodCrosby, an auto-installer for standard secure communications tools.  Select the apps you want to install below and click OK to begin the installation process.")
         self.label_1.Wrap(400)
         self.tbird_checkbox = wx.CheckBox(self, -1, "Thunderbird with Enigmail lets you send and receive encrypted emails.")
@@ -38,6 +38,7 @@ class FRCMainFrame(wx.Frame):
         self.truecrypt_checkbox = wx.CheckBox(self, -1, "Use Truecrypt to encrypt files on your computer.")
         self.tailsISO_checkbox = wx.CheckBox(self, -1, "Download Tails and burn it to a DVD for a temporary Windows alternative in highly insecure environments.")
         self.fakeOut_checkbox = wx.CheckBox(self, -1, "The FakeOut plugin from Access prevents Fake Domain attacks caused by misspelled domain names and other network shenanigans.")
+        self.CryptoCat_checkbox = wx.CheckBox(self, -1, "Cryptocat uses modern web technologies to provide easy to use, accessible encrypted chat with your friends, right in your browser. ")
         self.ok_button = wx.Button(self, wx.ID_OK, "OK")
         self.cancel_button = wx.Button(self, wx.ID_CLOSE, "Quit")
         self.SetBackgroundColour(wx.WHITE)
@@ -51,8 +52,9 @@ class FRCMainFrame(wx.Frame):
     def __set_properties(self):
         # begin wxGlade: FRCMainFrame.__set_properties
         self.SetTitle("FlyRodCrosby - Making Cryptoparties easier since 1897!")
-        self.SetSize((640, 412))
-        self.combo_box_1.SetSelection(-1)
+        self.SetSize((1000,400))
+        self.SetBackgroundColour('#ededed')
+        #self.combo_box.SetSelection(-1)
         # end wxGlade
 
     def __do_layout(self):
@@ -61,15 +63,17 @@ class FRCMainFrame(wx.Frame):
         global tab_offset
         sizer_1 = wx.BoxSizer(wx.VERTICAL)
         grid_sizer_1 = wx.GridSizer(1, 2, 0, 0)
-        sizer_1.Add(self.combo_box_1, 0, wx.ALIGN_RIGHT, item_border)
-        sizer_1.Add(self.label_1, 0, wx.ALL, item_border)
+        #sizer_1.Add(self.combo_box_1, 0, wx.ALIGN_RIGHT, item_border)
+        sizer_1.Add(self.label_1, 1, wx.ALL, item_border)
         sizer_1.Add(self.tbird_checkbox, 0, wx.ALL, item_border)
         sizer_1.Add(self.tbb_checkbox, 0, wx.ALL, item_border)
-        sizer_1.Add(self.torbirdy_checkbox, 0, wx.ALL, item_border+tab_offset)
+        sizer_1.Add(self.torbirdy_checkbox, 0, wx.ALL, item_border)
         sizer_1.Add(self.jitsi_checkbox, 0, wx.ALL, item_border)
         #sizer_1.Add(self.bleachbit_checkbox, 0, wx.ALL, item_border)
         sizer_1.Add(self.truecrypt_checkbox, 0, wx.ALL, item_border)
         sizer_1.Add(self.tailsISO_checkbox, 0, wx.ALL, item_border)
+        sizer_1.Add(self.fakeOut_checkbox, 0, wx.ALL, item_border)
+        sizer_1.Add(self.CryptoCat_checkbox, 0, wx.ALL, item_border)
         grid_sizer_1.Add(self.ok_button, 0, wx.ALIGN_RIGHT | wx.BOTTOM, 0)
         grid_sizer_1.Add(self.cancel_button, 0, wx.ALIGN_RIGHT | wx.BOTTOM, 0)
         sizer_1.Add(grid_sizer_1, 1, wx.ALIGN_RIGHT, 5)
@@ -91,6 +95,11 @@ class FRCMainFrame(wx.Frame):
         if self.tbird_checkbox.IsChecked():
             getThunderbirdWithEnigmail('en-US', self.torbirdy_checkbox.IsChecked())
 
+        if self.CryptoCat_checkbox.IsChecked():
+            installCryptoCat()
+
+
+
         if self.tbb_checkbox.IsChecked():
             getTOR(tor_url,'en-US')
 
@@ -110,15 +119,16 @@ class FRCMainFrame(wx.Frame):
         if self.truecrypt_checkbox.IsChecked():
             getTrueCrypt()
 
-        if self.fakeOut_checkbos.IsChecked():
+        if self.fakeOut_checkbox.IsChecked():
             getFakeOut()
 
 
-# end of class FRCMainFrame
+#end of class FRCMainFrame
 FRCAlert('Running main loop\n')
 app = wx.App()
 frame_1 = FRCMainFrame(None, -1, "")
 app.SetTopWindow(frame_1)
-#frame_1.Show()
+frame_1.Show()
 app.MainLoop()
-p()
+#p()
+print "GoodBye"
