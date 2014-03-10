@@ -44,7 +44,7 @@ Functionality to automatically download Tails [9] and burn it to a DVD
 
 making the .app file
 ====================
-We use py2app:
+We use py2app:<br>
   in your terminal :
     1-pip install py2app
     2-py2applet --make-setup path/to/the/FlyRodCrosby/frc-gui.py #this will make the setup.py file on your home directory
