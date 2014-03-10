@@ -55,9 +55,3 @@ We use py2app:
 					      #univeral: i386, x86_64, ppc, ppc64
 					      #intel: i386, x86_64
 
-6_64
-
-6_64
-
-intel: i386, x86_64
-
