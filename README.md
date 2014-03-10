@@ -15,8 +15,6 @@ Jitsi [5]
 
 TorBirdy [6]
 
-We plan to support:
-
 Cryptocat [4]
 
 Bleachbit [7]
@@ -42,3 +40,24 @@ Functionality to automatically download Tails [9] and burn it to a DVD
 [8] http://www.truecrypt.org/
 
 [9] https://tails.boum.org/
+
+
+making the .app file
+====================
+We use py2app:
+  in your terminal :
+    1-pip install py2app
+    2-py2applet --make-setup path/to/the/FlyRodCrosby/frc-gui.py #this will make the setup.py file on your home directory
+    3-python setup.py py2app --arch=universal #this willl generate two directory build/ and dist/ you can check the applcation on buil/
+					      #arch can be more spcified '--arch=VALUE' where VALUE is the architecture type:
+					      #fat: i386, ppc
+					      #fat3: i386, x86_64, ppc
+					      #univeral: i386, x86_64, ppc, ppc64
+					      #intel: i386, x86_64
+
+6_64
+
+6_64
+
+intel: i386, x86_64
+
