@@ -95,20 +95,45 @@ def FRCAlert(text):
 #Intevation doesn't have an HTTPS download of the file 
 #that doesn't throw a certificate error.  Could somebody yell at them, please?	
 #Anyway 
-def getGPG(macGPGurl):
-  page = requests.get(macGPGurl,verify=False)
-  soup = BeautifulSoup(page.content)
-  link=soup.find_all('a',attrs={'href': re.compile("GPG%20Suite *")}) [0]['href'] 
-  print link
-  macGPG_file=requests.get(link,stream=True,verify=False)
-  with open('./%s' % "GPG_Suite_2013.dmg",'wb') as f:
-   print "The GPG Suite Tools is downloading..\n"
-   for chunk in macGPG_file.iter_content(chunk_size=1024):
-     if chunk:
-       f.write(chunk)
-       f.flush
-   f.close()
-  os.system("open GPG_Suite_2013.dmg")
+
+def getGPG(GPGurl):
+        try:
+                # getting the link to dowload:
+                page = requests.get(GPGurl,verify=True)
+                soup = BeautifulSoup(page.content)
+                link = soup.find_all('a',attrs={'href':re.compile("gnupg-.*.tar.bz2$")})[0]['href']
+                siglink = soup.find_all('a',attrs={'href':re.compile("gnupg-.*.tar.bz2.sig$")})[0]['href']
+                if len(link)==0 or len(siglink)==0 :
+                        print "Couldn't found gpg doxnload link. Please telle whoever is running the cryptoperty.\n"
+
+                # downloading from the ftp server:      
+                with closing(urllib2.urlopen(link)) as r:
+                        #print r
+                        #print "in 2nd loop now"
+                        with open( gpg_file_name,'wb') as f:
+                                #print f
+                                #print "in 3rd loop now.."
+                                shutil.copyfileobj(r,f)
+                                #print "after copy"
+                                #bar.update(i+1)
+                                #sleep(0.1)
+                        f.close()
+                print "download done.."
+
+                # extracting and installing the needed packages:
+                os.system("tar xvjf " + gpg_file_name)
+                os.system ("apt-get install libgpg-error-dev && \
+                            apt-get install libgcrypt11-dev && \
+                            apt-get install libksba-dev && \
+                            apt-get install libassuan-dev ")
+
+                # installing gnupg:
+                os.system("./gnupg-2.0.22/configure")
+                #exit()
+                os.system("make gnupg-2.0.22/po/Makefile.in.in")
+                os.system("make gnupg-2.0.22/po/Makefile.in.in  install")
+        except Exception as e:
+                print "Error while downloading GnuPG: Please show this to your facilitator ERROR:", e
     
 
 

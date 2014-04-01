@@ -1,7 +1,8 @@
 #Fly Rod Crosby: Making Cryptoparties Easier since 1897!
 import os
 
-macGPGurl= u'https://gpgtools.org/'
+gpg_file_name='gpg_to_install.tar.bz2'
+GPGurl=u'http://www.gnupg.org/download/'
 tor_url = u'https://www.torproject.org/projects/torbrowser.html.en#Download-torbrowserbundle'
 jitsi_url = u'https://jitsi.org/Main/Download'
 #SOMEONE PLEASE CHECK THAT I GOT ERINN CLARK'S GPG INFO RIGHT
