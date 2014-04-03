@@ -5,7 +5,7 @@ Making Cryptoparties easier since 1897!
 
 FlyRodCrosby[1] is an automated installer for Windows (stay tuned for an OSX port) for all of the standard Cryptoparty tools.  It currently handles:
 
-GPG4Win
+macGPG[2]
 
 Tor Browser Bundle [3]
 
