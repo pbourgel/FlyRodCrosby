@@ -171,18 +171,29 @@ def getTOR(url,lang):
         tor_soup = BeautifulSoup(tor_page.content)
         tor_zip_link=''
         tor_sig_links=''
-        FRCAlert('Scraping the Tor Project site for the relevant links\n')
+        print 'Scraping the Tor Project site for the relevant links\n'
         #Find the anchor tags for the language's EXE and OpenPGP signature
-        tor_zip_link=tor_soup.find_all('a', attrs={'href': re.compile('TorBrowserBundle-.*' + lang + '.*.zip$')})[0]['href']
-        tor_sig_links=tor_soup.find_all('a', attrs={'href': re.compile('TorBrowserBundle-.*' + lang + '\\.zip\\.*asc$')})[0]['href']
+	#print platform.machine()
+        #exit()
+	if platform.machine()=='x86_64':
+		tor_zip_link=tor_soup.find_all('a', attrs={'href': re.compile('tor-browser-linux64-.*' + lang + '.*.tar.xz$')})[0]['href']
+        	tor_sig_links=tor_soup.find_all('a', attrs={'href': re.compile('tor-browser-linux64-.*' + lang + '\\.tar.xz\\.*asc$')})[0]['href']
+	else:
+		tor_zip_link=tor_soup.find_all('a', attrs={'href': re.compile('tor-browser-linux32-.*' + lang + '.*.tar.xz$')})[0]['href']
+                tor_sig_links=tor_soup.find_all('a', attrs={'href': re.compile('tor-browser-linux32-.*' + lang + '\\.tar.xz\\.*asc$')})[0]['href']
         print tor_zip_link
         print tor_sig_links
-        
+        #exit()
+		
+	tor_file_name=tor_zip_link[25:63]
+
+	print  tor_file_name
+	#exit()
         #We parse the url and add the scheme because the href text in the source looks something like this:
         # ../dist/torbrowser/3.5.2.1/torbrowser-install-3.5.2.1_vi.exe
-        #Therefore we need to take the url in the href attribute,  parse out the netloc, and add https to the beginning.
+        #Therefore we need to take the url in the href attribute, parse out the netloc, and add https to the beginning.
         tor_url_parsed=urlparse(url)
-        tor_url_base=tor_url_parsed.scheme + '://' + tor_url_parsed.netloc
+	tor_url_base=tor_url_parsed.scheme + '://' + tor_url_parsed.netloc
         
         #print unicode(tor_link_exes) + '\n\n' + unicode(tor_sig_links)
         #In an earlier version of the Tor download page, the stable version
@@ -190,75 +201,99 @@ def getTOR(url,lang):
         #Hence the two for loops below to find the non-beta version.
         #TO-DO: Remove the for loops to make the code more readable.
         #for exe_link in tor_link_exes:
-        #    if len(exe_link) > 0 and 'beta' not in exe_link['href']:
-        #        tor_exe_link=tor_url_base+exe_link['href'][2:]
-        #        FRCAlert(tor_exe_link + '\n')
+        # if len(exe_link) > 0 and 'beta' not in exe_link['href']:
+        # tor_exe_link=tor_url_base+exe_link['href'][2:]
+        # FRCAlert(tor_exe_link + '\n')
 
         #for sig_link in tor_sig_links:
-        #    if len(sig_link) > 0 and 'beta' not in sig_link['href']:
-        #        tor_sig_link=tor_url_base+sig_link['href'][2:]
-        #        FRCAlert(tor_sig_link + '\n')
+        # if len(sig_link) > 0 and 'beta' not in sig_link['href']:
+        # tor_sig_link=tor_url_base+sig_link['href'][2:]
+        # FRCAlert(tor_sig_link + '\n')
         
         #Check to make sure we have an exe link and a signature link
         #to request.
         if len(tor_zip_link) == 0 or len(tor_sig_links) == 0:
-            FRCAlert("Couldn't find download link for Tor.  Please tell whoever is running the Cryptoparty.\n")
+            print "Couldn't find download link for Tor. Please tell whoever is running the Cryptoparty.\n"
             exit()
-        FRCAlert('Found download links.  Downloading the zip from ' + tor_zip_link + '\n')
+        print 'Found download links. Downloading the zip from ' + tor_zip_link + '\n'
         #Download and write to file (see getGPG for an explanation of the with block below
         
         tor_zip_link='https://www.torproject.org'+tor_zip_link[2:]
         
         #tor_zip_link='https://www.torproject.org/dist/torbrowser/3.5.2.1/TorBrowserBundle-3.5.2.1-osx32_en-US.zip'
-        tor_zip_file=requests.get(tor_zip_link,stream=True) 
-        
-        with open('tor.zip','wb') as f:
-            for chunk in tor_zip_file.iter_content(chunk_size=1024): 
+        tor_zip_file=requests.get(tor_zip_link,stream=True)
+       	i=0 
+	#exit() 
+	pbar = ProgressBar(widgets=[Percentage(), Bar()], maxval=300).start()
+  	print "obove"
+	#print tor_zip_file.iter_content(chunk_size=1024)
+	#exit(0)
+	with open(tor_file_name,'wb') as f:
+            for chunk in tor_zip_file.iter_content(chunk_size=1024):
                 if chunk: # filter out keep-alive new chunks
+		    print "something", i
+		    # time.sleep(0.01)
+		    i+=1
                     f.write(chunk)
                     f.flush()
+		    #pbar.update(i)
+	print "ok 2"
+	#pbar.finish()
+	print "ok "
         f.close()
+	#exit()
+	
         tor_sig_links='https://www.torproject.org'+tor_sig_links[2:]
-        FRCAlert('Downloaded zip.  Now downloading GPG signature from ' + tor_sig_links + '\n')
+        print 'Downloaded tor file. Now downloading GPG signature from ' + tor_sig_links + '\n'
         #Now download the signature
         tor_sig_file=requests.get(tor_sig_links)
-        f=open('tor_sig.asc', 'wb')
+        f=open(tor_file_name+'.asc', 'wb')
         f.write(tor_sig_file.content)
         f.close()
+	print "under f.close"
         #And now to verify the executable.
         #I just hope that nobody tampered with both the exe AND the asc!
         #If they did, I'm going to download Erinn Clark's GPG off one of a list
         #of public key servers (from the Thunderbird defaults) and verify with
-        #both keys.  If either one fails, I'll throw an exception.
-        #TO-DO: Tweak the key verification.  It might be a good idea to use
+        #both keys. If either one fails, I'll throw an exception.
+        #TO-DO: Tweak the key verification. It might be a good idea to use
         #a server that speaks HKPS if we can find one.
         try:
             #Start up GPG
             gpg=gnupg.GPG()
-            FRCAlert('Trying to download Tor devs GPG key\n')
+            print 'Trying to download Tor devs GPG key\n'
             #TO-DO: Iterate through the standard servers in case sks-skyservers
             #is down.
             gpg.recv_keys('pool.sks-keyservers.net',tor_dev_gpg_fingerprint)
-            f = open('tor_sig.asc','rb')
+            f = open(tor_file_name+'.asc','rb')
             #g = open('tor.exe','rb')
-            FRCAlert('Verifying exe with GPG key in keyring\n')
-            verified_with_asc = gpg.verify_file(f,os.path.abspath('tor.zip'))
+            print 'Verifying exe with GPG key in keyring\n'
+            verified_with_asc = gpg.verify_file(f,os.path.abspath(tor_file_name))
             if verified_with_asc:
-                FRCAlert("The Tor executable checks out.  Let's extract it.\n")
-                os.system(' open tor.zip')
-                f.close()
+                #print "The Tor executable checks out. Let's extract it.\n"
+                #os.system(' open tor.zip')
+                #f.close()
                 #g.close()
-                task="open TorBrowserBundle_"+lang 
-                os.system( task )
+                #task="open TorBrowserBundle_"+lang
+                #os.system( task )
+		print "verified GOOD"
+	
+		task = "tar -xvJf "+tor_file_name
+		print task
+		os.system(task)
+		task2= "./tor-browser_" +lang+ "/start-tor-browser"
+		os.system("./tor-browser_en-US/start-tor-browser")
             else:
-                FRCAlert("EXE verification failed.  Please tell whoever is running your Cryptoparty." + "\n")
-                f.close()
+                print "EXE verification failed. Please tell whoever is running your Cryptoparty." + "\n"
+                #f.close()
                 #g.close()
-                exit()
+                #exit()
         except Exception as e:
-            FRCAlert('Problem downloading Tor: Please show this to your facilitator: ' + unicode(e) + '\n')
+            print 'Problem downloading Tor: Please show this to your facilitator: ' + unicode(e) + '\n'
     except Exception as e:
-        printError(unicode(e))
+        print unicode(e)
+        
+        
  
 def getThunderbird(lang):
     try:
