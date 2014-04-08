@@ -25,34 +25,28 @@ import wx
 def install_Firefox_plugin(plugin_name):
   os.system("rm install.rdf")
   task="unzip -p "+plugin_name+" install.rdf > install.rdf"
-  print task 
-  os.system(task) #" unzip -p enigmail.xpi install.rdf >   install.rdf"
+  os.system(task)
   xmldoc = minidom.parse("install.rdf")
   dom = minidom.parseString(xmldoc.toxml())
   plugin_id = str(dom.getElementsByTagName("em:id")[0].toxml().replace('<em:id>','').replace('</em:id>',''))
   print plugin_id
-  
-  #profile=os.listdir("./.icedove")[0]
+  #exit()
 
-  for x in os.listdir("./Library/Application Support/Firefox/Profiles"):
-	  if x.endswith(".default"):
-		  profile=x
-	  break
 
-  path="./Library/Application Support/Firefox/Pofiles/"+profile+"/extensions/" 
+  for x in os.listdir(".mozilla/firefox/"):
+        if x.endswith(".default"):
+                profile=x
+        break
+  print profile
+  #exit()
+
+  path=".mozilla/firefox/"+profile+"/extensions/" #don't hesitate to change thunderbird to icedove if you have icedove installed
   print path
-  path=path +plugin_id
-  #task1="mkdir "+path
-  #print task1
-  #os.system(task1)
-  #task2="cp "+plugin_name +" "+path
-  #print task2
-  #os.system(task2)
-  #f=open(plugin_name,'r')
-  #open(path,'w').write(f.read())
-  #f.close
-  file=zipfile.ZipFile(plugin_name)
-  file.extractall(path)
+
+  task="cp Downloads/fake_domain_detective-1.2-fx.xpi "+path+plugin_id+".xpi"
+  print task
+  os.system(task)
+
 
 
 
