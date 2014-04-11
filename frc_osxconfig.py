@@ -1,6 +1,10 @@
 #Fly Rod Crosby: Making Cryptoparties Easier since 1897!
 import os
 
+
+
+home=os.path.expanduser("~")
+hkps_cert_link=u'https://sks-keyservers.net/sks-keyservers.netCA.pem'
 gpg_file_name='gpg_to_install.tar.bz2'
 GPGurl=u'http://www.gnupg.org/download/'
 tor_url = u'https://www.torproject.org/projects/torbrowser.html.en#Download-torbrowserbundle'

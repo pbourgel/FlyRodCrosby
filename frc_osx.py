@@ -131,12 +131,24 @@ def getGPG(GPGurl):
               	  #exit()
                 	os.system("make gnupg-2.0.22/po/Makefile.in.in")
                		os.system("make gnupg-2.0.22/po/Makefile.in.in  install")
+		
+			cert_file=requests.get(hkps_cert_link,verify=False)
+
+	                path_to_cert=home+"/.gnupg/sks-keyservers.netCA.pem"
+	
+        	        with open("path_to_cert","wb") as f:
+                	     for chunk in cert_file.iter_content(chunk_size=1024):
+                        	     if chunk:
+                                	f.write(chunk)
+                                     	f.flush()
+	                     f.close()
+        	        with open(home+"/.gnupg/gpg.conf","a") as r:
+                	        r.write(" keyserver hkps://hkps.pool.sks-keyservers.net\nkeyserver-options ca-cert-file=path_to_cert")
+                		r.close()
+
         except Exception as e:
                 print "Error while downloading GnuPG: Please show this to your facilitator ERROR:", e
     
-
-
-
 
 try:
     import gnupg
