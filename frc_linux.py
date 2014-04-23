@@ -13,7 +13,7 @@ import hashlib
 from shutil import copyfile
 from bs4 import BeautifulSoup
 from urlparse import urlparse
-from frc_osxconfig import *
+from frc_linuxconfig import *
 #from xpi2folders import *
 #from _winreg import *
 from xml.dom import minidom

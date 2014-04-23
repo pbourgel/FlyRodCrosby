@@ -134,8 +134,7 @@ class CryptoCat_checkbox_msg(fct):
         msgFR="Cryptocat utilise des technologies Web modernes pour fournir facile à utiliser, le chat cryptée accessible avec vos amis, directement dans votre navigateur."
         msgES="Cryptocat utiliza tecnologías web modernas para proporcionar un fácil de usar, el chat encriptado accesible con tus amigos, en tu navegador."
         msgIT="Cryptocat utilizza tecnologie web moderne per fornire un facile da usare, accessibili chat crittata con i tuoi amici, direttamente dal tuo browser."        
-        msgAR=''
-        msgRU="Cryptocat использует современные веб-технологии, чтобы обеспечить легкий в использовании, доступную зашифрованный чат с друзьями, прямо в браузере."
+        msgAR='cryptocat تقنيات الويب الحديثة لتوفير سهلة الاستخدام، ويمكن الوصول إليها مشفرة دردشة مع أصدقائك، والحق في المتصفح الخاص بك.'
 
 
 #	languages.getGPG.getLangauge('fr')

@@ -8,7 +8,9 @@ import sys
 import subprocess
 import ctypes
 
-from frc_osx import *
+from frc_linux import *
+
+from langauges import *
 
 # begin wxGlade: extracode
 # end wxGlade
@@ -22,40 +24,103 @@ tab_offset=10
 # TorBirdy --> Thunderbird and Tor
 # Everything with a GPG signature --> GPG4Win/MacGPG
 
+
+
+
+######################################################
+
+l=["en-US",'fr', 'ar', 'es', "it", 'ru']
+
+class MyPanel(wx.Panel):
+
+        def __init__(self, parent, id):
+		
+                wx.Panel.__init__(self, parent, id)
+                self.button1 = wx.Button(self, -1, label = "OK!!",
+                        pos=wx.Point(210,50))
+
+                self.button2 = wx.Button(self, -1, label = "EXIT!!",
+                        pos=wx.Point(300,50))
+
+                self.button1.Bind(wx.EVT_BUTTON, self.button1Click, self.button1)
+
+                self.button2.Bind(wx.EVT_BUTTON, self.button2Click, self.button2)
+
+
+                wx.StaticText(self, -1, "Choose language:", (10,30))
+                self.combo1=wx.ComboBox(self,-1,
+                        value=l[0],
+                        pos=wx.Point(10,50),
+                        choices=l,
+                        style=wx.CB_READONLY)
+
+
+        def button1Click(self, e):
+		
+		global lang1
+                lang1=self.combo1.GetValue()
+                frame.Destroy()
+                
+
+
+        def button2Click(self, e):
+		
+		exit()
+
+
+######################################################
+
+
+
+
+
+
+
+
 class FRCMainFrame(wx.Frame):
     def __init__(self, *args, **kwds):
-        # begin wxGlade: FRCMainFrame.__init__
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
         wx.Frame.__init__(self, *args, **kwds)
-        #self.combo_box_1 = wx.ComboBox(self, -1, choices=["English", u"العربية", u"Français", u"Español", u"Português"], style=wx.CB_READONLY)
-        self.label_1 = wx.StaticText(self, -1, "Welcome to FlyRodCrosby, an auto-installer for standard secure communications tools.  Select the apps you want to install below and click OK to begin the installation process.")
+        self.label_1 = wx.StaticText(self, -1, First_msg(lang1).getFirstMsg())
+	#"Welcome to FlyRodCrosby, an auto-installer for standard secure communications tools.  Select the apps you want to install below and click OK to begin the installation process.")
         self.label_1.Wrap(400)
-        self.tbird_checkbox = wx.CheckBox(self, -1, "Thunderbird with Enigmail lets you send and receive encrypted emails.")
-        self.tbb_checkbox = wx.CheckBox(self, -1, "The Tor Browser Bundle lets you browse the web anonymously.")
-        self.torbirdy_checkbox = wx.CheckBox(self, -1, "TorBirdy lets you send and receive email over the Tor network (requires Tor and Thunderbird).")
-        self.jitsi_checkbox = wx.CheckBox(self, -1, "Jitsi is a secure Skype alternative with support for encrypted chat.")
-        #self.bleachbit_checkbox = wx.CheckBox(self, -1, "Bleachbit securely deletes sensitive files to prevent recovery.")
-        self.truecrypt_checkbox = wx.CheckBox(self, -1, "Use Truecrypt to encrypt files on your computer.")
-        self.tailsISO_checkbox = wx.CheckBox(self, -1, "Download Tails and burn it to a DVD for a temporary Windows alternative in highly insecure environments.")
-        self.fakeOut_checkbox = wx.CheckBox(self, -1, "The FakeOut plugin from Access prevents Fake Domain attacks caused by misspelled domain names and other network shenanigans.")
-        self.CryptoCat_checkbox = wx.CheckBox(self, -1, "Cryptocat uses modern web technologies to provide easy to use, accessible encrypted chat with your friends, right in your browser. ")
+        self.tbird_checkbox = wx.CheckBox(self, -1, tbird_checkbox_msg(lang1).getCheckBoxLabel())
+	#"Thunderbird with Enigmail lets you send and receive encrypted emails.")
+        self.tbb_checkbox = wx.CheckBox(self, -1, tbb_checkbox_msg(lang1).getCheckBoxLabel())
+	#"The Tor Browser Bundle lets you browse the web anonymously.")
+        self.torbirdy_checkbox = wx.CheckBox(self, -1,torbirdy_checkbox_msg(lang1).getCheckBoxLabel())
+	#"TorBirdy lets you send and receive email over the Tor network (requires Tor and Thunderbird).")
+        self.jitsi_checkbox = wx.CheckBox(self, -1, jitsi_checkbox_msg(lang1).getCheckBoxLabel())
+	#"Jitsi is a secure Skype alternative with support for encrypted chat.")
+        #self.bleachbit_checkbox = wx.CheckBox(self, -1, beachbit_checkbox_msg(lang1).getCheckBoxLabel())
+	#"Bleachbit securely deletes sensitive files to prevent recovery.")
+        self.truecrypt_checkbox = wx.CheckBox(self, -1, truecrypt_checkbox_msg(lang1).getCheckBoxLabel())
+	#"Use Truecrypt to encrypt files on your computer.")
+        self.tailsISO_checkbox = wx.CheckBox(self, -1,tailsISO_checkbox_msg(lang1).getCheckBoxLabel())
+	#"Download Tails and burn it to a DVD for a temporary Windows alternative in highly insecure environments.")
+        self.fakeOut_checkbox = wx.CheckBox(self, -1, fakeOut_checkbox_msg(lang1).getCheckBoxLabel())
+	# "The FakeOut plugin from Access prevents Fake Domain attacks caused by misspelled domain names and other network shenanigans.")
+       	#self.st=CryptoCat_checkbox_msg(lang).getCheckBoxLabel()
+	self.CryptoCat_checkbox = wx.CheckBox(self, -1,CryptoCat_checkbox_msg(lang1).getCheckBoxLabel())
+	
         self.ok_button = wx.Button(self, wx.ID_OK, "OK")
         self.cancel_button = wx.Button(self, wx.ID_CLOSE, "Quit")
         self.SetBackgroundColour(wx.WHITE)
-
-
+	
+	
+	
 
         self.__set_properties()
         self.__do_layout()
         # end wxGlade
-
+   
+    
     def __set_properties(self):
-        # begin wxGlade: FRCMainFrame.__set_properties
+       
         self.SetTitle("FlyRodCrosby - Making Cryptoparties easier since 1897!")
         self.SetSize((1000,400))
         self.SetBackgroundColour('#ededed')
-        #self.combo_box.SetSelection(-1)
-        # end wxGlade
+        
 
     def __do_layout(self):
         # begin wxGlade: FRCMainFrame.__do_layout
@@ -123,12 +188,32 @@ class FRCMainFrame(wx.Frame):
             getFakeOut()
 
 
+###############################################################################
+#app = wx.App()
+app1 = wx.PySimpleApp()
+frame = wx.Frame(None, -1, "Test:^|",pos=wx.Point(500,200),  size=(400,150), style= wx.MINIMIZE)
+
+MyPanel(frame,-1)
+frame.Show(True)
+app1.MainLoop()
+
+
+###############################################################################
+
+
+
 #end of class FRCMainFrame
+
 FRCAlert('Running main loop\n')
 app = wx.App()
-frame_1 = FRCMainFrame(None, -1, "")
+frame_1 = FRCMainFrame(None, -1, 'Title', style= wx.MINIMIZE)
+
 app.SetTopWindow(frame_1)
+
 frame_1.Show()
+
+
 app.MainLoop()
+
 #p()
 print "GoodBye"
