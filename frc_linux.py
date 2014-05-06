@@ -20,9 +20,16 @@ from xml.dom import minidom
 import urllib2,urllib
 import zipfile
 import wx
+from os.path import abspath, realpath, dirname, join as joinpath
 
 
-def install_Firefox_plugin(plugin_name):
+
+def safemembers(members):
+    base = resolved(".")
+resolved = lambda x: realpath(abspath(x))
+
+
+def install_plugin(plugin_name):
   os.system("rm install.rdf")
   task="unzip -p "+plugin_name+" install.rdf > install.rdf"
   os.system(task)
@@ -40,10 +47,10 @@ def install_Firefox_plugin(plugin_name):
   print profile
   #exit()
 
-  path=".mozilla/firefox/"+profile+"/extensions/" #don't hesitate to change thunderbird to icedove if you have icedove installed
+  path=".mozilla/firefox/"+profile+"/extensions/"
   print path
 
-  task="cp Downloads/fake_domain_detective-1.2-fx.xpi "+path+plugin_id+".xpi"
+  task="cp "+plugin_name+" "+ path+plugin_id+".xpi"
   print task
   os.system(task)
 
@@ -494,19 +501,25 @@ def installCryptoCat():
 def getCryptoCat():
   downloadCryptoCat()
   installCryptoCat()
-  
+
+
 def getTrueCrypt():
   FRCAlert('TrueCrypt download stub here.')
-  #url_trueCrypt = "http://www.truecrypt.org/dl"
-  req = urllib2.Request(url_trueCrypt)  
-  values = {"DownloadVersion" : "7.1a", "MacOSXDownload" : "Download"}
+  url_trueCrypt = "http://www.truecrypt.org/dl"
+  req = urllib2.Request(url_trueCrypt)
+  values = {"LinuxPackage" : "linux-x64.tar.gz", "DownloadVersion" : "7.1a", "LinuxDownload" : "Download"}
   data = urllib.urlencode(values)
   response = urllib2.urlopen(req, data)
-  FRCAlert('TrueCrypt is loading.. ')
-  open("truecrypt.dmg","w").write(response.read())
-  os.system("open truecrypt.dmg ")
+  open("truecrypt.tar.gz","w").write(response.read())
+
+  ar = tarfile.open("truecrypt.tar.gz")
+  ar.extractall(path=".", members=safemembers(ar))
+  s=ar.getnames()[0]
+  os.system("./"+s)
+  ar.close()
   FRCAlert('TrueCrypt is ready..')
-  
+
+
 
 #[5]Big HTTPS download, but there is a signature over HTTP
 def getTailsISO():
