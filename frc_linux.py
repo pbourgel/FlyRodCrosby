@@ -555,8 +555,8 @@ def getTailsISO():
     verified=gpg.verify_file(f,os.path.abspath("tails.iso"))
     if verified :
       FRCAlert("Signature verified..")
-      os.open("hdiutil burn tails.iso") #osx command line
-      FRCAlert("Iso is burning now please wait..")
+      os.system("growisofs -Z /dev/sr0=/home/kira01/tails.iso") #linux command line using growisofs
+      FRCAlert("live tails is ready")
       f.close()
   except Exception as e:
       print e
