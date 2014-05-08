@@ -29,7 +29,7 @@ def safemembers(members):
 resolved = lambda x: realpath(abspath(x))
 
 
-def install_plugin(plugin_name):
+def  install_Firefox_plugin(plugin_name):
   os.system("rm install.rdf")
   task="unzip -p "+plugin_name+" install.rdf > install.rdf"
   os.system(task)
@@ -58,31 +58,40 @@ def install_plugin(plugin_name):
 
 
 def install_plugin(plugin_name):
+  os.system("rm install.rdf")
   task="unzip -p "+plugin_name+" install.rdf > install.rdf"
-  os.system(task) #" unzip -p enigmail.xpi install.rdf >   install.rdf"
+  os.system(task)
   xmldoc = minidom.parse("install.rdf")
   dom = minidom.parseString(xmldoc.toxml())
   plugin_id = str(dom.getElementsByTagName("em:id")[0].toxml().replace('<em:id>','').replace('</em:id>',''))
   print plugin_id
+  #exit()
 
-  #profile=os.listdir("./.thunderbird")[0]
 
-  for x in os.listdir("./Library/Thunderbird/Profiles/"):
-	  if x.endswith(".default"):
-		  profile=x
-		  break
-		
-  #/Library/Thunderbird/Profiles/
-  path="./Library/Thunderbird/Profiles/"+profile+"/extensions/" #don't hesitate to change thunderbird to icedove if you have icedove installed
-  #print path
-  path=path +plugin_id+"/"
-  #task1="mkdir "+path
-  #print task1
-  #os.system(task1)
-  #task2="unzip "+plugin_name+" -d "+path
-  #os.system(task2)
-  file=zipfile.ZipFile(plugin_name)
-  file.extractall(path)
+  for x in os.listdir(".thunderbird/"):
+        if x.endswith(".default"):
+                #print "nothing"
+                profile=x
+                break
+  print profile
+  #exit()
+
+  path=".thunderbird/"+profile+"/extensions/"
+  print path
+
+  task="cp "+plugin_name+" "+ path+plugin_id+".xpi"
+  print task
+  os.system(task)
+
+
+
+
+
+
+
+
+
+
 
 def FRCAlert(text):
      print text
