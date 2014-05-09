@@ -319,6 +319,7 @@ def getTOR(url,lang):
  
 def getThunderbird(lang):
     try:
+	'''
         tbird_soup=BeautifulSoup(requests.get(thunderbird_url).content)#here we go very fast :p
         tbird_link=tbird_soup.find_all('a',attrs={'href': re.compile('.*os=osx.*lang=' + lang)})
         print tbird_link
@@ -331,10 +332,29 @@ def getThunderbird(lang):
                     f.write(chunk)
                     f.flush()
         f.close()
+	'''
+	is_64bits = sys.maxsize > 2**32
+        if is_64bits:
+                LinuxPackage = "linux-x86_64"
+        else:
+                LinuxPackage = "linux-i686"
+
+        link = "http://ftp.mozilla.org/pub/mozilla.org/thunderbird/releases/latest/"+LinuxPackage+"/en-US/"
+        tbird_soup=BeautifulSoup(requests.get(link).content)
+        tbird_link=tbird_soup.find_all('a',attrs={'href': re.compile('thunderbird-*')})[1]['href']
+
+        print tbird_link
+        #exit()
+        os.system("wget "+link+tbird_link)
+	
+        os.system('tar -xvjf '+tbird_link+'  -C /opt/')
+        os.system("ln -s /opt/thunderbird/thunderbird /usr/bin")
+	
+
         #I WOULD add signature verification code here, BUT THERE'S NO FUCKING
         #PGP key!
         #yeah soon ;)
-        os.system('open thunderbird-installer.dmg')
+        #os.system('open thunderbird-installer.dmg')
         print('Thunderbird is ready let\'s install enigmail')
     except Exception as e:
         printError(unicode(e))
@@ -516,7 +536,14 @@ def getTrueCrypt():
   FRCAlert('TrueCrypt download stub here.')
   url_trueCrypt = "http://www.truecrypt.org/dl"
   req = urllib2.Request(url_trueCrypt)
-  values = {"LinuxPackage" : "linux-x64.tar.gz", "DownloadVersion" : "7.1a", "LinuxDownload" : "Download"}
+  is_64bits = sys.maxsize > 2**32
+  if is_64bits:
+        LinuxPackage = "linux-x64.tar.gz"
+  else:
+        LinuxPackage = "linux-x86.tar.gz"
+
+  values = {"LinuxPackage" : LinuxPackage, "DownloadVersion" : "7.1a", "LinuxDownload" : "Download"}
+
   data = urllib.urlencode(values)
   response = urllib2.urlopen(req, data)
   open("truecrypt.tar.gz","w").write(response.read())
