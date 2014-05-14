@@ -6,7 +6,7 @@
 #This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 #See the GNU General Public License for more details.
 #You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-import os
+import os,sys
 import requests
 import re
 import hashlib
@@ -21,7 +21,7 @@ import urllib2,urllib
 import zipfile
 import wx
 from os.path import abspath, realpath, dirname, join as joinpath
-
+import tarfile
 
 
 def safemembers(members):
@@ -47,10 +47,13 @@ def  install_Firefox_plugin(plugin_name):
   print profile
   #exit()
 
-  path=".mozilla/firefox/"+profile+"/extensions/"
+  path=".mozilla/firefox/"+profile+"/extensions/"+plugin_id+".xpi"
   print path
-
-  task="cp "+plugin_name+" "+ path+plugin_id+".xpi"
+  plugin_exists=os.path.isfile(path)
+  if plugin_exists:
+	FRCAlert(plugin_name[:-4]+" is already installed..")
+	return 
+  task="cp "+plugin_name+" "+ path #+plugin_id+".xpi"
   print task
   os.system(task)
 
@@ -333,6 +336,11 @@ def getThunderbird(lang):
                     f.flush()
         f.close()
 	'''
+	exist=os.system("which thunderbird")
+        if exist==0:
+                print "Thunderbird is already installed !"
+                return
+
 	is_64bits = sys.maxsize > 2**32
         if is_64bits:
                 LinuxPackage = "linux-x86_64"
@@ -361,7 +369,7 @@ def getThunderbird(lang):
 
 def getEnigmail(url):
     try:
-	RCAlert('in getEnigmail\n')
+	FRCAlert('in getEnigmail\n')
         enigmail_page = requests.get(url).content
         enigmail_soup = BeautifulSoup(enigmail_page)
         enigmail_links=enigmail_soup.find_all('a', attrs={'href': re.compile('enigmail.*sm\\+tb\\.xpi')})[:2]
@@ -432,36 +440,14 @@ def getTorBirdy():
 
 def installEnigmail():
     try:
+      #getEnigmail(enigmail_url)
       install_plugin("enigmail.xpi")
-        #FRCAlert('Determined Thunderbird extensions directory: ' + thunderbird_ext_dir + '\n')
-        #FRCAlert('Determined Thunderbird main directory: ' + thunderbird_main_dir + '\n')
-        #copyfile(os.getcwd() + '\\' + 'enigmail.xpi', thunderbird_ext_dir + 'enigmail.xpi')
-        #xpi_id = processXpi(thunderbird_ext_dir + 'enigmail.xpi', thunderbird_ext_dir)['id']
-        #FRCAlert('Modifying registry\n')
-        #with CreateKey(HKEY_LOCAL_MACHINE,tbird_reg_str) as key:
-            #SetValueEx(key,"{3550f703-e582-4d05-9a08-453d09bdfdc6}",0,REG_SZ,xpi_id)
-            #FRCAlert('Set key in registry\n')
-            #CloseKey(key)
-        #FRCAlert('Starting Thunderbird\n')
-        #if start_after_copied:
-            #os.system(thunderbird_main_dir)
     except Exception as e:
         printError(unicode(e))
 
 def installTorBirdy():
     try:
       install_plugin("torbirdy.xpi")
-        #FRCAlert('Determined Thunderbird extensions directory: ' + thunderbird_ext_dir + '\n')
-        #FRCAlert('Determined Thunderbird main directory: ' + thunderbird_main_dir + '\n')
-        #copyfile(os.getcwd() + '\\' + 'torbirdy.xpi', thunderbird_ext_dir + 'torbirdy.xpi')
-        #xpi_id = processXpi(thunderbird_ext_dir + 'torbirdy.xpi', thunderbird_ext_dir)['id']
-        #FRCAlert('Modifying registry\n')
-        #with CreateKey(HKEY_LOCAL_MACHINE,tbird_reg_str) as key:
-           #SetValueEx(key,"{3550f703-e582-4d05-9a08-453d09bdfdc6}",0,REG_SZ,xpi_id)
-           #FRCAlert('Set key in registry\n')
-           #CloseKey(key)
-        #FRCAlert('Starting Thunderbird\n')
-        #os.system(thunderbird_main_dir)
     except Exception as e:
       printError(unicode(e))
 
@@ -471,7 +457,7 @@ def getJitsi(url):
         exist=os.system("which jitsi")
         if exist==0:
                 print "Jitsi is already installed !"
-                exit()
+                return
         print 'In getJitsi\n'
         jitsi_page = requests.get(url).content
         jitsi_soup = BeautifulSoup(jitsi_page)

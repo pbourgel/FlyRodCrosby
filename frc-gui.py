@@ -7,7 +7,7 @@ import os
 import sys
 import subprocess
 import ctypes
-
+import threading
 from frc_linux import *
 
 from langauges import *
@@ -161,6 +161,7 @@ class FRCMainFrame(wx.Frame):
             getThunderbirdWithEnigmail('en-US', self.torbirdy_checkbox.IsChecked())
 
         if self.CryptoCat_checkbox.IsChecked():
+	    downloadCryptoCat()
             installCryptoCat()
 
 
@@ -183,6 +184,9 @@ class FRCMainFrame(wx.Frame):
 
         if self.truecrypt_checkbox.IsChecked():
             getTrueCrypt()
+	    #t1 = threading.Thread(target=getTrueCrypt)
+	    #t1.start()
+	    #t1.join()
 
         if self.fakeOut_checkbox.IsChecked():
             getFakeOut()
@@ -191,7 +195,7 @@ class FRCMainFrame(wx.Frame):
 ###############################################################################
 #app = wx.App()
 app1 = wx.PySimpleApp()
-frame = wx.Frame(None, -1, "Test:^|",pos=wx.Point(500,200),  size=(400,150), style= wx.MINIMIZE)
+frame = wx.Frame(None, -1, "FlyRodCrosby",pos=wx.Point(500,200),  size=(400,150), style= wx.MINIMIZE)
 
 MyPanel(frame,-1)
 frame.Show(True)
@@ -206,7 +210,7 @@ app1.MainLoop()
 
 FRCAlert('Running main loop\n')
 app = wx.App()
-frame_1 = FRCMainFrame(None, -1, 'Title', style= wx.MINIMIZE)
+frame_1 = FRCMainFrame(None, -1, 'FlyRodCrosby-Making Cryptoparties easier since 1897!', style= wx.MINIMIZE,pos=(150,150))
 
 app.SetTopWindow(frame_1)
 
