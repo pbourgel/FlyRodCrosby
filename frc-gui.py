@@ -29,7 +29,7 @@ tab_offset=10
 
 ######################################################
 
-l=["English",'Français', 'ar', 'Español', "Italiano", 'Русский']
+l=["en-US",'fr', 'ar', 'es', "it", 'ru']
 class MyPanel(wx.Panel):
 
         def __init__(self, parent, id):
