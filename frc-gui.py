@@ -29,17 +29,16 @@ tab_offset=10
 
 ######################################################
 
-l=["en-US",'fr', 'ar', 'es', "it", 'ru']
-
+l=["English",'Français', 'ar', 'Español', "Italiano", 'Русский']
 class MyPanel(wx.Panel):
 
         def __init__(self, parent, id):
 		
                 wx.Panel.__init__(self, parent, id)
-                self.button1 = wx.Button(self, -1, label = "OK!!",
+                self.button1 = wx.Button(self, -1, label = "OK",
                         pos=wx.Point(210,50))
 
-                self.button2 = wx.Button(self, -1, label = "EXIT!!",
+                self.button2 = wx.Button(self, -1, label = "EXIT",
                         pos=wx.Point(300,50))
 
                 self.button1.Bind(wx.EVT_BUTTON, self.button1Click, self.button1)
@@ -118,7 +117,7 @@ class FRCMainFrame(wx.Frame):
     def __set_properties(self):
        
         self.SetTitle("FlyRodCrosby - Making Cryptoparties easier since 1897!")
-        self.SetSize((1000,400))
+        self.SetSize((1000,500))
         self.SetBackgroundColour('#ededed')
         
 
