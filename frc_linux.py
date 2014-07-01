@@ -545,6 +545,7 @@ def getTrueCrypt():
 
 #[5]Big HTTPS download, but there is a signature over HTTP
 def getTailsISO():
+  global home #defined in frc_linuxconfig.py return the home path 
   tails_soup = BeautifulSoup(requests.get(tails_url).content)
   tails_iso_link = tails_soup.find_all('a', attrs = {'href': re.compile('tails.*\\.iso$')})[0]['href']
   FRCAlert('Got Tails download link: ' + str(tails_iso_link))
@@ -554,7 +555,7 @@ def getTailsISO():
   iso_file = requests.get(tails_iso_link,stream=True)
   #Downloading iso file 
   FRCAlert("Downloading iso file..")
-  with open("tails.iso","wb") as f:
+  with open(home+'/tails.iso','wb') as f:
     for chunk in iso_file.iter_content(chunk_size=1024):
       if chunk:
 	f.write(chunk)
@@ -562,7 +563,7 @@ def getTailsISO():
   f.close()
   #downloading signature file
   FRCAlert("Downloading signature file..")
-  with open('tails.sig','wb') as f:
+  with open(home+'/tails.sig','wb') as f:
     for chunk in sig_file.iter_content(chunk_size=1024):
       if chunk:
 	f.write(chunk)
@@ -574,10 +575,10 @@ def getTailsISO():
     s=gpg.recv_keys('pool.sks-keyservers.net',tails_finger_print) #tails_finger_print
     #print s
     f=open("tails.sig","rb")
-    verified=gpg.verify_file(f,os.path.abspath("tails.iso"))
+    verified=gpg.verify_file(f,os.path.abspath(home+'/tails.iso'))
     if verified :
       FRCAlert("Signature verified..")
-      os.system("growisofs -Z /dev/sr0=/home/kira01/tails.iso") #linux command line using growisofs
+      os.system("growisofs -Z /dev/sr0="+home+"/tails.iso") #linux command line using growisofs
       FRCAlert("live tails is ready")
       f.close()
   except Exception as e:
