@@ -162,7 +162,7 @@ def getGPG(GPGurl):
                                      	f.flush()
 	                     f.close()
         	        with open(home+"/.gnupg/gpg.conf","a") as r:
-                	        r.write(" keyserver hkps://hkps.pool.sks-keyservers.net\nkeyserver-options ca-cert-file=path_to_cert")
+                	        r.write("keyserver hkps://hkps.pool.sks-keyservers.net\nkeyserver-options ca-cert-file="+path_to_cert)
                 		r.close()
 
         except Exception as e:
