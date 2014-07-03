@@ -157,7 +157,7 @@ class FRCMainFrame(wx.Frame):
     def installation_controller(self, evt):
       
         if self.tbird_checkbox.IsChecked():
-            getThunderbirdWithEnigmail('en-US', self.torbirdy_checkbox.IsChecked())
+            getThunderbirdWithEnigmail()
 
         if self.CryptoCat_checkbox.IsChecked():
 	    downloadCryptoCat()
@@ -169,7 +169,7 @@ class FRCMainFrame(wx.Frame):
             getTOR(tor_url,'en-US')
 
         if self.jitsi_checkbox.IsChecked():
-            getJitsi(jitsi_url)
+            getJitsi()
 
         if self.torbirdy_checkbox.IsChecked():
             getTorBirdy()

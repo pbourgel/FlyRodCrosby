@@ -320,55 +320,19 @@ def getTOR(url,lang):
         
         
  
-def getThunderbird(lang):
+def installThunderbird():
     try:
-	'''
-        tbird_soup=BeautifulSoup(requests.get(thunderbird_url).content)#here we go very fast :p
-        tbird_link=tbird_soup.find_all('a',attrs={'href': re.compile('.*os=osx.*lang=' + lang)})
-        print tbird_link
-        tbird_file=requests.get(tbird_link[0]['href'],stream=True)
-        #Grease is the word...
-        print 'downloading..'
-        with open('thunderbird-installer.dmg','wb') as f:
-            for chunk in tbird_file.iter_content(chunk_size=1024):
-                if chunk: # filter out keep-alive new chunks
-                    f.write(chunk)
-                    f.flush()
-        f.close()
-	'''
-	exist=os.system("which thunderbird")
-        if exist==0:
-                print "Thunderbird is already installed !"
-                return
-
-	is_64bits = sys.maxsize > 2**32
-        if is_64bits:
-                LinuxPackage = "linux-x86_64"
-        else:
-                LinuxPackage = "linux-i686"
-
-        link = "http://ftp.mozilla.org/pub/mozilla.org/thunderbird/releases/latest/"+LinuxPackage+"/en-US/"
-        tbird_soup=BeautifulSoup(requests.get(link).content)
-        tbird_link=tbird_soup.find_all('a',attrs={'href': re.compile('thunderbird-*')})[1]['href']
-
-        print tbird_link
-        #exit()
-        os.system("wget "+link+tbird_link)
-	
-        os.system('tar -xvjf '+tbird_link+'  -C /opt/')
-        os.system("ln -s /opt/thunderbird/thunderbird /usr/bin")
-	
-
+	os.system("sudo apt-get install thunderbird")
         #I WOULD add signature verification code here, BUT THERE'S NO FUCKING
         #PGP key!
         #yeah soon ;)
-        #os.system('open thunderbird-installer.dmg')
-        print('Thunderbird is ready let\'s install enigmail')
+      
     except Exception as e:
         printError(unicode(e))
 
 def getEnigmail(url):
     try:
+	
 	FRCAlert('in getEnigmail\n')
         enigmail_page = requests.get(url).content
         enigmail_soup = BeautifulSoup(enigmail_page)
@@ -399,6 +363,8 @@ def getEnigmail(url):
             FRCAlert("Enigmail verification failed. Please tell whoever is running your Cryptoparty.\n")
             x.close()
             exit()
+	
+	#os.system("sudo apt-get install enigmail")
     except Exception as e:
         printError(unicode(e))
 
@@ -440,10 +406,9 @@ def getTorBirdy():
 
 def installEnigmail():
     try:
-      #getEnigmail(enigmail_url)
-      install_plugin("enigmail.xpi")
+	os.system("sudo apt-get install enigmail")
     except Exception as e:
-        printError(unicode(e))
+    	printError(unicode(e))
 
 def installTorBirdy():
     try:
@@ -452,43 +417,17 @@ def installTorBirdy():
       printError(unicode(e))
 
 
-def getJitsi(url):
+def getJitsi():
     try:
-        exist=os.system("which jitsi")
-        if exist==0:
-                print "Jitsi is already installed !"
-                return
-        print 'In getJitsi\n'
-        jitsi_page = requests.get(url).content
-        jitsi_soup = BeautifulSoup(jitsi_page)
-        if platform.machine()=='x86_64':
-                jitsi_links=jitsi_soup.find_all('a', attrs={'href': re.compile('jitsi.*latest_amd64.deb$')})[0]["href"]
-        else:
-                jitsi_linkstsi_links=jitsi_soup.find_all('a', attrs={'href': re.compile('jitsi.*latest_i386.deb$')})[0]["href"]
-
-        print 'Starting installer download\n'
-        jitsi_dmg=requests.get(url+jitsi_links)
-        print 'Jitsi downloding..\n'
-        with open('jitsi-installer.deb','wb') as f:
-                for chunk in jitsi_dmg.iter_content(chunk_size=1024):
-                        if chunk: # filter out keep-alive new chunks
-                                f.write(chunk)
-                                f.flush()
-                f.close()
-
-      #I WOULD put GPG signature verification code here, but SOMEBODY didn't add a .asc!
-        #ptint 'Running installer\n'
-        os.system('dpkg -i -R  jitsi-installer.deb')
-        os.system('jitsi &')
+	os.system("sudo apt-get install jitsi")
     except Exception as e:
         print e
    
 
 	
-def getThunderbirdWithEnigmail(lang, start_after_copied):
-    getThunderbird(lang)
-    getEnigmail(enigmail_url)
-    installEnigmail()
+def getThunderbirdWithEnigmail():
+	installThunderbird()
+	installEnigmail()
 
 
   
