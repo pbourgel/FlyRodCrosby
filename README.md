@@ -42,16 +42,3 @@ Functionality to automatically download Tails [9] and burn it to a DVD
 [9] https://tails.boum.org/
 
 
-making the .app file
-====================
-We use py2app:<br>
-  in your terminal :<br>
-    1-pip install py2app<br>
-    2-py2applet --make-setup path/to/the/FlyRodCrosby/frc-gui.py #this will make the setup.py file on your home directory<br>
-    3-python setup.py py2app --arch=universal #this willl generate two directory build/ and dist/ you can check the applcation on buil/<br>
-					      #arch can be more spcified '--arch=VALUE' where VALUE is the architecture type:<br>
-					      #fat: i386, ppc<br>
-					      #fat3: i386, x86_64, ppc<br>
-					      #univeral: i386, x86_64, ppc, ppc64<br>
-					      #intel: i386, x86_64<br>
-
