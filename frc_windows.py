@@ -14,7 +14,7 @@ from bs4 import BeautifulSoup
 from urlparse import urlparse
 from frc_winconfig import *
 from xpi2folders import *
-from _winreg import *
+#from _winreg import *
 
 import wx
 
@@ -37,8 +37,8 @@ def FRCAlert(text):
 def getGPG(url):
     print url
     gpg_page=requests.get(url)
-    gpg4win_soup = BeautifulSoup(gpg_page.content)
-    print gpg_page.content
+    gpg4win_soup = BeautifulSoup(gpg_page.content, "lxml")
+    #print gpg_page.content
     #We need to get the download link for the specific version of GPG we're trying to download.
     #For example, in the OSX version, the Intevation website has a link in the source code
     #like so: 
@@ -117,7 +117,7 @@ def getTOR(url, lang):
     try:
         #get and parse the HTML of the download page
         tor_page=requests.get(url)
-        tor_soup = BeautifulSoup(tor_page.content)
+        tor_soup = BeautifulSoup(tor_page.content, "lxml")
         tor_exe_link=''
         tor_sig_link=''
         FRCAlert('Scraping the Tor Project site for the relevant links\n')
@@ -152,7 +152,6 @@ def getTOR(url, lang):
         FRCAlert('Found download links.  Downloading EXE from ' + tor_exe_link + '\n')
         #Download and write to file (see getGPG for an explanation of the with block below
         tor_exe_file=requests.get(tor_exe_link,stream=True) 
-        
         with open('tor.exe','wb') as f:
             for chunk in tor_exe_file.iter_content(chunk_size=1024): 
                 if chunk: # filter out keep-alive new chunks
@@ -178,11 +177,11 @@ def getTOR(url, lang):
             FRCAlert('Trying to download Tor devs GPG key\n')
             #TO-DO: Iterate through the standard servers in case sks-skyservers
             #is down.
-            gpg.recv_keys('pool.sks-keyservers.net',tor_dev_gpg_fingerprint)
+            #gpg.recv_keys('pool.sks-keyservers.net',tor_dev_gpg_fingerprint)
             f = open('tor_sig.asc','rb')
             #g = open('tor.exe','rb')
             FRCAlert('Verifying exe with GPG key in keyring\n')
-            verified_with_asc = gpg.verify_file(f,os.path.abspath('tor.exe'))
+            verified_with_asc = gpg.verify_file(open(os.path.abspath('tor.exe')), 'tor_sig.asc')
             if verified_with_asc:
                 FRCAlert("The Tor executable checks out.  Let's extract it.\n")
                 os.system('tor.exe')
@@ -202,7 +201,7 @@ def getTOR(url, lang):
 def getThunderbird(lang):
     try:
         #Get the HTML and parse out the link for the language we want
-        tbird_soup=BeautifulSoup(requests.get(thunderbird_url).content)
+        tbird_soup=BeautifulSoup(requests.get(thunderbird_url).content, "lxml")
         tbird_link=tbird_soup.find_all('a',attrs={'href': re.compile('.*os=win.*lang=' + lang)})
         #print tbird_link
         tbird_file=requests.get(tbird_link[0]['href'],stream=True) 
@@ -226,12 +225,12 @@ def getEnigmail(url):
         FRCAlert('in getEnigmail\n')
         #Lather, rinse, repeat I mean get, scrape, repeat
         enigmail_page = requests.get(url).content
-        enigmail_soup = BeautifulSoup(enigmail_page)
+        enigmail_soup = BeautifulSoup(enigmail_page, "lxml")
         enigmail_links=enigmail_soup.find_all('a', attrs={'href': re.compile('enigmail.*sm\\+tb\\.xpi')})[:2]
-        FRCAlert('contents of enigmail_links: ' + str(enigmail_links) + '\n')
+        #FRCAlert('contents of enigmail_links: ' + enigmail_links[0]['href'] + '\n')
         enigmail_xpi=requests.get(enigmail_links[0]['href'])
         FRCAlert('Downloaded enigmail.xpi\n')
-        enigmail_asc=requests.get(HTTPSthis(enigmail_links[1]['href']))
+        enigmail_asc=requests.get(enigmail_links[1]['href'])
         FRCAlert('scraped and downloaded enigmail\n')
         f = open('enigmail.xpi','wb')
         g = open('enigmail.xpi.asc','wb')
@@ -242,11 +241,12 @@ def getEnigmail(url):
         gpg=gnupg.GPG()    
 	#TO-DO: Iterate through the standard servers in case sks-skyservers
         #is down.
-        gpg.recv_keys('pool.sks-keyservers.net',enigmail_dev_gpg_fingerprint)
+        #gpg.recv_keys('pool.sks-keyservers.net',enigmail_dev_gpg_fingerprint)
         x = open('enigmail.xpi.asc','rb')
         dd = os.path.abspath('enigmail.xpi')
         FRCAlert('Directory: ' + str(dd) + '\n')
-        verified = gpg.verify_file(x,os.path.abspath('enigmail.xpi'))
+        verified = gpg.verify_file(open(dd),os.path.abspath('enigmail.xpi.asc'))
+        print verified.stderr
         if verified:
             FRCAlert("The Enigmail plugin checks out.  Let's install it in Thunderbird\n")
             x.close()
@@ -275,11 +275,11 @@ def getTorBirdy():
         gpg=gnupg.GPG()    
 	#TO-DO: Iterate through the standard servers in case sks-skyservers
         #is down.
-        gpg.recv_keys('pool.sks-keyservers.net',torbirdy_dev_gpg_fingerprint)
+        gpg.recv_keys('pgp.mit.edu','0x744301A2')
         x = open('torbirdy.xpi.asc','rb')
         dd = os.path.abspath('torbirdy.xpi')
         FRCAlert('Directory: ' + str(dd) + '\n')
-        verified = gpg.verify_file(x,os.path.abspath('torbirdy.xpi'))
+        verified = gpg.verify_file(open(dd), os.path.abspath('torbirdy.xpi.asc'))
         if verified:
             FRCAlert("The Torbirdy plugin checks out.  Let's install it in Thunderbird\n")
             x.close()
@@ -340,7 +340,7 @@ def getJitsi(url):
     try:
         FRCAlert('In getJitsi\n')
         jitsi_page = requests.get(url).content
-        jitsi_soup = BeautifulSoup(jitsi_page)
+        jitsi_soup = BeautifulSoup(jitsi_page, "lxml")
         #Since Jitsi is available for both 32 and 64-bit Windows, we make a decision about which link to 
         #scrape based on the architecture of the system, which we determine in frc_winconfig.py
         if arch == 32:
@@ -378,7 +378,7 @@ def getCryptoCat():
 #[1]Straight HTTP download.  Does offer a sha256 sum over HTTP.
 def getBleachBit():
     try:
-        bleachbit_soup = BeautifulSoup(requests.get(bleachbit_url).content)
+        bleachbit_soup = BeautifulSoup(requests.get(bleachbit_url).content, "lxml")
         bleachbit_exe_link = bleachbit_soup.find_all('a', attrs = {'href': re.compile('BleachBit-.*\\.exe$')})[0]['href']
         FRCAlert('Found download links: ' + str(bleachbit_exe_link))
         bleachbit_exe = requests.get(bleachbit_base_url + bleachbit_exe_link)
@@ -400,14 +400,14 @@ def getTrueCrypt():
 
 #[5]Big HTTPS download, but there is a signature over HTTP
 def getTailsISO():
-    tails_soup = BeautifulSoup(requests.get(tails_url).content)
+    tails_soup = BeautifulSoup(requests.get(tails_url).content, "lxml")
     tails_iso_link = tails_soup.find_all('a', attrs = {'href': re.compile('tails.*\\.iso$')})[0]['href']
     FRCAlert('Got Tails download link: ' + str(tails_iso_link))
     tails_sig_link = tails_soup.find_all('a', attrs = {'href': re.compile('tails.*\\.iso\\.sig$')})[0]['href']
 
 def downloadFakeOut():
     try:
-        fakeout_soup = BeautifulSoup(requests.get(fakeout_url).content)
+        fakeout_soup = BeautifulSoup(requests.get(fakeout_url).content, "lxml")
         fakeout_xpi_link = fakeout_soup.find_all('a', attrs = {'href': re.compile('fake_domain_detective_plugin.8\\.xpi')})[0]['href']
         FRCAlert('Found download links: ' + str(fakeout_xpi_link))
         fakeout_xpi = requests.get(fakeout_xpi_link).content
