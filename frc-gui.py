@@ -193,6 +193,7 @@ class FRCMainFrame(wx.Frame):
 
 ###############################################################################
 #app = wx.App()
+
 app1 = wx.PySimpleApp()
 frame = wx.Frame(None, -1, "FlyRodCrosby",pos=wx.Point(500,200),  size=(400,150), style= wx.MINIMIZE)
 
