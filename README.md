@@ -21,7 +21,7 @@ FlyRodCrosby will download the listed tools and verify the pgp signature then in
 - Python 2.7
 - pip
 - wxPython (Windows, Linux), PyQt4 (Mac)
-- Git (Required if you are going to clone this repository)
+- Git
 
 ### Installation
 - After installing the Prerequisites you can clone this repository:
@@ -29,6 +29,13 @@ FlyRodCrosby will download the listed tools and verify the pgp signature then in
 $ git clone https://github.com/AccessNow/FlyRodCrosby
 $ cd FlyRodCrosby
 $ sudo pip install -r requirements.txt 
+```
+- Switch to the appropriate branch:
+  - master for Windows OS
+  - frc-linux for Linux OS
+  - frc-osx for Mac OS
+```
+$ git checkout <branch>
 ```
 - Now you can run the application using this command:
 ```
