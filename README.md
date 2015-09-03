@@ -1,3 +1,10 @@
+# Scope
+There is many privacy and secure communication tools that worth to use to help user at risk to do his works and protect him from the adversary. The problem here is that user needs to choose and install all these tools manually and this is a challenging task for no-tech user. So it is helpful to build a solution that automates this task and guide the user through simple steps.
+
+# Concept
+
+# Set up
+
 ## Prerequisites
 - Python 2.7
 - pip
