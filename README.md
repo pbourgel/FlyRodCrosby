@@ -4,6 +4,17 @@ There is many privacy and secure communication tools that worth to use to help u
 # 2 - Concept
 We proposed to build a tool that help user at risk in installing important privacy and secure communication tools that help him to do his works with a lower risk.
 
+FlyRodCrosby is a cross-platform automated installer for most of the privacy and secure communication tools. It currently handles:
+- GPG
+- Tor Browser
+- Thunderbird
+- Enigmail
+- TorBirdy
+- Jitsi
+
+FlyRodCrosby will download the listed tools and verify the pgp signature then install them. 
+
+
 # 3 - Set up
 
 ### Prerequisites
