@@ -30,3 +30,8 @@ $ git clone https://github.com/AccessNow/FlyRodCrosby
 $ cd FlyRodCrosby
 $ sudo pip install -r requirements.txt 
 ```
+- Now you can run the application using this command:
+```
+$ python frc-gui.py 
+```
+
