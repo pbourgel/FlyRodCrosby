@@ -6,13 +6,13 @@ We proposed to build a tool that help user at risk in installing important priva
 
 # 3 - Set up
 
-## Prerequisites
+### Prerequisites
 - Python 2.7
 - pip
 - wxPython (Windows, Linux), PyQt4 (Mac)
 - Git (Required if you are going to clone this repository)
 
-## Installation
+### Installation
 - After installing the Prerequisites you can clone this repository:
 ```
 $ git clone https://github.com/AccessNow/FlyRodCrosby
