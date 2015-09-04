@@ -46,6 +46,6 @@ $ python frc-gui.py
 
 # How to contibute ?
 ```
-git clone https://github.com/AccessNow/FlyRodCrosby
+$ git clone https://github.com/AccessNow/FlyRodCrosby
 ```
 And start coding :D !!
