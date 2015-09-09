@@ -1,44 +1,66 @@
-FlyRodCrosby
-============
+# Scope
+There is many privacy and secure communication tools that worth to use to help user at risk to do his works and protect him from the adversary. The problem here is that user needs to choose and install all these tools manually and this is a challenging task for no-tech user. So it is helpful to build a solution that automates this task and guide the user through simple steps.
 
-Making Cryptoparties easier since 1897!
+# Concept
+We proposed to build a tool that help user at risk in installing important privacy and secure communication tools that help him to do his works with a lower risk.
 
-FlyRodCrosby[1] is an automated installer for Windows (stay tuned for an OSX port) for all of the standard Cryptoparty tools.  It currently handles:
+FlyRodCrosby is a cross-platform automated installer for most of the privacy and secure communication tools. It currently handles:
+- GPG
+- Tor Browser
+- Thunderbird
+- Enigmail
+- TorBirdy
+- Jitsi
 
-macGPG[2]
+FlyRodCrosby will download the listed tools and verify the pgp signature then install them. 
 
-Tor Browser Bundle [3]
 
-Thunderbird with Enigmail [2]
+# Packages / Dependencies
 
-Jitsi [5]
+### Prerequisites
+- Python 2.7
+- pip
+- wxPython (Windows, Linux), PyQt4 (Mac)
+- Git
 
-TorBirdy [6]
+### Install python modules
+- After installing the Prerequisites you can clone this repository:
+```
+$ git clone https://github.com/AccessNow/FlyRodCrosby
+$ cd FlyRodCrosby
+$ sudo pip install -r requirements.txt 
+```
 
-Cryptocat [4]
+# How to use ?
+- Switch to the appropriate branch:
+  - master for Windows OS
+  - frc-linux for Linux OS
+  - frc-osx for Mac OS
+```
+$ git checkout <branch>
+```
+- Now you can run the application using this command:
+```
+$ python frc-gui.py 
+```
 
-Bleachbit [7]
+# How to contibute ?
+```
+$ git clone https://github.com/AccessNow/FlyRodCrosby
+```
+And start coding :D !!
 
-TrueCrypt [8]
+# How to build
 
-Functionality to automatically download Tails [9] and burn it to a DVD
+To build FlyRodCrosby from source, install PyInstaller and type
 
-[1] https://en.wikipedia.org/wiki/Cornilia_Thurza_Crosby
+$ pyinstaller frc-gui.py --onefile
 
-[2] https://www.enigmail.net/home/index.php
+# TODO
+Want to contribute? Here is a short TODO list of things that aren't implemented for this application that would be nice:
 
-[3] https://www.torproject.org/
-
-[4] https://crypto.cat/
-
-[5] https://jitsi.org/
-
-[6] https://trac.torproject.org/projects/tor/wiki/torbirdy
-
-[7] http://bleachbit.sourceforge.net/
-
-[8] http://www.truecrypt.org/
-
-[9] https://tails.boum.org/
-
+- Onionshare
+- The Commotion wireless client or some mesh network client software
+- Some kind of instructional materials that the user can read while they download their apps.
+- One of those Mumble Push-To-Talk apps.
 
