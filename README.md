@@ -49,3 +49,18 @@ $ python frc-gui.py
 $ git clone https://github.com/AccessNow/FlyRodCrosby
 ```
 And start coding :D !!
+
+# How to build
+
+To build FlyRodCrosby from source, install PyInstaller and type
+
+$ pyinstaller frc-gui.py --onefile
+
+# TODO
+Want to contribute? Here is a short TODO list of things that aren't implemented for this application that would be nice:
+
+- Onionshare
+- The Commotion wireless client or some mesh network client software
+- Some kind of instructional materials that the user can read while they download their apps.
+- One of those Mumble Push-To-Talk apps.
+
