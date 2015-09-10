@@ -3,6 +3,7 @@
 #various tools, and some code to determine other things about the system the program is running on/
 import os
 
+# Define download urls and signature urls
 gpg4win_url = u'http://www.gpg4win.org/download.html'
 tor_url = u'https://www.torproject.org/projects/torbrowser.html.en#Download-torbrowserbundle'
 jitsi_url = u'https://jitsi.org/Main/Download'

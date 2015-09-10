@@ -98,7 +98,7 @@ except Exception:
 
 
 #Given an HTTP url, return it with https
-def HTTPSthis(url):
+def httpsThis(url):
     return re.sub(pattern='http', repl='https', string=url)
 #Exception handler used in a few cases elsewhere in the code
 def printError(text):
@@ -371,9 +371,6 @@ def getThunderbirdWithEnigmail(lang, start_after_copied):
     getEnigmail(enigmail_url)
     installEnigmail(start_after_copied)
 
-#[2/3]What's a good browser decision here?  Should I just install Firefox if it isn't installed, or add it to the TBB?
-def getCryptoCat():
-    pass
 
 #[1]Straight HTTP download.  Does offer a sha256 sum over HTTP.
 def getBleachBit():
@@ -393,10 +390,6 @@ def getBleachBit():
     except Exception as e:
         printError(e)
     
-
-#[4]Weird POST and transient URL stuff here, HTTP but there is PGP sig
-def getTrueCrypt():
-    FRCAlert('TrueCrypt download stub here.')
 
 #[5]Big HTTPS download, but there is a signature over HTTP
 def getTailsISO():
@@ -421,28 +414,4 @@ def downloadFakeOut():
         #Coming soon: A detached GPG signature for this so we can verify the integrity.
     except Exception as e:
         printError(e)
-
-def installFakeOut():
-    pass
-#Copied and pasted the TorBirdy install code.  
-#Need to figure out if there are any significant changes needed.
-#    try:
-#        FRCAlert('Determined Thunderbird extensions directory: ' + thunderbird_ext_dir + '\n')
-#        FRCAlert('Determined Thunderbird main directory: ' + thunderbird_main_dir + '\n')
-#        copyfile(os.getcwd() + '\\' + 'fakeout.xpi', thunderbird_ext_dir + 'fakeout.xpi')
-#        xpi_id = processXpi(thunderbird_ext_dir + 'fakeout.xpi', thunderbird_ext_dir)['id']
-#        FRCAlert('Modifying registry\n')
-#        with CreateKey(HKEY_LOCAL_MACHINE,tbird_reg_str) as key:
-#           SetValueEx(key,"{3550f703-e582-4d05-9a08-453d09bdfdc6}",0,REG_SZ,xpi_id)
-#           FRCAlert('Set key in registry\n')
-#          CloseKey(key)
-#        FRCAlert('Starting Thunderbird\n')
-#        os.system(thunderbird_main_dir)
-#    except Exception as e:
-#        printError(unicode(e))
-
-#[2/3]HTTPS download, PGP signature coming soon
-def getFakeOut():
-    downloadFakeOut()
-    installFakeOut()
 

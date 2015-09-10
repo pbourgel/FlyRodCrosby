@@ -59,7 +59,8 @@ $ pyinstaller frc-gui.py --onefile
 # TODO
 Want to contribute? Here is a short TODO list of things that aren't implemented for this application that would be nice:
 
-- Onionshare
+- Add VeraCrypt
+- Add Onionshare
 - The Commotion wireless client or some mesh network client software
 - Some kind of instructional materials that the user can read while they download their apps.
 - One of those Mumble Push-To-Talk apps.
