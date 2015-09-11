@@ -1,0 +1,4 @@
+beautifulsoup4==4.4.0
+gnupg==2.0.2
+psutil==3.2.0
+requests==2.7.0
