@@ -1,10 +1,10 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# 
-# Fly Rod Crosby: Making Cryptoparties Easier since 1897!
-# All original material Copyright (C) 2013 Peter Bourgelais
-# @author
-# @desc
+# Copyright (C) 2013-2015 Access Organistion.
+# See the file 'LICENSE' for copying permission.
+#
+# This file contains the graphical user interface classes:
+#	- LangPanel: This class will let the user choose the suitable language
+#	- FRCMainFrame: This class will build the FRC main interface 
+
 
 import wx
 import os
@@ -36,11 +36,13 @@ class LangPanel(wx.Panel):
                                choices=l,
                                style=wx.CB_READONLY)
 
+    # This method is called when OK button is clicked
     def okClick(self, e):
 	global lang
         lang = self.combo.GetValue()
         lang_frame.Destroy()
                 
+    # This method is called when EXIT button is clicked
     def exitClick(self, e):
 	exit()
 
@@ -89,10 +91,11 @@ class FRCMainFrame(wx.Frame):
         self.Layout()
         self.Show(True)
 
-
+    # This method is called when CLOSE button is clicked
     def onClose(self, evt):
         self.Close(True)
 
+    # This method is called when INSTALL button is clicked
     def installationController(self, evt):
       
         if self.tbird_checkbox.IsChecked():

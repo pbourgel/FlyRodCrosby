@@ -1,8 +1,10 @@
-# coding=utf-8
+# -*- coding: utf-8 -*-
+# Copyright (C) 2013-2015 Access Organistion.
+# See the file 'LICENSE' for copying permission.
+#
+# This file contains the text messages with different languages
 
 class fct():
-	def __init__(self,lg):
-		self.lang=lg
 
 	msgEN=''
 	msgFR=''
@@ -17,6 +19,9 @@ class fct():
         First_msgIT=''
         First_msgAR=''
         First_msgRU=''
+
+	def __init__(self,lg):
+		self.lang=lg
 
 	def getFirstMsg(self):
 		if (self.lang=='en-US'):
@@ -138,7 +143,5 @@ class CryptoCat_checkbox_msg(fct):
 	msgRU='Cryptocat использует современные веб-технологии, чтобы обеспечить легкий в использовании, доступную зашифрованный чат с друзьями, прямо в браузере.'
 
 
-msg=First_msg('en-US')
-cryptmsg=CryptoCat_checkbox_msg('es')
-print msg.getFirstMsg()
-print cryptmsg.getCheckBoxLabel()
+msg = First_msg('en-US')
+cryptmsg = CryptoCat_checkbox_msg('es')
