@@ -1,165 +1,112 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# 
+# Fly Rod Crosby: Making Cryptoparties Easier since 1897!
+# All original material Copyright (C) 2013 Peter Bourgelais
+# Original file from xpi2folders: xpi2folders.py Copyright 
+# (C) 2011-2012, Kirill Kozlovskiy
+# This program is free software. You can redistribute it and/or 
+# modify it under the terms of the GNU General Public License 
+# as published by the Free  Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+# This program is distributed in the hope that it will be useful, 
+# but WITHOUT ANY WARRANTY; without even the implied warranty of 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program, if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 
+# 02111-1307, USA.
 
-#Fly Rod Crosby: Making Cryptoparties Easier since 1897!
-#All original material Copyright (C) 2013 Peter Bourgelais
-#Original file from xpi2folders: xpi2folders.py Copyright (C) 2011-2012, Kirill Kozlovskiy
-#This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
-#This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-#See the GNU General Public License for more details.
-#You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-import os,sys
-import requests
+import os
 import re
+import sys
+import requests
 import hashlib
+import urllib
+import urllib2
+import zipfile
+import tarfile
+import platform
+import wx
 from shutil import copyfile
 from bs4 import BeautifulSoup
 from urlparse import urlparse
 from frc_linuxconfig import *
-#from xpi2folders import *
-#from _winreg import *
 from xml.dom import minidom
-import urllib2,urllib
-import zipfile
-import wx
 from os.path import abspath, realpath, dirname, join as joinpath
-import tarfile
-import platform
 
-def safemembers(members):
-    base = resolved(".")
+
 resolved = lambda x: realpath(abspath(x))
 
-
-def install_Firefox_plugin(plugin_name):
-  os.system("rm -rf install.rdf")
-  task="unzip -p "+plugin_name+" install.rdf > install.rdf"
-  os.system(task)
-  xmldoc = minidom.parse("install.rdf")
-  dom = minidom.parseString(xmldoc.toxml())
-  plugin_id = str(dom.getElementsByTagName("em:id")[0].toxml().replace('<em:id>','').replace('</em:id>',''))
-  
-
-  for x in os.listdir(os.path.expanduser("~")+"/.mozilla/firefox/"):
+def installFirefoxPlugin(plugin_name):
+    task="unzip -p "+plugin_name+" install.rdf > install.rdf"
+    os.system("rm -rf install.rdf")
+    os.system(task)
+    xmldoc = minidom.parse("install.rdf")
+    dom = minidom.parseString(xmldoc.toxml())
+    plugin_id = str(dom.getElementsByTagName("em:id")[0].toxml().replace('<em:id>','').replace('</em:id>','')) 
+    for x in os.listdir(os.path.expanduser("~")+"/.mozilla/firefox/"):
         if x.endswith(".default"):
-                profile=x
-        break
-  print profile
+            profile=x
+            break
+    path=os.path.expanduser("~")+"/.mozilla/firefox/"+profile+"/extensions/"+plugin_id+".xpi"
+    plugin_exists=os.path.isfile(path)
+    if plugin_exists:
+        FRCAlert(plugin_name[:-4]+" is already installed..")
+        return 
+    task="cp "+plugin_name+" "+ path
+    os.system(task)
 
-  path=os.path.expanduser("~")+"/.mozilla/firefox/"+profile+"/extensions/"+plugin_id+".xpi"
-  print path
-  plugin_exists=os.path.isfile(path)
-  if plugin_exists:
-	FRCAlert(plugin_name[:-4]+" is already installed..")
-	return 
-  task="cp "+plugin_name+" "+ path #+plugin_id+".xpi"
-  print task
-  os.system(task)
-
-
-
-
-def install_plugin(plugin_name):
-  os.system("rm install.rdf")
-  task="unzip -p "+plugin_name+" install.rdf > install.rdf"
-  os.system(task)
-  xmldoc = minidom.parse("install.rdf")
-  dom = minidom.parseString(xmldoc.toxml())
-  plugin_id = str(dom.getElementsByTagName("em:id")[0].toxml().replace('<em:id>','').replace('</em:id>',''))
-  print plugin_id
-  #exit()
-
-
-  for x in os.listdir(".thunderbird/"):
+def installPlugin(plugin_name):
+    task="unzip -p "+plugin_name+" install.rdf > install.rdf"
+    os.system("rm install.rdf")
+    os.system(task)
+    xmldoc = minidom.parse("install.rdf")
+    dom = minidom.parseString(xmldoc.toxml())
+    plugin_id = str(dom.getElementsByTagName("em:id")[0].toxml().replace('<em:id>','').replace('</em:id>',''))
+    for x in os.listdir(".thunderbird/"):
         if x.endswith(".default"):
-                #print "nothing"
                 profile=x
                 break
-  print profile
-  #exit()
-
-  path=".thunderbird/"+profile+"/extensions/"
-  print path
-
-  task="cp "+plugin_name+" "+ path+plugin_id+".xpi"
-  print task
-  os.system(task)
-
-
-
-
-
-
-
-
-
-
+    path=".thunderbird/"+profile+"/extensions/"
+    print path
+    task="cp "+plugin_name+" "+ path+plugin_id+".xpi"
+    os.system(task)
 
 def FRCAlert(text):
-     print text
-#    if os.path.isfile('log.dat'):
-#        f = open('log.dat','a')
-#    else:
-#        f = open('log.dat','w')
-#    f.write(text)
-#    f.close()
-
-#Intevation doesn't have an HTTPS download of the file 
-#that doesn't throw a certificate error.  Could somebody yell at them, please?	
-#Anyway 
+    print text
 
 def getGPG(GPGurl):
-        try:	
-		home = os.path.expanduser("~")
-		if os.path.isdir(home+"/.gnupg") != True:
-			print "gnupg is already installed :)"
-			exit(0)
-		else:
-                	# getting the link to dowload:
-	                page = requests.get(GPGurl,verify=True)
-        	        soup = BeautifulSoup(page.content, "lxml")
-                	link = soup.find_all('a',attrs={'href':re.compile("gnupg-.*.tar.bz2$")})[0]['href']
-	                siglink = soup.find_all('a',attrs={'href':re.compile("gnupg-.*.tar.bz2.sig$")})[0]['href']
-        	        if len(link)==0 or len(siglink)==0 :
-                	        print "Couldn't found gpg doxnload link. Please telle whoever is running the cryptoperty.\n"
-	
-        	        # downloading from the ftp server:      
-                        print link
-                        print siglink
-                        print gpg_file_name
-                        file_stream = requests.get('http://www.gnupg.org/'+link, stream=True)
-                 	i=0 
-                 	with open(gpg_file_name,'wb') as f:
-                            for chunk in file_stream.iter_content(chunk_size=1024):
-                                if chunk: # filter out keep-alive new chunks
-                    		    print "something", i
-                 		    i+=1
-                                    f.write(chunk)
-                                    f.flush()
-                        """                        
-                	with urllib2.urlopen('http://www.gnupg.org/'+link) as r:
-                        	#print r
-	                        #print "in 2nd loop now"
-        	                with open( gpg_file_name,'wb') as f:
-                	                #print f
-                        	        #print "in 3rd loop now.."
-                                	shutil.copyfileobj(r,f)
-                                	#print "after copy"
-                                	#bar.update(i+1)
-                                	#sleep(0.1)
-	                        f.close()
-                        """
-        	        print "download done.."
-                        
-                	# extracting and installing the needed packages:
-	                os.system("tar xvjf " + gpg_file_name)
+    try:	
+        home = os.path.expanduser("~")
+	if os.path.isdir(home+"/.gnupg") != True:
+	    print "Gnupg is already installed :)"
+            exit(0)
+	else:
+            # Getting the link to dowload:
+	    page = requests.get(GPGurl,verify=True)
+            soup = BeautifulSoup(page.content, "lxml")
+            link = soup.find_all('a',attrs={'href':re.compile("gnupg-.*.tar.bz2$")})[0]['href']
+	    siglink = soup.find_all('a',attrs={'href':re.compile("gnupg-.*.tar.bz2.sig$")})[0]['href']
+            if len(link)==0 or len(siglink)==0 :
+                print "Couldn't found gpg doxnload link. Please telle whoever is running the cryptoperty.\n"
+            file_stream = requests.get('http://www.gnupg.org/'+link, stream=True)
+            i=0 
+            with open(gpg_file_name,'wb') as f:
+                for chunk in file_stream.iter_content(chunk_size=1024):
+                    if chunk:
+                        i+=1
+                        f.write(chunk)
+                        f.flush()
+                        print "Download done.."
+                	os.system("tar xvjf " + gpg_file_name)
         	        os.system ("apt-get install libgpg-error-dev && \
                 	            apt-get install libgcrypt11-dev && \
                         	    apt-get install libksba-dev && \
 	                            apt-get install libassuan-dev ")
-
-        	        # installing gnupg:
-                	os.system("./gnupg-2.0.22/configure")
-              	        exit()
-                	os.system("make gnupg-2.0.22/po/Makefile.in.in")
+        	        os.system("./gnupg-2.0.22/configure")
+              	        os.system("make gnupg-2.0.22/po/Makefile.in.in")
                		os.system("make gnupg-2.0.22/po/Makefile.in.in  install")
 		
 			cert_file=requests.get(hkps_cert_link,verify=False)
@@ -168,32 +115,26 @@ def getGPG(GPGurl):
 	
         	        with open("path_to_cert","wb") as f:
                 	     for chunk in cert_file.iter_content(chunk_size=1024):
-                        	     if chunk:
-                                	f.write(chunk)
-                                     	f.flush()
-	                     f.close()
+                        	 if chunk:
+                                     f.write(chunk)
+                                     f.flush()
+	                f.close()
         	        with open(home+"/.gnupg/gpg.conf","a") as r:
-                	        r.write("keyserver hkps://hkps.pool.sks-keyservers.net\nkeyserver-options ca-cert-file="+path_to_cert)
-                		r.close()
-
-        except Exception as e:
-                print "Error while downloading GnuPG: Please show this to your facilitator ERROR:", e
+                	    r.write("keyserver hkps://hkps.pool.sks-keyservers.net\nkeyserver-options ca-cert-file="+path_to_cert)
+                	r.close()
+    except Exception as e:
+        print "Error while downloading GnuPG: Please show this to your facilitator ERROR:", e
     
-
 try:
     import gnupg
-    FRCAlert('near gpg init\n')
     gpg=gnupg.GPG()
-    FRCAlert('after gpg init\n')
 except Exception:
     FRCAlert("GnuPG not found.  Downloading it now.\n")
     FRCAlert("Expect an installer window in 5 minutes.\n")
     getGPG(macGPGurl)
     import gnupg
 
-
-#Given an HTTP url, return it with https
-def HTTPSthis(url):
+def httpsThis(url):
     return re.sub(pattern='http', repl='https', string=url)
 
 def printError(text):
@@ -202,29 +143,21 @@ def printError(text):
     
 def getTOR(url,lang):	
     try:
-        #get and parse the HTML of the download page
+        # Get and parse the HTML of the download page
         tor_page=requests.get(url)
         tor_soup = BeautifulSoup(tor_page.content, "lxml")
         tor_zip_link=''
         tor_sig_links=''
         print 'Scraping the Tor Project site for the relevant links\n'
-        #Find the anchor tags for the language's EXE and OpenPGP signature
-	#print platform.machine()
-        #exit()
-	if platform.machine()=='x86_64':
+        if platform.machine()=='x86_64':
 		tor_zip_link=tor_soup.find_all('a', attrs={'href': re.compile('tor-browser-linux64-.*' + lang + '.*.tar.xz$')})[0]['href']
         	tor_sig_links=tor_soup.find_all('a', attrs={'href': re.compile('tor-browser-linux64-.*' + lang + '\\.tar.xz\\.*asc$')})[0]['href']
 	else:
 		tor_zip_link=tor_soup.find_all('a', attrs={'href': re.compile('tor-browser-linux32-.*' + lang + '.*.tar.xz$')})[0]['href']
                 tor_sig_links=tor_soup.find_all('a', attrs={'href': re.compile('tor-browser-linux32-.*' + lang + '\\.tar.xz\\.*asc$')})[0]['href']
-        print tor_zip_link
-        print tor_sig_links
         tor_file_name=tor_zip_link[25:63]
 
-	print  tor_file_name
-        #exit(0)
-	#exit()
-        #We parse the url and add the scheme because the href text in the source looks something like this:
+	#We parse the url and add the scheme because the href text in the source looks something like this:
         # ../dist/torbrowser/3.5.2.1/torbrowser-install-3.5.2.1_vi.exe
         #Therefore we need to take the url in the href attribute, parse out the netloc, and add https to the beginning.
         tor_url_parsed=urlparse(url)
@@ -250,80 +183,40 @@ def getTOR(url,lang):
         if len(tor_zip_link) == 0 or len(tor_sig_links) == 0:
             print "Couldn't find download link for Tor. Please tell whoever is running the Cryptoparty.\n"
             exit()
-        print 'Found download links. Downloading the zip from ' + tor_zip_link + '\n'
         #Download and write to file (see getGPG for an explanation of the with block below
-        
         tor_zip_link='https://www.torproject.org'+tor_zip_link[2:]
-        
-        #tor_zip_link='https://www.torproject.org/dist/torbrowser/3.5.2.1/TorBrowserBundle-3.5.2.1-osx32_en-US.zip'
         tor_zip_file=requests.get(tor_zip_link,stream=True)
-       	i=0 
-	#exit() 
-	#pbar = ProgressBar(widgets=[Percentage(), Bar()], maxval=300).start()
-  	print "obove"
-	#print tor_zip_file.iter_content(chunk_size=1024)
-	#exit(0)
-        with open(tor_file_name,'wb') as f:
+       	with open(tor_file_name,'wb') as f:
             for chunk in tor_zip_file.iter_content(chunk_size=1024):
-                if chunk: # filter out keep-alive new chunks
-		    print "something", i
-		    # time.sleep(0.01)
-		    i+=1
-                    f.write(chunk)
+                if chunk:
+		    f.write(chunk)
                     f.flush()
-		    #pbar.update(i)
-        print "ok 2"
-	#pbar.finish()
-	print "ok "
-        #f.close()
-	#exit()
-	
         tor_sig_links='https://www.torproject.org'+tor_sig_links[2:]
-        print 'Downloaded tor file. Now downloading GPG signature from ' + tor_sig_links + '\n'
-        #Now download the signature
+        # Now download the signature
         tor_sig_file=requests.get(tor_sig_links)
         f=open(tor_file_name+'.asc', 'wb')
         f.write(tor_sig_file.content)
         f.close()
-	print "under f.close"
-        #And now to verify the executable.
-        #I just hope that nobody tampered with both the exe AND the asc!
-        #If they did, I'm going to download Erinn Clark's GPG off one of a list
-        #of public key servers (from the Thunderbird defaults) and verify with
-        #both keys. If either one fails, I'll throw an exception.
-        #TO-DO: Tweak the key verification. It might be a good idea to use
-        #a server that speaks HKPS if we can find one.
+	# And now to verify the executable.
+        # I just hope that nobody tampered with both the exe AND the asc!
+        # If they did, I'm going to download Erinn Clark's GPG off one of a list
+        # of public key servers (from the Thunderbird defaults) and verify with
+        # both keys. If either one fails, I'll throw an exception.
+        # TO-DO: Tweak the key verification. It might be a good idea to use
+        # a server that speaks HKPS if we can find one.
         try:
-            #Start up GPG
             gpg=gnupg.GPG(homedir="/tmp/gpg")
             gpg._create_trustdb()
             print 'Trying to download Tor devs GPG key\n'
             #TO-DO: Iterate through the standard servers in case sks-skyservers
             #is down.
-            #gpg.recv_keys('hkp://pgp.mit.edu', '4e2c6e8793298290')
-            #g = open('tor.exe','rb')
-            print 'Verifying exe with GPG key in keyring\n'
-            #verified_with_asc = gpg.verify_file(f,os.path.abspath(tor_file_name))
             verified_with_asc = gpg.verify_file(open(tor_file_name), tor_file_name+'.asc')
-            print verified_with_asc.status
             if verified_with_asc:
-                #print "The Tor executable checks out. Let's extract it.\n"
-                #os.system(' open tor.zip')
-                #f.close()
-                #g.close()
-                #task="open TorBrowserBundle_"+lang
-                #os.system( task )
-		print "verified GOOD"
-	        task = "tar -xvJf "+tor_file_name
-		print task
+		task = "tar -xvJf "+tor_file_name
 		os.system(task)
-		task2= "./tor-browser_" +lang+ "/start-tor-browser"
 		os.system("tor-browser_en-US/Browser/start-tor-browser")
             else:
                 print "EXE verification failed. Please tell whoever is running your Cryptoparty." + "\n"
-                #f.close()
-                #g.close()
-                #exit()
         except Exception as e:
             print 'Problem downloading Tor: Please show this to your facilitator: ' + unicode(e) + '\n'
     except Exception as e:
@@ -333,26 +226,18 @@ def getTOR(url,lang):
  
 def installThunderbird():
     try:
-	os.system("sudo apt-get install thunderbird")
-        #I WOULD add signature verification code here, BUT THERE'S NO FUCKING
-        #PGP key!
-        #yeah soon ;)
-      
+	os.system("sudo apt-get install thunderbird")      
     except Exception as e:
         printError(unicode(e))
 
 def getEnigmail(url):
     try:
-	
-	FRCAlert('in getEnigmail\n')
         enigmail_page = requests.get(url).content
         enigmail_soup = BeautifulSoup(enigmail_page, "lxml")
         enigmail_links=enigmail_soup.find_all('a', attrs={'href': re.compile('enigmail.*sm\\+tb\\.xpi')})[:2]
-        FRCAlert('contents of enigmail_links: ' + str(enigmail_links) + '\n')
         enigmail_xpi=requests.get(enigmail_links[0]['href'])
         FRCAlert('Downloaded enigmail.xpi\n')
         enigmail_asc=requests.get(HTTPSthis(enigmail_links[1]['href']))
-        FRCAlert('scraped and downloaded enigmail\n')
         f = open('enigmail.xpi','wb')
         g = open('enigmail.xpi.asc','wb')
         f.write(enigmail_xpi.content)
@@ -363,29 +248,23 @@ def getEnigmail(url):
 	#TO-DO: Iterate through the standard servers in case sks-skyservers
         #is down.
         gpg.recv_keys('pool.sks-keyservers.net',enigmail_dev_gpg_fingerprint)
-        x = open('enigmail.xpi.asc','rb')
-        dd = os.path.abspath('enigmail.xpi')
-        FRCAlert('Directory: ' + str(dd) + '\n')
-        verified = gpg.verify_file(x,os.path.abspath('enigmail.xpi'))
+        fd = open('enigmail.xpi.asc','rb')
+        verified = gpg.verify_file(fd,os.path.abspath('enigmail.xpi'))
         if verified:
             FRCAlert("The Enigmail plugin checks out. Let's install it in Thunderbird\n")
-            x.close()
+            fd.close()
         else:
             FRCAlert("Enigmail verification failed. Please tell whoever is running your Cryptoparty.\n")
-            x.close()
-            exit()
-	
-	#os.system("sudo apt-get install enigmail")
+            fd.close()
+            exit()	
     except Exception as e:
         printError(unicode(e))
 
 def getTorBirdy():
     try:
-        FRCAlert('in getTorBirdy\n')
         torbirdy_xpi=requests.get(torbirdy_xpi_url)
         FRCAlert('Downloaded torbirdy.xpi\n')
         torbirdy_asc=requests.get(torbirdy_xpi_sig_url)
-        FRCAlert('Downloaded TorBirdy signature\n')
         f = open('torbirdy.xpi','wb')
         g = open('torbirdy.xpi.asc','wb')
         f.write(torbirdy_xpi.content)
@@ -393,27 +272,20 @@ def getTorBirdy():
         f.close()
         g.close()
         gpg=gnupg.GPG()    
-		#TO-DO: Iterate through the standard servers in case sks-skyservers
+	#TO-DO: Iterate through the standard servers in case sks-skyservers
         #is down.
         gpg.recv_keys('pool.sks-keyservers.net',torbirdy_dev_gpg_fingerprint)
-        x = open('torbirdy.xpi.asc','rb')
-        dd = os.path.abspath('torbirdy.xpi')
-        FRCAlert('Directory: ' + str(dd) + '\n')
-        verified = gpg.verify_file(x,os.path.abspath('torbirdy.xpi'))
+        fd = open('torbirdy.xpi.asc','rb')
+        verified = gpg.verify_file(fd,os.path.abspath('torbirdy.xpi'))
         if verified:
             FRCAlert("The Torbirdy plugin checks out.  Let's install it in Thunderbird\n")
-            x.close()
+            fd.close()
         else:
             FRCAlert("Torbirdy verification failed.  Please tell whoever is running your Cryptoparty.\n")
-            x.close()
+            fd.close()
             exit()
     except Exception as e:
         printError(unicode(e))
-
-
-
-#def spaceEscape(d): #That's a fun NES game
-#    return d.replace(' ','\ ')
 
 def installEnigmail():
     try:
@@ -423,35 +295,27 @@ def installEnigmail():
 
 def installTorBirdy():
     try:
-      install_plugin("torbirdy.xpi")
+      installPlugin("torbirdy.xpi")
     except Exception as e:
       printError(unicode(e))
-
 
 def getJitsi():
     try:
 	os.system("sudo apt-get install jitsi")
     except Exception as e:
         print e
-   
-
 	
 def getThunderbirdWithEnigmail():
 	installThunderbird()
 	installEnigmail()
-
-
   
 def downloadCryptoCat():
     try:
-      FRCAlert('in CryptoCat downloading..\n')
+      FRCAlert('In CryptoCat downloading..\n')
       cat_page = requests.get(cryptocat_url ).content
       cat_soup = BeautifulSoup(cat_page, "lxml")
       cat_links=cat_soup.find_all('a', attrs={'href': re.compile('\\/cryptocat-.*\\.xpi*')})[0]['href']
-      FRCAlert('contents of cat_links: ' + str(cat_links) + '\n')
       cat_xpi=requests.get(cat_links)
-      FRCAlert('cryptocat.xpi\n')
-      #fake_asc=requests.get(HTTPSthis(fake_links))
       FRCAlert('scraped and downloaded fake domain detective\n')
       f = open('cryptocat.xpi','wb')
       f.write(cat_xpi.content)
@@ -460,76 +324,44 @@ def downloadCryptoCat():
       printError(e)
       
 def installCryptoCat():
-  install_Firefox_plugin('cryptocat.xpi')
+    installFirefoxPlugin('cryptocat.xpi')
   
-#[2/3]What's a good browser decision here?  Should I just install Firefox if it isn't installed, or add it to the TBB?
 def getCryptoCat():
   downloadCryptoCat()
   installCryptoCat()
 
-
-def getTrueCrypt():
-  FRCAlert('TrueCrypt download stub here.')
-  url_trueCrypt = "http://www.truecrypt.org/dl"
-  req = urllib2.Request(url_trueCrypt)
-  is_64bits = sys.maxsize > 2**32
-  if is_64bits:
-        LinuxPackage = "linux-x64.tar.gz"
-  else:
-        LinuxPackage = "linux-x86.tar.gz"
-
-  values = {"LinuxPackage" : LinuxPackage, "DownloadVersion" : "7.1a", "LinuxDownload" : "Download"}
-
-  data = urllib.urlencode(values)
-  response = urllib2.urlopen(req, data)
-  open("truecrypt.tar.gz","w").write(response.read())
-
-  ar = tarfile.open("truecrypt.tar.gz")
-  ar.extractall(path=".", members=safemembers(ar))
-  s=ar.getnames()[0]
-  os.system("./"+s)
-  ar.close()
-  FRCAlert('TrueCrypt is ready..')
-
-
-
 #[5]Big HTTPS download, but there is a signature over HTTP
 def getTailsISO():
-  global home #defined in frc_linuxconfig.py return the home path 
+  global home
   tails_soup = BeautifulSoup(requests.get(tails_url).content, "lxml")
   tails_iso_link = tails_soup.find_all('a', attrs = {'href': re.compile('tails.*\\.iso$')})[0]['href']
   FRCAlert('Got Tails download link: ' + str(tails_iso_link))
   sig_link = tails_soup.find_all('a', attrs = {'href': re.compile('tails.*\\.iso\\.sig$')})[0]['href']
-  #sig_link='https://tails.boum.org/torrents/files/tails-i386-0.22.1.iso.sig'
   sig_file=requests.get(sig_link,stream=True)
   iso_file = requests.get(tails_iso_link,stream=True)
-  #Downloading iso file 
   FRCAlert("Downloading iso file..")
   with open(home+'/tails.iso','wb') as f:
-    for chunk in iso_file.iter_content(chunk_size=1024):
-      if chunk:
-	f.write(chunk)
-	f.flush()
+      for chunk in iso_file.iter_content(chunk_size=1024):
+          if chunk:
+	      f.write(chunk)
+	      f.flush()
   f.close()
-  #downloading signature file
   FRCAlert("Downloading signature file..")
   with open(home+'/tails.sig','wb') as f:
     for chunk in sig_file.iter_content(chunk_size=1024):
       if chunk:
 	f.write(chunk)
 	f.flush()
-  f.close()
-    
+  f.close()    
   try:
-    gpg=gnupg.GPG()
-    s=gpg.recv_keys('pool.sks-keyservers.net',tails_finger_print) #tails_finger_print
-    #print s
-    f=open("tails.sig","rb")
-    verified=gpg.verify_file(f,os.path.abspath(home+'/tails.iso'))
-    if verified :
-      FRCAlert("Signature verified..")
-      os.system("growisofs -Z /dev/sr0="+home+"/tails.iso") #linux command line using growisofs
-      FRCAlert("live tails is ready")
+      gpg=gnupg.GPG()
+      s=gpg.recv_keys('pool.sks-keyservers.net',tails_finger_print) #tails_finger_print
+      f=open("tails.sig","rb")
+      verified=gpg.verify_file(f,os.path.abspath(home+'/tails.iso'))
+      if verified :
+          FRCAlert("Signature verified..")
+          os.system("growisofs -Z /dev/sr0="+home+"/tails.iso") #linux command line using growisofs
+          FRCAlert("Live tails is ready")
       f.close()
   except Exception as e:
       print e
@@ -552,23 +384,20 @@ def downloadFakeOut(url):
     printError(e)
 
 def installFakeOut():
-  install_Firefox_plugin('fake_domain_detective.xpi')
+    installFirefoxPlugin('fake_domain_detective.xpi')
 
-#[2/3]HTTPS download, PGP signature coming soon
 def getFakeOut():
-  downloadFakeOut(FakeDomain_url)
-  installFakeOut()
+    downloadFakeOut(FakeDomain_url)
+    installFakeOut()
 
 def downloadFakeOut(url):
   try:
-    FRCAlert('in getFakeDoamin\n')
+    FRCAlert('In getFakeDoamin\n')
     fake_page = requests.get(url).content
     fake_soup = BeautifulSoup(fake_page, "lxml")
     fake_links=fake_soup.find_all('a', attrs={'href': re.compile('\\/fake_domain_detective-.*\\.xpi*')})[0]['href']
-    FRCAlert('contents of fake_links: ' + str(fake_links) + '\n')
     fake_xpi=requests.get(fake_links)
     FRCAlert('FakeDomain.xpi\n')
-    #fake_asc=requests.get(HTTPSthis(fake_links))
     FRCAlert('scraped and downloaded fake domain detective\n')
     f = open('fake_domain_detective.xpi','wb')
     f.write(fake_xpi.content)
@@ -577,12 +406,8 @@ def downloadFakeOut(url):
     printError(e)
 
 def installFakeOut():
-  install_Firefox_plugin('fake_domain_detective.xpi')
+  installFirefoxPlugin('fake_domain_detective.xpi')
 
-
-#[2/3]HTTPS download, PGP signature coming soon
 def getFakeOut():
     downloadFakeOut(FakeDomain_url)
     installFakeOut()
-
-#getGPG(macGPGurl)

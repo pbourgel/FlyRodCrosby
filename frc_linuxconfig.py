@@ -1,7 +1,6 @@
-#Fly Rod Crosby: Making Cryptoparties Easier since 1897!
+# Fly Rod Crosby: Making Cryptoparties Easier since 1897!
+
 import os
-
-
 
 home=os.path.expanduser("~")
 hkps_cert_link=u'https://sks-keyservers.net/sks-keyservers.netCA.pem'
@@ -29,23 +28,3 @@ url_trueCrypt=u'http://www.truecrypt.org/dl'
 jitsi_url = u'https://jitsi.org/Main/Download'
 tails_finger_print='0D24B36AA9A2A651787876451202821CBE2CD9C1'
 FakeDomain_url=u'https://addons.mozilla.org/ro/firefox/addon/fake-domain/'
-
-
-#try:
-    #os.environ['PROGRAMFILES(X86)']
-    #arch=64
-#except KeyError:
-    #arch=32
-
-#if arch == 64:
-    #thunderbird_ext_dir = 'C:\\Program Files (x86)\\Mozilla Thunderbird\\extensions\\'
-    #thunderbird_main_dir = r'""C:\Program Files (x86)\Mozilla Thunderbird\thunderbird.exe""'
-    #gpg4win_path = 'C:\\Program\ Files\ (x86)\\GNU\\GnuPG\\gpg2.exe'
-    #tbird_reg_str = r'SOFTWARE\Wow6432Node\Mozilla\Mozilla Thunderbird\Extensions'
-#else:
-    #thunderbird_ext_dir = 'C:\\Program Files\\Mozilla Thunderbird\\extensions\\'
-    #thunderbird_main_dir = r'""C:\Program Files\Mozilla Thunderbird\thunderbird.exe""'
-    #gpgrwin_path = 'C:\\Program\ Files\\GNU\\GnuPG\\gpg2.exe'
-    #tbird_reg_str = r'SOFTWARE\Mozilla\Mozilla Thunderbird\Extensions'
-
-

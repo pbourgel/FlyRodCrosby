@@ -137,10 +137,8 @@ class CryptoCat_checkbox_msg(fct):
         msgAR='cryptocat تقنيات الويب الحديثة لتوفير سهلة الاستخدام، ويمكن الوصول إليها مشفرة دردشة مع أصدقائك، والحق في المتصفح الخاص بك.'
 	msgRU='Cryptocat использует современные веб-технологии, чтобы обеспечить легкий в использовании, доступную зашифрованный чат с друзьями, прямо в браузере.'
 
-#	languages.getGPG.getLangauge('fr')
 
 msg=First_msg('en-US')
 cryptmsg=CryptoCat_checkbox_msg('es')
-#print GPG.getLanguage()
 print msg.getFirstMsg()
 print cryptmsg.getCheckBoxLabel()
