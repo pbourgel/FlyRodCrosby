@@ -67,48 +67,36 @@ def FRCAlert(text):
 def getGPG(GPGurl):
     try:	
         home = os.path.expanduser("~")
-	if os.path.isdir(home+"/.gnupg") != True:
+	if os.path.isdir(home+"/.gnupg") == True:
 	    print "Gnupg is already installed :)"
             exit(0)
 	else:
             # Getting the link to dowload:
 	    page = requests.get(GPGurl,verify=True)
-            soup = BeautifulSoup(page.content, "lxml")
-            link = soup.find_all('a',attrs={'href':re.compile("gnupg-.*.tar.bz2$")})[0]['href']
-	    siglink = soup.find_all('a',attrs={'href':re.compile("gnupg-.*.tar.bz2.sig$")})[0]['href']
+            ascii_text = BeautifulSoup(page.content, "lxml")
+            link = ascii_text.find_all('a',attrs={'href':re.compile("gnupg-.*.tar.bz2$")})[0]['href']
+	    siglink = ascii_text.find_all('a',attrs={'href':re.compile("gnupg-.*.tar.bz2.sig$")})[0]['href']
             if len(link)==0 or len(siglink)==0 :
                 print "Couldn't found gpg doxnload link. Please tell whoever is running the cryptoperty.\n"
             file_stream = requests.get('http://www.gnupg.org/'+link, stream=True)
-            i=0 
             with open(gpg_file_name,'wb') as f:
                 for chunk in file_stream.iter_content(chunk_size=1024):
                     if chunk:
-                        i+=1
                         f.write(chunk)
                         f.flush()
-                        print "Download done.."
-                	os.system("tar xvjf " + gpg_file_name + " -C gnupg --strip-components 1")
-        	        os.system ("apt-get install libgpg-error-dev && \
-                	            apt-get install libgcrypt11-dev && \
-                        	    apt-get install libksba-dev && \
-	                            apt-get install libassuan-dev ")
-        	        os.system("./gnupg/configure")
-              	        os.system("make gnupg/po/Makefile.in.in")
-               		os.system("make gnupg/po/Makefile.in.in  install")
-		
-			cert_file=requests.get(hkps_cert_link,verify=False)
-
-	                path_to_cert=home+"/.gnupg/sks-keyservers.netCA.pem"
-	
-        	        with open("path_to_cert","wb") as f:
-                	     for chunk in cert_file.iter_content(chunk_size=1024):
-                        	 if chunk:
-                                     f.write(chunk)
-                                     f.flush()
-	                f.close()
-        	        with open(home+"/.gnupg/gpg.conf","a") as r:
-                	    r.write("keyserver hkps://hkps.pool.sks-keyservers.net\nkeyserver-options ca-cert-file="+path_to_cert)
-                	r.close()
+            print "Download done.."
+            os.system("mkdir gnupg; tar xvjf " + gpg_file_name + " -C gnupg --strip-components 1")
+            os.system ("apt-get install -y libgpg-error-dev libgcrypt11-dev libksba-dev libassuan-dev")
+            os.system("cd gnupg; ./configure && make && make install")
+            cert_file=requests.get(hkps_cert_link,verify=False)
+            path_to_cert=home+"/.gnupg/sks-keyservers.netCA.pem"
+            with open("path_to_cert","wb") as f:
+                for chunk in cert_file.iter_content(chunk_size=1024):
+                    if chunk:
+                        f.write(chunk)
+                        f.flush()
+	    with open(home+"/.gnupg/gpg.conf","a") as f:
+                f.write("keyserver hkps://hkps.pool.sks-keyservers.net\nkeyserver-options ca-cert-file="+path_to_cert)
     except Exception as e:
         print "Error while downloading GnuPG: Please show this to your facilitator ERROR:", e
     
@@ -134,16 +122,16 @@ def getTOR(url,lang):
     try:
         # Get and parse the HTML of the download page
         tor_page=requests.get(url)
-        tor_soup = BeautifulSoup(tor_page.content, "lxml")
+        tor_ascii_text = BeautifulSoup(tor_page.content, "lxml")
         tor_zip_link=''
         tor_sig_links=''
         print 'Scraping the Tor Project site for the relevant links\n'
         if platform.machine()=='x86_64':
-		tor_zip_link=tor_soup.find_all('a', attrs={'href': re.compile('tor-browser-linux64-.*' + lang + '.*.tar.xz$')})[0]['href']
-        	tor_sig_links=tor_soup.find_all('a', attrs={'href': re.compile('tor-browser-linux64-.*' + lang + '\\.tar.xz\\.*asc$')})[0]['href']
+		tor_zip_link=tor_ascii_text.find_all('a', attrs={'href': re.compile('tor-browser-linux64-.*' + lang + '.*.tar.xz$')})[0]['href']
+        	tor_sig_links=tor_ascii_text.find_all('a', attrs={'href': re.compile('tor-browser-linux64-.*' + lang + '\\.tar.xz\\.*asc$')})[0]['href']
 	else:
-		tor_zip_link=tor_soup.find_all('a', attrs={'href': re.compile('tor-browser-linux32-.*' + lang + '.*.tar.xz$')})[0]['href']
-                tor_sig_links=tor_soup.find_all('a', attrs={'href': re.compile('tor-browser-linux32-.*' + lang + '\\.tar.xz\\.*asc$')})[0]['href']
+		tor_zip_link=tor_ascii_text.find_all('a', attrs={'href': re.compile('tor-browser-linux32-.*' + lang + '.*.tar.xz$')})[0]['href']
+                tor_sig_links=tor_ascii_text.find_all('a', attrs={'href': re.compile('tor-browser-linux32-.*' + lang + '\\.tar.xz\\.*asc$')})[0]['href']
         tor_file_name=tor_zip_link[25:63]
 	tor_url_parsed=urlparse(url)
 	tor_url_base=tor_url_parsed.scheme + '://' + tor_url_parsed.netloc        
@@ -194,17 +182,17 @@ def installThunderbird():
 def getEnigmail(url):
     try:
         enigmail_page = requests.get(url).content
-        enigmail_soup = BeautifulSoup(enigmail_page, "lxml")
-        enigmail_links=enigmail_soup.find_all('a', attrs={'href': re.compile('enigmail.*sm\\+tb\\.xpi')})[:2]
+        enigmail_ascii_text = BeautifulSoup(enigmail_page, "lxml")
+        enigmail_links=enigmail_ascii_text.find_all('a', attrs={'href': re.compile('enigmail.*sm\\+tb\\.xpi')})[:2]
         enigmail_xpi=requests.get(enigmail_links[0]['href'])
         FRCAlert('Downloaded enigmail.xpi\n')
         enigmail_asc=requests.get(HTTPSthis(enigmail_links[1]['href']))
         f = open('enigmail.xpi','wb')
-        g = open('enigmail.xpi.asc','wb')
         f.write(enigmail_xpi.content)
-        g.write(enigmail_asc.content)
         f.close()
-        g.close()
+        f = open('enigmail.xpi.asc','wb')
+        f.write(enigmail_asc.content)
+        f.close()
         gpg=gnupg.GPG()
 	#TO-DO: Iterate through the standard servers in case sks-skyservers
         #is down.
@@ -228,11 +216,11 @@ def getTorBirdy():
         FRCAlert('Downloaded torbirdy.xpi\n')
         torbirdy_asc=requests.get(torbirdy_xpi_sig_url)
         f = open('torbirdy.xpi','wb')
-        g = open('torbirdy.xpi.asc','wb')
         f.write(torbirdy_xpi.content)
-        g.write(torbirdy_asc.content)
         f.close()
-        g.close()
+        f = open('torbirdy.xpi.asc','wb')
+        f.write(torbirdy_asc.content)
+        f.close()
         gpg=gnupg.GPG()    
 	#TO-DO: Iterate through the standard servers in case sks-skyservers
         #is down.
@@ -280,8 +268,8 @@ def downloadCryptoCat():
     try:
       FRCAlert('In CryptoCat downloading..\n')
       cat_page = requests.get(cryptocat_url ).content
-      cat_soup = BeautifulSoup(cat_page, "lxml")
-      cat_links=cat_soup.find_all('a', attrs={'href': re.compile('\\/cryptocat-.*\\.xpi*')})[0]['href']
+      cat_ascii_text = BeautifulSoup(cat_page, "lxml")
+      cat_links=cat_ascii_text.find_all('a', attrs={'href': re.compile('\\/cryptocat-.*\\.xpi*')})[0]['href']
       cat_xpi=requests.get(cat_links)
       FRCAlert('scraped and downloaded fake domain detective\n')
       f = open('cryptocat.xpi','wb')
@@ -302,10 +290,10 @@ def getCryptoCat():
 # This function downloads and build Tails iso  
 def getTailsISO():
   global home
-  tails_soup = BeautifulSoup(requests.get(tails_url).content, "lxml")
-  tails_iso_link = tails_soup.find_all('a', attrs = {'href': re.compile('tails.*\\.iso$')})[0]['href']
+  tails_ascii_text = BeautifulSoup(requests.get(tails_url).content, "lxml")
+  tails_iso_link = tails_ascii_text.find_all('a', attrs = {'href': re.compile('tails.*\\.iso$')})[0]['href']
   FRCAlert('Got Tails download link: ' + str(tails_iso_link))
-  sig_link = tails_soup.find_all('a', attrs = {'href': re.compile('tails.*\\.iso\\.sig$')})[0]['href']
+  sig_link = tails_ascii_text.find_all('a', attrs = {'href': re.compile('tails.*\\.iso\\.sig$')})[0]['href']
   sig_file=requests.get(sig_link,stream=True)
   iso_file = requests.get(tails_iso_link,stream=True)
   FRCAlert("Downloading iso file..")
@@ -314,14 +302,12 @@ def getTailsISO():
           if chunk:
 	      f.write(chunk)
 	      f.flush()
-  f.close()
   FRCAlert("Downloading signature file..")
   with open(home+'/tails.sig','wb') as f:
     for chunk in sig_file.iter_content(chunk_size=1024):
       if chunk:
 	f.write(chunk)
 	f.flush()
-  f.close()    
   try:
       gpg=gnupg.GPG()
       s=gpg.recv_keys('pool.sks-keyservers.net',tails_finger_print) #tails_finger_print
@@ -340,8 +326,8 @@ def downloadFakeOut(url):
   try:
     FRCAlert('in getFakeDoamin\n')
     fake_page = requests.get(url).content
-    fake_soup = BeautifulSoup(fake_page, "lxml")
-    fake_links=fake_soup.find_all('a', attrs={'href': re.compile('\\/fake_domain_detective-.*\\.xpi*')})[0]['href']
+    fake_ascii_text = BeautifulSoup(fake_page, "lxml")
+    fake_links=fake_ascii_text.find_all('a', attrs={'href': re.compile('\\/fake_domain_detective-.*\\.xpi*')})[0]['href']
     FRCAlert('contents of fake_links: ' + str(fake_links) + '\n')
     fake_xpi=requests.get(fake_links)
     FRCAlert('FakeDomain.xpi\n')
