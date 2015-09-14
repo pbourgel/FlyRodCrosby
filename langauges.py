@@ -1,8 +1,14 @@
+# !/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2015 Access Organistion.
-# See the file 'LICENSE' for copying permission.
 #
-# This file contains the text messages with different languages
+# Name            : languages.py
+# Version         : 0.2
+# Author          : Peter Bourgelais
+# Date            : 20131016
+# Owner           : Peter Bourgelais
+# License         : GPLv2
+# Description     : This component contains the text messages with different languages.
+#######################################################################################
 
 class fct():
 

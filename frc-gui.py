@@ -1,10 +1,14 @@
-# Copyright (C) 2013-2015 Access Organistion.
-# See the file 'LICENSE' for copying permission.
+# !/usr/bin/env python
+# -*- coding: utf-8 -*-
 #
-# This file contains the graphical user interface classes:
-#	- LangPanel: This class will let the user choose the suitable language
-#	- FRCMainFrame: This class will build the FRC main interface 
-
+# Name            : frc-gui.py
+# Version         : 0.2
+# Author          : Peter Bourgelais
+# Date            : 20131016
+# Owner           : Peter Bourgelais
+# License         : GPLv2
+# Description     : This component contains the graphical user interface classes.
+#################################################################################
 
 import wx
 import os
