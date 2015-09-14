@@ -12,28 +12,22 @@
 
 import os
 
-# Define download urls and signature urls
+cryptocat_url = u'https://addons.mozilla.org/en-US/firefox/addon/cryptocat/'
+enigmail_url = u'https://www.enigmail.net/download/download-static.php'
+thunderbird_url = u'https://www.mozilla.org/en-US/thunderbird/all.html'
+tails_url = u'http://bleachbit.sourceforge.net/download/windows'
+torbirdy_xpi_url = u'https://www.torproject.org/dist/torbirdy/torbirdy-current.xpi'
+torbirdy_xpi_sig_url = u'https://www.torproject.org/dist/torbirdy/torbirdy-current.xpi.asc'
 gpg4win_url = u'http://www.gpg4win.org/download.html'
 tor_url = u'https://www.torproject.org/projects/torbrowser.html.en#Download-torbrowserbundle'
 jitsi_url = u'https://jitsi.org/Main/Download'
+
+torbirdy_dev_gpg_fingerprint = u'228FAD203DE9AE7D84E25265CF9A6F914193A197'
 tor_dev_gpg_fingerprint = '8738A680B84B3031A630F2DB416F061063FEE659'
 tor_dev_gpg_name = u'Erinn Clark (erinn@torproject.org)'
 enigmail_dev_gpg_fingerprint = u'10B2E4A0E718BB1B2791DAC4F040E41B9369CDF3'
 gpg_servers = ['pool.sks-keyservers.net','subkeys.pgp.net','sks.mit.edu','pgp.mit.edu']
 
-# TO-DO: We need to substitute whatever the language variable needs to be in here
-cryptocat_url = u'https://addons.mozilla.org/en-US/firefox/addon/cryptocat/'
-enigmail_url = u'https://www.enigmail.net/download/download-static.php'
-thunderbird_url = u'https://www.mozilla.org/en-US/thunderbird/all.html'
-bleachbit_url = u'http://bleachbit.sourceforge.net/download/windows'
-bleachbit_base_url = u'http://bleachbit.sourceforge.net/download/'
-tails_url = u'http://bleachbit.sourceforge.net/download/windows'
-torbirdy_xpi_url = u'https://www.torproject.org/dist/torbirdy/torbirdy-current.xpi'
-torbirdy_xpi_sig_url = u'https://www.torproject.org/dist/torbirdy/torbirdy-current.xpi.asc'
-
-# You can find this key by searching for "Jacob Appelbaum (offline long term identity key)"
-torbirdy_dev_gpg_fingerprint = u'228FAD203DE9AE7D84E25265CF9A6F914193A197'
-jitsi_url = u'https://jitsi.org/Main/Download'
 
 # Are we on a 32-bit system or 64-bit?
 try:

@@ -95,7 +95,8 @@ class FRCMainFrame(wx.Frame):
     def onClose(self, evt):
         self.Close(True)
 
-    # This method is called when INSTALL button is clicked
+    # This method is called when INSTALL button is clicked. It will install
+    # the checked tools. 
     def installationController(self, evt):
       
         if self.tbird_checkbox.IsChecked():

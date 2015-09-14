@@ -29,22 +29,19 @@ def FRCAlert(text):
 def getGPG(url):
     print url
     gpg_page=requests.get(url)
-    gpg4win_soup = BeautifulSoup(gpg_page.content, "lxml")
-    gpg4win_link=gpg4win_soup.find_all('a', attrs={'href': re.compile('gpg4win-vanilla.*exe$')})[0]['href']
-    gpg4win_checksums=gpg4win_soup.find_all('code')
+    gpg4win_ascii_text = BeautifulSoup(gpg_page.content, "lxml")
+    gpg4win_link=gpg4win_ascii_text.find_all('a', attrs={'href': re.compile('gpg4win-vanilla.*exe$')})[0]['href']
+    gpg4win_checksums=gpg4win_ascii_text.find_all('code')
     gpg4win_file=requests.get(gpg4win_link,stream=True) 
     with open('gpg4win.exe','wb') as f:
         for chunk in gpg4win_file.iter_content(chunk_size=1024): 
             if chunk:
                 f.write(chunk)
                 f.flush()
-	f.close()
     sha1 = hashlib.sha1()
     f = open('gpg4win.exe','rb')
-    try:
-        sha1.update(f.read())
-    finally:
-        f.close()
+    sha1.update(f.read())
+    f.close()
     gpg4win_hash = sha1.hexdigest()
     checksum_verified=False
     for checksum in gpg4win_checksums:
@@ -75,13 +72,13 @@ def getTOR(url, lang):
     try:
         # Get and parse the HTML of the download page
         tor_page=requests.get(url)
-        tor_soup = BeautifulSoup(tor_page.content, "lxml")
+        tor_ascii_text = BeautifulSoup(tor_page.content, "lxml")
         tor_exe_link=''
         tor_sig_link=''
         FRCAlert('Scraping the Tor Project site for the relevant links\n')
         # Find the anchor tags for the language's EXE and OpenPGP signature
-        tor_link_exes=tor_soup.find_all('a', attrs={'href': re.compile('torbrowser-install-.*' + lang + '.*exe$')})
-        tor_sig_links=tor_soup.find_all('a', attrs={'href': re.compile('torbrowser-install-.*' + lang + '\\.exe\\.*asc$')})
+        tor_link_exes=tor_ascii_text.find_all('a', attrs={'href': re.compile('torbrowser-install-.*' + lang + '.*exe$')})
+        tor_sig_links=tor_ascii_text.find_all('a', attrs={'href': re.compile('torbrowser-install-.*' + lang + '\\.exe\\.*asc$')})
         tor_url_parsed=urlparse(url)
         tor_url_base=tor_url_parsed.scheme + '://' + tor_url_parsed.netloc        
         for exe_link in tor_link_exes:
@@ -102,7 +99,6 @@ def getTOR(url, lang):
                 if chunk:
                     f.write(chunk)
                     f.flush()
-        f.close()
         FRCAlert('Downloaded exe.  Now downloading GPG signature from ' + tor_sig_link + '\n')
         # Now download the signature
         tor_sig_file=requests.get(tor_sig_link)
@@ -128,11 +124,11 @@ def getTOR(url, lang):
     except Exception as e:
         printError(unicode(e))
 
-# This function downloafs and installs Thunderbird
+# This function downloads and installs Thunderbird
 def getThunderbird(lang):
     try:
         # Get the HTML and parse out the link for the language we want
-        tbird_soup=BeautifulSoup(requests.get(thunderbird_url).content, "lxml")
+        tbird_ascii_text=BeautifulSoup(requests.get(thunderbird_url).content, "lxml")
         tbird_link=tbird_soup.find_all('a',attrs={'href': re.compile('.*os=win.*lang=' + lang)})
         tbird_file=requests.get(tbird_link[0]['href'],stream=True) 
         with open('thunderbird-installer.exe','wb') as f:
@@ -140,7 +136,6 @@ def getThunderbird(lang):
                 if chunk:
                     f.write(chunk)
                     f.flush()
-        f.close()
         os.system('thunderbird-installer.exe')
     except Exception as e:
         printError(unicode(e))
@@ -150,30 +145,25 @@ def getEnigmail(url):
     try:
         FRCAlert('In getEnigmail\n')
         enigmail_page = requests.get(url).content
-        enigmail_soup = BeautifulSoup(enigmail_page, "lxml")
-        enigmail_links=enigmail_soup.find_all('a', attrs={'href': re.compile('enigmail.*sm\\+tb\\.xpi')})[:2]
+        enigmail_ascii_text = BeautifulSoup(enigmail_page, "lxml")
+        enigmail_links=enigmail_ascii_text.find_all('a', attrs={'href': re.compile('enigmail.*sm\\+tb\\.xpi')})[:2]
         enigmail_xpi=requests.get(enigmail_links[0]['href'])
         FRCAlert('Downloaded enigmail.xpi\n')
         enigmail_asc=requests.get(enigmail_links[1]['href'])
         FRCAlert('scraped and downloaded enigmail\n')
         f = open('enigmail.xpi','wb')
-        g = open('enigmail.xpi.asc','wb')
         f.write(enigmail_xpi.content)
-        g.write(enigmail_asc.content)
         f.close()
-        g.close()
-        gpg=gnupg.GPG()    
-        x = open('enigmail.xpi.asc','rb')
-        dd = os.path.abspath('enigmail.xpi')
-        FRCAlert('Directory: ' + str(dd) + '\n')
-        verified = gpg.verify_file(open(dd),os.path.abspath('enigmail.xpi.asc'))
+        f = open('enigmail.xpi.asc','wb')
+        f.write(enigmail_asc.content)
+        f.close()
+        gpg=gnupg.GPG()
+        verified = gpg.verify_file(open(os.path.abspath('enigmail.xpi')),os.path.abspath('enigmail.xpi.asc'))
         print verified.stderr
         if verified:
             FRCAlert("The Enigmail plugin checks out.  Let's install it in Thunderbird\n")
-            x.close()
         else:
             FRCAlert("Enigmail verification failed.  Please tell whoever is running your Cryptoparty.\n")
-            x.close()
             exit()
     except Exception as e:
         printError(unicode(e))
@@ -187,11 +177,11 @@ def getTorBirdy():
         torbirdy_asc=requests.get(torbirdy_xpi_sig_url)
         FRCAlert('Downloaded TorBirdy signature\n')
         f = open('torbirdy.xpi','wb')
-        g = open('torbirdy.xpi.asc','wb')
         f.write(torbirdy_xpi.content)
-        g.write(torbirdy_asc.content)
         f.close()
-        g.close()
+        f = open('torbirdy.xpi.asc','wb')
+        f.write(torbirdy_asc.content)
+        f.close()
         gpg=gnupg.GPG()    
         gpg.recv_keys('pgp.mit.edu','0x744301A2')
         x = open('torbirdy.xpi.asc','rb')
