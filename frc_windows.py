@@ -1,9 +1,13 @@
-# Copyright (C) 2013-2015 Access Organistion.
-# See the file 'LICENSE' for copying permission.
-#
-# This file contains the functions that used to download, verify
-# and install tools.
-
+# !/usr/bin/env python
+# Name            : frc-windows.py
+# Version         : 0.2
+# Author          : Peter Bourgelais
+# Date            : 20131016
+# Owner           : Peter Bourgelais
+# License         : GPLv2
+# Description     : This component contains the functions that used to download,
+#                   verify and install the different tools.
+#################################################################################
 
 import os
 import requests
