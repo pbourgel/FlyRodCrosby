@@ -10,11 +10,8 @@
 # Description     : This component contains the graphical user interface classes.
 #################################################################################
 
-import wx
 import os
-import sys
-import subprocess
-import ctypes
+import wx
 
 from frc_windows import *
 from langauges import *
