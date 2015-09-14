@@ -1,5 +1,7 @@
 # !/usr/bin/env python
-# Name            : frc-windows.py
+# -*- coding: utf-8 -*-
+#
+# Name            : frc_windows.py
 # Version         : 0.2
 # Author          : Peter Bourgelais
 # Date            : 20131016
