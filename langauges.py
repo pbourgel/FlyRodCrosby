@@ -1,4 +1,14 @@
-# coding=utf-8
+# !/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# Name            : languages.py
+# Version         : 0.2
+# Author          : Peter Bourgelais
+# Date            : 20131016
+# Owner           : Peter Bourgelais
+# License         : GPLv2
+# Description     : This component contains the text messages with different languages.
+#######################################################################################
 
 class fct():
 	def __init__(self,lg):
@@ -136,11 +146,3 @@ class CryptoCat_checkbox_msg(fct):
         msgIT="Cryptocat utilizza tecnologie web moderne per fornire un facile da usare, accessibili chat crittata con i tuoi amici, direttamente dal tuo browser."        
         msgAR='cryptocat تقنيات الويب الحديثة لتوفير سهلة الاستخدام، ويمكن الوصول إليها مشفرة دردشة مع أصدقائك، والحق في المتصفح الخاص بك.'
 	msgRU='Cryptocat использует современные веб-технологии, чтобы обеспечить легкий в использовании, доступную зашифрованный чат с друзьями, прямо в браузере.'
-
-#	languages.getGPG.getLangauge('fr')
-
-msg=First_msg('en-US')
-cryptmsg=CryptoCat_checkbox_msg('es')
-#print GPG.getLanguage()
-print msg.getFirstMsg()
-print cryptmsg.getCheckBoxLabel()
