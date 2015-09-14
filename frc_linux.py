@@ -57,7 +57,6 @@ def installPlugin(plugin_name):
                 profile=x
                 break
     path=".thunderbird/"+profile+"/extensions/"
-    print path
     task="cp "+plugin_name+" "+ path+plugin_id+".xpi"
     os.system(task)
 
@@ -78,7 +77,7 @@ def getGPG(GPGurl):
             link = soup.find_all('a',attrs={'href':re.compile("gnupg-.*.tar.bz2$")})[0]['href']
 	    siglink = soup.find_all('a',attrs={'href':re.compile("gnupg-.*.tar.bz2.sig$")})[0]['href']
             if len(link)==0 or len(siglink)==0 :
-                print "Couldn't found gpg doxnload link. Please telle whoever is running the cryptoperty.\n"
+                print "Couldn't found gpg doxnload link. Please tell whoever is running the cryptoperty.\n"
             file_stream = requests.get('http://www.gnupg.org/'+link, stream=True)
             i=0 
             with open(gpg_file_name,'wb') as f:
@@ -88,14 +87,14 @@ def getGPG(GPGurl):
                         f.write(chunk)
                         f.flush()
                         print "Download done.."
-                	os.system("tar xvjf " + gpg_file_name)
+                	os.system("tar xvjf " + gpg_file_name + " -C gnupg --strip-components 1")
         	        os.system ("apt-get install libgpg-error-dev && \
                 	            apt-get install libgcrypt11-dev && \
                         	    apt-get install libksba-dev && \
 	                            apt-get install libassuan-dev ")
-        	        os.system("./gnupg-2.0.22/configure")
-              	        os.system("make gnupg-2.0.22/po/Makefile.in.in")
-               		os.system("make gnupg-2.0.22/po/Makefile.in.in  install")
+        	        os.system("./gnupg/configure")
+              	        os.system("make gnupg/po/Makefile.in.in")
+               		os.system("make gnupg/po/Makefile.in.in  install")
 		
 			cert_file=requests.get(hkps_cert_link,verify=False)
 
