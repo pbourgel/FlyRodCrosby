@@ -14,16 +14,9 @@
 
 import os
 import re
-import sys
 import requests
-import hashlib
-import urllib
-import urllib2
-import zipfile
-import tarfile
 import platform
 import wx
-from shutil import copyfile
 from bs4 import BeautifulSoup
 from urlparse import urlparse
 from frc_linuxconfig import *
