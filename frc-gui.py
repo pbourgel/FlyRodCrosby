@@ -18,6 +18,7 @@ from frc_osx import *
 
 
 lang = 'en-US'
+
 class FRCDialog(QtGui.QWidget):
 	
 	def __init__(self):

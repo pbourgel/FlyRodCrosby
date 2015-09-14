@@ -1,4 +1,4 @@
-# !/usr/bin/env python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # Name            : frc_osx.py
@@ -120,13 +120,13 @@ def printError(text):
     
 def getTOR(url,lang):	
     try:
-        #get and parse the HTML of the download page
+        # Get and parse the HTML of the download page
         tor_page=requests.get(url)
         tor_soup = BeautifulSoup(tor_page.content)
         tor_zip_link=''
         tor_sig_links=''
         FRCAlert('Scraping the Tor Project site for the relevant links\n')
-        #Find the anchor tags for the language's EXE and OpenPGP signature
+        # Find the anchor tags for the language's EXE and OpenPGP signature
         tor_zip_link=tor_soup.find_all('a', attrs={'href': re.compile('/TorBrowser.*.'+lang+'.*.')})[0]['href'][2:]
         tor_sig_links=tor_soup.find_all('a', attrs={'href': re.compile('/TorBrowser.*.'+lang+'.*.')})[1]['href'][2:]          
         tor_url_parsed=urlparse(url)
@@ -143,7 +143,6 @@ def getTOR(url,lang):
                     f.write(chunk)
                     f.flush()
         f.close()
-
         tor_sig_links=tor_url_base+tor_sig_links
         FRCAlert('Downloaded .dmg  Now downloading GPG signature from ' + tor_sig_links + '\n')
         tor_sig_file=requests.get(tor_sig_links)
@@ -256,7 +255,7 @@ def getTorBirdy():
 
 def installEnigmail():
     try:
-    	install_plugin("enigmail17.xpi")
+    	installPlugin("enigmail17.xpi")
     except Exception as e:
      	printError(unicode(e))
 
