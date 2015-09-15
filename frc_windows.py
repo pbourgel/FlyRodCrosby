@@ -27,7 +27,6 @@ def FRCAlert(text):
 
 # This function downloads and installs GPG program
 def getGPG(url):
-    print url
     gpg_page=requests.get(url)
     gpg4win_ascii_text = BeautifulSoup(gpg_page.content, "lxml")
     gpg4win_link=gpg4win_ascii_text.find_all('a', attrs={'href': re.compile('gpg4win-vanilla.*exe$')})[0]['href']
@@ -84,11 +83,9 @@ def getTOR(url, lang):
         for exe_link in tor_link_exes:
             if len(exe_link) > 0 and 'beta' not in exe_link['href']:
                 tor_exe_link=tor_url_base+exe_link['href'][2:]
-                FRCAlert(tor_exe_link + '\n')
         for sig_link in tor_sig_links:
             if len(sig_link) > 0 and 'beta' not in sig_link['href']:
                 tor_sig_link=tor_url_base+sig_link['href'][2:]
-                FRCAlert(tor_sig_link + '\n')
         if len(tor_exe_link) == 0 or len(tor_sig_link) == 0:
             FRCAlert("Couldn't find download link for Tor.  Please tell whoever is running the Cryptoparty.\n")
             exit()
@@ -129,7 +126,7 @@ def getThunderbird(lang):
     try:
         # Get the HTML and parse out the link for the language we want
         tbird_ascii_text=BeautifulSoup(requests.get(thunderbird_url).content, "lxml")
-        tbird_link=tbird_soup.find_all('a',attrs={'href': re.compile('.*os=win.*lang=' + lang)})
+        tbird_link=tbird_ascii_text.find_all('a',attrs={'href': re.compile('.*os=win.*lang=' + lang)})
         tbird_file=requests.get(tbird_link[0]['href'],stream=True) 
         with open('thunderbird-installer.exe','wb') as f:
             for chunk in tbird_file.iter_content(chunk_size=1024): 
@@ -197,6 +194,27 @@ def getTorBirdy():
             exit()
     except Exception as e:
         printError(unicode(e))
+
+def downloadCryptoCat():
+  try:
+    FRCAlert('In CryptoCat downloading..\n')
+    cat_page = requests.get(cryptocat_url ).content
+    cat_ascii_text = BeautifulSoup(cat_page)
+    cat_links=cat_ascii_text.find_all('a', attrs={'href': re.compile('\\/cryptocat-.*\\.xpi*')})[0]['href']
+    cat_xpi=requests.get(cat_links)
+    f = open('cryptocat.xpi','wb')
+    f.write(cat_xpi.content)
+    f.close()
+  except Exception as e:
+    printError(e)
+
+def installCryptoCat():
+    pass
+    #installFirefoxPlugin('cryptocat.xpi')
+
+def getCryptoCat():
+    downloadCryptoCat()
+    installCryptoCat()
 
 # This function downloads and verifies Torbirdy
 def installEnigmail(start_after_copied):

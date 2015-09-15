@@ -66,12 +66,14 @@ class FRCMainFrame(wx.Frame):
         self.__do_layout()
    
     
+    # This method set up the title and the background
     def __set_properties(self):
         self.SetTitle("FlyRodCrosby - Making Cryptoparties easier since 1897!")
         self.SetSize((1000,500))
         self.SetBackgroundColour('#ededed')
         
 
+    # This method set up the layout the main frame
     def __do_layout(self):
         item_border = 5
         sizer_1 = wx.BoxSizer(wx.VERTICAL)
@@ -103,14 +105,13 @@ class FRCMainFrame(wx.Frame):
             getThunderbirdWithEnigmail()
 
         if self.CryptoCat_checkbox.IsChecked():
-	    downloadCryptoCat()
-            installCryptoCat()
+            getCryptoCat()
 
         if self.tbb_checkbox.IsChecked():
             getTOR(tor_url,'en-US')
 
         if self.jitsi_checkbox.IsChecked():
-            getJitsi()
+            getJitsi(jitsi_url)
 
         if self.torbirdy_checkbox.IsChecked():
             getTorBirdy()
@@ -131,4 +132,3 @@ main_frame = FRCMainFrame(None, -1, 'FlyRodCrosby-Making Cryptoparties easier si
 main_app.SetTopWindow(main_frame)
 main_frame.Show()
 main_app.MainLoop()
-
