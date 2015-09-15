@@ -186,7 +186,7 @@ def getEnigmail(url):
         enigmail_links=enigmail_ascii_text.find_all('a', attrs={'href': re.compile('enigmail.*sm\\+tb\\.xpi')})[:2]
         enigmail_xpi=requests.get(enigmail_links[0]['href'])
         FRCAlert('Downloaded enigmail.xpi\n')
-        enigmail_asc=requests.get(HTTPSthis(enigmail_links[1]['href']))
+        enigmail_asc=requests.get(enigmail_links[1]['href'])
         f = open('enigmail.xpi','wb')
         f.write(enigmail_xpi.content)
         f.close()
@@ -224,9 +224,9 @@ def getTorBirdy():
         gpg=gnupg.GPG()    
 	#TO-DO: Iterate through the standard servers in case sks-skyservers
         #is down.
-        gpg.recv_keys('pool.sks-keyservers.net',torbirdy_dev_gpg_fingerprint)
+        #gpg.recv_keys('pool.sks-keyservers.net',torbirdy_dev_gpg_fingerprint)
         fd = open('torbirdy.xpi.asc','rb')
-        verified = gpg.verify_file(fd,os.path.abspath('torbirdy.xpi'))
+        verified = gpg.verify_file(fd, os.path.abspath('torbirdy.xpi'))
         if verified:
             FRCAlert("The Torbirdy plugin checks out.  Let's install it in Thunderbird\n")
             fd.close()
