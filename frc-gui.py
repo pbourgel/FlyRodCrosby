@@ -65,13 +65,13 @@ class FRCMainFrame(wx.Frame):
         self.__set_properties()
         self.__do_layout()
    
-    
+    # This method set up the title and the background
     def __set_properties(self):
         self.SetTitle("FlyRodCrosby - Making Cryptoparties easier since 1897!")
         self.SetSize((1000,500))
         self.SetBackgroundColour('#ededed')
         
-
+    # This method set up the layout the main frame
     def __do_layout(self):
         item_border = 5
         sizer_1 = wx.BoxSizer(wx.VERTICAL)

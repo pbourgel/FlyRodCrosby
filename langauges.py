@@ -147,7 +147,3 @@ class CryptoCat_checkbox_msg(fct):
         msgIT="Cryptocat utilizza tecnologie web moderne per fornire un facile da usare, accessibili chat crittata con i tuoi amici, direttamente dal tuo browser."        
         msgAR='cryptocat تقنيات الويب الحديثة لتوفير سهلة الاستخدام، ويمكن الوصول إليها مشفرة دردشة مع أصدقائك، والحق في المتصفح الخاص بك.'
 	msgRU='Cryptocat использует современные веб-технологии, чтобы обеспечить легкий в использовании, доступную зашифрованный чат с друзьями, прямо в браузере.'
-
-
-msg = First_msg('en-US')
-cryptmsg = CryptoCat_checkbox_msg('es')
