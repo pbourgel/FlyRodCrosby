@@ -43,9 +43,11 @@ class FRCDialog(QtGui.QWidget):
              
                 self.ExitButton.clicked.connect(self.exit)
         
+        # This method is called when exit button is clicked
 	def exit(self):
                 exit(0)
 	
+        # This method is called when OK button is clicked
 	def getLanguage(self):
 		global lang
 		lang = str(self.ComboBox.currentText())
@@ -99,9 +101,11 @@ class FRCWidget(QtGui.QWidget):
 		self.OkButton.clicked.connect(self.action)
 		self.ExitButton.clicked.connect(self.exit)
 
+        # This method is called when exit button is clicked
 	def exit(self):
         	exit(0)
 
+        # This method is called when OK button is clicked
 	def action(self):
 		if self.tbird_checkbox.isChecked():
 			getThunderbirdWithEnigmail(lang)
@@ -111,7 +115,7 @@ class FRCWidget(QtGui.QWidget):
 		if self.tbb_checkbox.isChecked():
 			getTor(tor_url,lang) 
 		if self.jitsi_checkbox.isChecked():
-			getJitsi()
+			getJitsi(jitsi_url)
                 if self.tailsISO_checkbox.isChecked():
 			getTailsISO()
                 if self.fakeOut_checkbox.isChecked():

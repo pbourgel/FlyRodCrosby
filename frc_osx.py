@@ -24,7 +24,7 @@ from xml.dom import minidom
 
 from frc_osxconfig import *
 
-
+# This function installs the given plugin into Firefox
 def installFirefoxPlugin(plugin_name):
   os.system("rm install.rdf")
   task="unzip -p "+plugin_name+" install.rdf > install.rdf"
@@ -88,19 +88,20 @@ def installPlugin(plugin_name):
 def FRCAlert(text):
      print text
 
+# This function downloads and installs GPG program
 def getGPG(macGPGurl):	
   page = requests.get(macGPGurl,verify=False)
   soup = BeautifulSoup(page.content)
   link=soup.find_all('a',attrs={'href': re.compile("GPG%20Suite *")}) [0]['href'] 
   macGPG_file=requests.get(link,stream=True,verify=False)
-  with open('./%s' % "GPG_Suite_2013.dmg",'wb') as f:
+  with open('./%s' % "GPG_Suite.dmg",'wb') as f:
    print "The GPG Suite Tools is downloading..\n"
    for chunk in macGPG_file.iter_content(chunk_size=1024):
      if chunk:
        f.write(chunk)
        f.flush
    f.close()
-  os.system("open GPG_Suite_2013.dmg")
+  os.system("open GPG_Suite.dmg")
     
 try:
     import gnupg
@@ -117,18 +118,19 @@ def httpThis(url):
 def printError(text):
     print 'An error occured with your download.  Please show this to your Cryptoparty facilitator: ' + str(text)
     print "ERROR: "+ str(text)
-    
+
+# This function downloads and installs the Tor browser bundle
 def getTOR(url,lang):	
     try:
         # Get and parse the HTML of the download page
         tor_page=requests.get(url)
-        tor_soup = BeautifulSoup(tor_page.content)
+        tor_ascii_text = BeautifulSoup(tor_page.content)
         tor_zip_link=''
         tor_sig_links=''
         FRCAlert('Scraping the Tor Project site for the relevant links\n')
         # Find the anchor tags for the language's EXE and OpenPGP signature
-        tor_zip_link=tor_soup.find_all('a', attrs={'href': re.compile('/TorBrowser.*.'+lang+'.*.')})[0]['href'][2:]
-        tor_sig_links=tor_soup.find_all('a', attrs={'href': re.compile('/TorBrowser.*.'+lang+'.*.')})[1]['href'][2:]          
+        tor_zip_link=tor_ascii_text.find_all('a', attrs={'href': re.compile('/TorBrowser.*.'+lang+'.*.')})[0]['href'][2:]
+        tor_sig_links=tor_ascii_text.find_all('a', attrs={'href': re.compile('/TorBrowser.*.'+lang+'.*.')})[1]['href'][2:]          
         tor_url_parsed=urlparse(url)
         tor_url_base=tor_url_parsed.scheme + '://' + tor_url_parsed.netloc
         if len(tor_zip_link) == 0 or len(tor_sig_links) == 0:
@@ -170,11 +172,12 @@ def getTOR(url,lang):
             FRCAlert('Problem downloading Tor: Please show this to your facilitator: ' + unicode(e) + '\n')
     except Exception as e:
         print unicode(e)
- 
+
+# This function installs Thunderbird 
 def getThunderbird(lang):
     try:
-        tbird_soup=BeautifulSoup(requests.get(thunderbird_url).content)#here we go very fast :p
-        tbird_link=tbird_soup.find_all('a',attrs={'href': re.compile('.*os=osx.*lang=' + lang)})
+        tbird_ascii_text=BeautifulSoup(requests.get(thunderbird_url).content)#here we go very fast :p
+        tbird_link=tbird_ascii_text.find_all('a',attrs={'href': re.compile('.*os=osx.*lang=' + lang)})
         tbird_file=requests.get(tbird_link[0]['href'],stream=True)
         with open('thunderbird-installer.dmg','wb') as f:
             for chunk in tbird_file.iter_content(chunk_size=1024):
@@ -187,12 +190,13 @@ def getThunderbird(lang):
     except Exception as e:
         printError(unicode(e))
 
+# This function Downloads Engimail plugin
 def getEnigmail(url):
     try:
 	RCAlert('in getEnigmail\n')
         enigmail_page = requests.get(url).content
-        enigmail_soup = BeautifulSoup(enigmail_page)
-        enigmail_links=enigmail_soup.find_all('a', attrs={'href': re.compile('enigmail-1.7.*-tb\\+sm\\.xpi')})[:2]
+        enigmail_ascii_text = BeautifulSoup(enigmail_page)
+        enigmail_links=enigmail_ascii_text.find_all('a', attrs={'href': re.compile('enigmail-1.7.*-tb\\+sm\\.xpi')})[:2]
         FRCAlert('contents of enigmail_links: ' + str(enigmail_links) + '\n')
         enigmail_xpi=requests.get(enigmail_links[0]['href'])
         FRCAlert('Downloaded enigmail.xpi\n')
@@ -222,6 +226,7 @@ def getEnigmail(url):
     except Exception as e:
         printError(unicode(e))
 
+# This function Downloads Torbirdy plugin
 def getTorBirdy():
     try:
     	FRCAlert('in getTorBirdy\n')
@@ -253,12 +258,14 @@ def getTorBirdy():
     except Exception as e:
     	printError(unicode(e))
 
+# This function installs Engimail plugin
 def installEnigmail():
     try:
     	installPlugin("enigmail17.xpi")
     except Exception as e:
      	printError(unicode(e))
 
+# This function installs Torbirdy plugin
 def installTorBirdy():
     try:
 	installPlugin("torbirdy.xpi")
@@ -269,8 +276,8 @@ def getJitsi(url):
     try:
       FRCAlert('In getJitsi\n')
       jitsi_page = requests.get(url).content
-      jitsi_soup = BeautifulSoup(jitsi_page)
-      jitsi_links=jitsi_soup.find_all('a', attrs={'href': re.compile('\\/macosx\\/jitsi-.*\\.dmg$')})
+      jitsi_ascii_text = BeautifulSoup(jitsi_page)
+      jitsi_links=jitsi_ascii_text.find_all('a', attrs={'href': re.compile('\\/macosx\\/jitsi-.*\\.dmg$')})
       FRCAlert('Starting installer download\n')
       jitsi_dmg=requests.get(jitsi_links[0]['href'])
       FRCAlert('Jitsi download complete\n')
@@ -284,18 +291,20 @@ def getJitsi(url):
       os.system(' open jitsi-installer.dmg')
     except Exception as e:
       printError(e)
-	
+
+# This function installs Thunderbird with Engimail	
 def getThunderbirdWithEnigmail(lang):
     getThunderbird(lang)
     getEnigmail(enigmail_url)
     installEnigmail()
   
+# This function downloads Cryptocat plugin
 def downloadCryptoCat():
     try:
       FRCAlert('in CryptoCat downloading..\n')
       cat_page = requests.get(cryptocat_url ).content
-      cat_soup = BeautifulSoup(cat_page)
-      cat_links=cat_soup.find_all('a', attrs={'href': re.compile('\\/cryptocat-.*\\.xpi*')})[0]['href']
+      cat_ascii_text = BeautifulSoup(cat_page)
+      cat_links=cat_ascii_text.find_all('a', attrs={'href': re.compile('\\/cryptocat-.*\\.xpi*')})[0]['href']
       FRCAlert('contents of cat_links: ' + str(cat_links) + '\n')
       cat_xpi=requests.get(cat_links)
       FRCAlert('cryptocat.xpi\n')
@@ -305,19 +314,22 @@ def downloadCryptoCat():
       f.close()
     except Exception as e:
       printError(e)
-      
+   
+# This function installs Cryptocat plugin  
 def installCryptoCat():
   installFirefoxPlugin('cryptocat.xpi')
   
+# This function downloads and installs Cryptocat plugin  
 def getCryptoCat():
   downloadCryptoCat()
   installCryptoCat()
   
+# This function downloads and build Tails iso  
 def getTailsISO():
-  tails_soup = BeautifulSoup(requests.get(tails_url).content)
-  tails_iso_link = tails_soup.find_all('a', attrs = {'href': re.compile('tails.*\\.iso$')})[0]['href']
+  tails_ascii_text = BeautifulSoup(requests.get(tails_url).content)
+  tails_iso_link = tails_ascii_text.find_all('a', attrs = {'href': re.compile('tails.*\\.iso$')})[0]['href']
   FRCAlert('Got Tails download link: ' + str(tails_iso_link))
-  sig_link = tails_soup.find_all('a', attrs = {'href': re.compile('tails.*\\.iso\\.sig$')})[0]['href']
+  sig_link = tails_ascii_text.find_all('a', attrs = {'href': re.compile('tails.*\\.iso\\.sig$')})[0]['href']
   sig_file=requests.get(sig_link,stream=True)
   iso_file = requests.get(tails_iso_link,stream=True)
   FRCAlert("Downloading iso file..")
@@ -347,12 +359,13 @@ def getTailsISO():
   except Exception as e:
       print e
 
+# This function downloads FakeOut plugin  
 def downloadFakeOut(url):
   try:
     FRCAlert('in getFakeDoamin\n')
     fake_page = requests.get(url).content
-    fake_soup = BeautifulSoup(fake_page)
-    fake_links=fake_soup.find_all('a', attrs={'href': re.compile('\\/fake_domain_detective-.*\\.xpi*')})[0]['href']
+    fake_ascii_text = BeautifulSoup(fake_page)
+    fake_links=fake_ascii_text.find_all('a', attrs={'href': re.compile('\\/fake_domain_detective-.*\\.xpi*')})[0]['href']
     FRCAlert('contents of fake_links: ' + str(fake_links) + '\n')
     fake_xpi=requests.get(fake_links)
     FRCAlert('FakeDomain.xpi\n')
@@ -363,10 +376,12 @@ def downloadFakeOut(url):
   except Exception as e:
     printError(e)
 
+# This function installs FakeOut plugin
 def installFakeOut():
   installFirefoxPlugin('fake_domain_detective.xpi')
 
 
+# This function downloads and installs FakeOut plugin
 def getFakeOut():
     downloadFakeOut(FakeDomain_url)
     installFakeOut()
