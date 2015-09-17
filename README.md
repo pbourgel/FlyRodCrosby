@@ -43,6 +43,7 @@ $ git checkout <branch>
 ```
 $ python frc-gui.py 
 ```
+Note: You need to run it as root on Linux version
 
 # How to contibute ?
 ```
