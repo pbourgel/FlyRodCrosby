@@ -16,6 +16,7 @@ import requests
 import re
 import hashlib
 import wx
+from _winreg import *
 from shutil import copyfile
 from bs4 import BeautifulSoup
 from urlparse import urlparse
