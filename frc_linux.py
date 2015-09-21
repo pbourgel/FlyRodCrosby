@@ -254,9 +254,13 @@ def installTorBirdy():
 # This function installs Jitsi
 def getJitsi():
     try:
-	os.system("sudo apt-get install jitsi")
+        FRCAlert('In getJitsi\n')
+        os.system('gpg --keyserver subkeys.pgp.net --recv-keys ' + jitsi_id)
+        os.system('echo "deb http://download.jitsi.org/deb unstable/" > /etc/apt/sources.list.d/jitsi.list')
+        os.system('apt-get udpate')
+        os.system('apt-get install jitsi')
     except Exception as e:
-        print e
+        printError(e)
 
 # This function installs Thunderbird with Engimail
 def getThunderbirdWithEnigmail():

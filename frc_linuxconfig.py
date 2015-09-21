@@ -27,6 +27,7 @@ torbirdy_xpi_url = u'https://www.torproject.org/dist/torbirdy/torbirdy-current.x
 torbirdy_xpi_sig_url = u'https://www.torproject.org/dist/torbirdy/torbirdy-current.xpi.asc'
 url_trueCrypt=u'http://www.truecrypt.org/dl'
 jitsi_url = u'https://jitsi.org/Main/Download'
+jitsi_id = '0xC697D823EB0AB654'
 FakeDomain_url=u'https://addons.mozilla.org/ro/firefox/addon/fake-domain/'
 
 torbirdy_dev_gpg_fingerprint = u'228FAD203DE9AE7D84E25265CF9A6F914193A197'
