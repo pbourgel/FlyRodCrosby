@@ -196,6 +196,7 @@ def getTorBirdy():
     except Exception as e:
         printError(unicode(e))
 
+# This function downloads CryptoCat
 def downloadCryptoCat():
   try:
     FRCAlert('In CryptoCat downloading..\n')
@@ -209,9 +210,9 @@ def downloadCryptoCat():
   except Exception as e:
     printError(e)
 
+# NOTE: This function supposed to install CryptoCat but it's not implemented
 def installCryptoCat():
     pass
-    #installFirefoxPlugin('cryptocat.xpi')
 
 def getCryptoCat():
     downloadCryptoCat()
