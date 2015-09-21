@@ -272,6 +272,7 @@ def installTorBirdy():
     except Exception as e:
 	printError(unicode(e))
 
+# This function downloads and installs Jitsi
 def getJitsi(url):
     try:
       FRCAlert('In getJitsi\n')
